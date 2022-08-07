@@ -1,0 +1,41 @@
+{
+  "themes": {
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
+  },
+  "navigationBar": {
+    "home": "Home",
+    "me": "Me",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "logOut": "Log out"
+  },
+  "headerBar": {
+    "search": "Search",
+    "logIn": "Log in"
+  },
+  "languages": {
+    "language": "Language"
+  },
+  "modal": {
+    "closeInfo": "Got it, thanks!"
+  },
+  "auth": {
+    "authorization": "Authorization",
+    "registration": "Registration",
+    "logIn": "Log in",
+    "signUp": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "name": "Name",
+    "surname": "Surname"
+  },
+  "dashboard": {
+    "totalDifficulty": "Total difficulty",
+    "employees": "Employees",
+    "tasks": "Tasks"
+  }
+}

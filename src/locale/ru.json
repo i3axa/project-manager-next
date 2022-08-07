@@ -1,0 +1,41 @@
+{
+  "themes": {
+    "theme": "Тема",
+    "dark": "Тёмная",
+    "light": "Светлая",
+    "system": "Системная"
+  },
+  "navigationBar": {
+    "home": "Главная",
+    "me": "Я",
+    "dashboard": "Панель",
+    "settings": "Настройки",
+    "logOut": "Выйти"
+  },
+  "headerBar": {
+    "search": "Поиск",
+    "logIn": "Войти"
+  },
+  "languages": {
+    "language": "Язык"
+  },
+  "modal": {
+    "closeInfo": "Ясно, спасибо!"
+  },
+  "auth": {
+    "authorization": "Авторизация",
+    "registration": "Регистрация",
+    "logIn": "Войти",
+    "signUp": "Зарегистрироваться",
+    "email": "Адрес эл.почты",
+    "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "name": "Имя",
+    "surname": "Фамилия"
+  },
+  "dashboard": {
+    "totalDifficulty": "Общая сложность",
+    "employees": "Рабочие",
+    "tasks": "Задания"
+  }
+}
