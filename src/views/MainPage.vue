@@ -6,24 +6,11 @@ import RadioButton from '@/components/UI/RadioButton.vue';
 import { Theme } from '@/hooks/useTheme';
 import ListBox from '@/components/UI/ListBox.vue';
 import InfoModal from '@/components/UI/InfoModal.vue';
-import DropDown from '@/components/UI/DropDown.vue';
 import store from '@/store';
-import { StyleActions } from '@/store/modules/style';
+import { StyleMutations } from '@/store/modules/style';
 
 const { theme } = useTheme();
 const { i18n, getLanguageName } = useLocale();
-
-const onThemeInput = (value: unknown) => {
-  theme.value = value as Theme;
-};
-
-const onListBoxChange = (value: unknown) => {
-  i18n.locale.value = value as string;
-};
-
-const onDropDownAction = (element: unknown) => {
-  i18n.locale.value = element as string;
-};
 
 const isModalOpen = ref(false);
 </script>
@@ -37,28 +24,13 @@ const isModalOpen = ref(false);
         {{ $t('themes.theme') }}
       </legend>
       <div class="mt-4 space-y-4">
-        <RadioButton
-          :id="'theme-light'"
-          :value="Theme.light"
-          :model="theme"
-          @input="onThemeInput"
-        >
+        <RadioButton :id="'theme-light'" :value="Theme.light" v-model="theme">
           {{ $t('themes.light') }}
         </RadioButton>
-        <RadioButton
-          :id="'theme-dark'"
-          :value="Theme.dark"
-          :model="theme"
-          @input="onThemeInput"
-        >
+        <RadioButton :id="'theme-dark'" :value="Theme.dark" v-model="theme">
           {{ $t('themes.dark') }}
         </RadioButton>
-        <RadioButton
-          :id="'theme-system'"
-          :value="Theme.system"
-          :model="theme"
-          @input="onThemeInput"
-        >
+        <RadioButton :id="'theme-system'" :value="Theme.system" v-model="theme">
           {{ $t('themes.system') }}
         </RadioButton>
       </div>
@@ -72,15 +44,14 @@ const isModalOpen = ref(false);
       <div class="mt-4">
         <ListBox
           :items="$i18n.availableLocales"
-          :initialValue="new Intl.Locale($i18n.locale).language"
+          v-model="i18n.locale.value"
           class="w-40"
-          @change="onListBoxChange"
         >
-          <template #title="{ selected }">
-            {{ getLanguageName(selected) }}
+          <template #title="{ modelValue }">
+            {{ getLanguageName(modelValue as string) }}
           </template>
           <template #item="{ item }">
-            {{ getLanguageName(item) }}
+            {{ getLanguageName(item as string) }}
           </template>
         </ListBox>
       </div>
@@ -93,10 +64,24 @@ const isModalOpen = ref(false);
     <div>
       <button
         class="btn-outline-primary mt-3"
-        @click="store.dispatch(StyleActions.enableGlobalSpinner)"
+        @click="store.commit(StyleMutations.setIsGlobalSpinnerShown, true)"
       >
         <b-icon-grid class="mr-1" />Spinner
       </button>
+    </div>
+    <div>
+      <button class="btn-secondary mt-3">
+        <b-icon-pen class="mr-1" />Test
+      </button>
+    </div>
+    <div>
+      <button class="btn-info mt-3"><b-icon-pen class="mr-1" />Test</button>
+    </div>
+    <div>
+      <button class="btn-dark mt-3"><b-icon-pen class="mr-1" />Test</button>
+    </div>
+    <div>
+      <button class="btn-light my-3"><b-icon-pen class="mr-1" />Test</button>
     </div>
     <InfoModal :isOpen="isModalOpen" @close="isModalOpen = false">
       <template #header>Payment successful</template>
@@ -106,15 +91,6 @@ const isModalOpen = ref(false);
       >
       <template #close-button>{{ $t('modal.closeInfo') }}</template>
     </InfoModal>
-    <DropDown :items="i18n.availableLocales" @action="onDropDownAction">
-      <template #title>
-        {{ getLanguageName($i18n.locale) }}
-        <b-icon-chevron-down class="-mr-1 ml-1 h-5" />
-      </template>
-      <template #item="{ element }">
-        {{ getLanguageName(element as string) }}
-      </template>
-    </DropDown>
   </div>
 </template>
 

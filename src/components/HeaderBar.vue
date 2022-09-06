@@ -13,6 +13,13 @@ import { StyleActions } from '@/store/modules/style';
       <b-icon-list />
     </button>
 
+    <span
+      class="sync-indicator text-xl text-gray-500"
+      v-show="store.state.style.isSyncIndicatorToggled"
+    >
+      <b-icon-arrow-clockwise class="animate-spin" />
+    </span>
+
     <!-- <button class="btn text-2xl text-dark dark:text-light shadow-none">
       <b-icon-bell />
     </button> -->
@@ -38,7 +45,9 @@ import { StyleActions } from '@/store/modules/style';
 }
 
 .header {
-  position: fixed;
+  position: sticky;
+  top: 0;
+  bottom: 0;
   padding: 5px 20px 5px 8px;
   width: 100%;
   display: flex;
@@ -47,5 +56,12 @@ import { StyleActions } from '@/store/modules/style';
   justify-content: space-between;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
   z-index: 1;
+}
+
+.sync-indicator {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 }
 </style>

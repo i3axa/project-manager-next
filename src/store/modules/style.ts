@@ -3,23 +3,42 @@ import type { Module } from 'vuex';
 
 export interface StyleState {
   isNavbarHidden: boolean;
+  isSyncIndicatorToggled: boolean;
+  isGlobalSpinnerShown: boolean;
 }
 
 export enum StyleActions {
   toggleNavigationBar = 'style/toggleNavigationBar',
-  enableGlobalSpinner = 'style/enableGlobalSpinner',
-  disableGlobalSpinner = 'style/disableGlobalSpinner',
+}
+
+export enum StyleMutations {
+  setIsSyncIndicatorToggled = 'style/setIsSyncIndicatorToggled',
+  setIsGlobalSpinnerShown = 'style/setIsGlobalSpinnerShown',
 }
 
 export const styleModule: Module<StyleState, State> = {
   namespaced: true,
 
   state: (): StyleState => {
-    let isNavbarHidden = true;
-
     return {
-      isNavbarHidden,
+      isNavbarHidden: true,
+      isSyncIndicatorToggled: false,
+      isGlobalSpinnerShown: false,
     };
+  },
+
+  mutations: {
+    setIsSyncIndicatorToggled(state, value: boolean) {
+      state.isSyncIndicatorToggled = value;
+      window.onbeforeunload = value
+        ? () => {
+            return 'Do you really want to leave?';
+          }
+        : null;
+    },
+    setIsGlobalSpinnerShown(state, value: boolean) {
+      state.isGlobalSpinnerShown = value;
+    },
   },
 
   actions: {
@@ -36,20 +55,6 @@ export const styleModule: Module<StyleState, State> = {
       }
 
       state.isNavbarHidden = !state.isNavbarHidden;
-    },
-    enableGlobalSpinner(): void {
-      const spinner = document.getElementById('global-spinner');
-      const globalOverlay = document.getElementById('global-overlay');
-
-      spinner!.style.display = 'flex';
-      globalOverlay!.style.display = 'block';
-    },
-    disableGlobalSpinner(): void {
-      const spinner = document.getElementById('global-spinner');
-      const globalOverlay = document.getElementById('global-overlay');
-
-      spinner!.style.display = 'none';
-      globalOverlay!.style.display = 'none';
     },
   },
 };

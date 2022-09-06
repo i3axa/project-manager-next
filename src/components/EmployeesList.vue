@@ -2,28 +2,48 @@
 import useEmployees from '@/hooks/useEmployees';
 import type ITask from '@/models/ITask';
 import { watch } from 'vue';
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
+import TaskService from '@/services/TaskService';
+import store from '@/store';
+import { StyleMutations } from '@/store/modules/style';
+import type IEmployee from '@/models/IEmployee';
 
-const { employees } = useEmployees();
-employees.value.forEach((employee) => {
-  watch(employee.takenTasks, (newTasks) => console.log(newTasks));
-});
+interface IEmits {
+  (eventName: 'taskRelease', task: ITask, employee: IEmployee): void;
+}
+
+interface IProps {
+  employees: IEmployee[];
+}
+
+defineProps<IProps>();
+const emit = defineEmits<IEmits>();
 
 const getTotalDifficulty = (tasks: ITask[]) => {
   const difficulties = tasks.map((task) => task.difficulty);
 
-  return difficulties.reduce((previous, current) => previous + current);
+  return difficulties.reduce((previous, current) => previous + current, 0);
+};
+
+const releaseTask = (taskIndex: number, employee: IEmployee) => {
+  const deletedTask = employee.takenTasks.splice(taskIndex, 1)[0];
+
+  emit('taskRelease', deletedTask, employee);
 };
 </script>
 
 <template>
   <div class="employees-list">
     <div class="card" v-for="employee in employees">
-      <div class="card-header mb-4 w-max flex flex-col gap-2">
+      <div class="mb-4 w-max flex flex-col gap-2">
         <div class="min-w-max flex flex-row gap-5">
           <h4>{{ employee.name }} {{ employee.surname }}</h4>
-          <button class="btn-outline-secondary text-sm">
+          <router-link
+            class="btn-outline-secondary text-sm !opacity-100"
+            :to="`/employee/${employee.user}`"
+          >
             <b-icon-box-arrow-up-right />
-          </button>
+          </router-link>
         </div>
         <h6>{{ employee.skills }}</h6>
       </div>
@@ -35,7 +55,7 @@ const getTotalDifficulty = (tasks: ITask[]) => {
         itemKey="id"
         filter=".ignore"
       >
-        <template #item="{ element }">
+        <template #item="{ element, index }: { element: ITask, index: number }">
           <div
             class="task rounded-2xl shadow !border-none"
             :style="{
@@ -46,7 +66,10 @@ const getTotalDifficulty = (tasks: ITask[]) => {
               {{ element.title }} ({{ element.difficulty }})
             </h5>
             <button class="ignore text-gray-800 hover:opacity-70">
-              <b-icon-x-lg class="close" />
+              <b-icon-x-lg
+                class="close"
+                @click="releaseTask(index, employee)"
+              />
             </button>
           </div>
         </template>
@@ -90,6 +113,7 @@ const getTotalDifficulty = (tasks: ITask[]) => {
   display: flex;
   flex-direction: column;
   flex: none;
+  min-height: 250px;
 }
 
 .task {
@@ -111,6 +135,7 @@ const getTotalDifficulty = (tasks: ITask[]) => {
   flex-direction: row;
   gap: 1.25rem;
   overflow-x: auto;
+  padding-bottom: 20px;
 }
 
 .employees-list::before,

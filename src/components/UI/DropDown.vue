@@ -1,25 +1,14 @@
 <script setup lang="ts">
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-
-interface IProps {
-  items: Array<unknown>;
-}
-
-interface IEmits {
-  (eventName: 'action', element: unknown): void;
-}
-
-defineEmits<IEmits>();
-defineProps<IProps>();
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue';
 </script>
 
 <template>
-  <Menu as="div" class="relative inline-block text-left">
-    <div>
-      <MenuButton
-        class="menu-btn inline-flex justify-center w-full rounded-xl border border-gray-400 border-opacity-60 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50 focus:ring-offset-gray-100 focus:ring-primary"
-      >
-        <slot name="title"></slot>
+  <Menu as="div" class="menu">
+    <div class="flex content-center">
+      <MenuButton>
+        <slot name="title">
+          <b-icon-chevron-down />
+        </slot>
       </MenuButton>
     </div>
 
@@ -32,39 +21,27 @@ defineProps<IProps>();
       leave-to-class="transition-transform opacity-0 scale-95"
     >
       <MenuItems
-        class="z-20 rounded-2xl origin-top-right absolute mt-2 w-40 shadow-lg bg-white dark:bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="menu-items shadow-lg bg-white dark:bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
-        <MenuItem
-          v-for="(element, index) in items"
-          v-slot="{ active }"
-          @click="$emit('action', element)"
-        >
-          <div
-            class="unselectable cursor-pointer block px-4 py-2 text-sm"
-            :class="[
-              active
-                ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-200 '
-                : 'text-gray-700 dark:text-gray-400',
-              index === 0 ? 'rounded-t-2xl' : '',
-              index === items.length - 1 ? 'rounded-b-2xl' : '',
-            ]"
-          >
-            <slot
-              name="item"
-              v-bind="{ element, index, active, length: items.length }"
-            >
-              {{ element }}
-            </slot>
-          </div>
-        </MenuItem>
+        <slot name="items"></slot>
       </MenuItems>
     </transition>
   </Menu>
 </template>
 
 <style scoped lang="scss">
-.menu-btn {
-  line-height: 1.2;
-  transition: background-color 0.3s ease-in-out;
+.menu {
+  position: relative;
+  display: inline-block;
+  text-align: left;
+}
+
+.menu-items {
+  right: 0px;
+  border-radius: 1rem;
+  transform-origin: top right;
+  position: absolute;
+  width: 10rem;
+  margin-top: 0.5rem;
 }
 </style>

@@ -65,7 +65,7 @@ defineEmits<IEmits>();
               <div class="mt-4">
                 <button
                   type="button"
-                  class="btn text-sm bg-blue-100 text-info hover:bg-blue-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  class="btn-info text-sm focus:ring-0"
                   @click="$emit('close')"
                 >
                   <slot name="close-button">Close</slot>

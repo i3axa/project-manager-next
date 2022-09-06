@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import {
   Listbox,
   ListboxButton,
@@ -9,31 +8,32 @@ import {
 
 interface IProps {
   items: Array<any>;
-  initialValue: any;
+  modelValue: string;
 }
 
 interface IEmits {
-  (eventName: 'change', item: any): void;
+  (eventName: 'update:modelValue', value: string): void;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
-const items = ref(props.items);
-const selected = ref(
-  items.value.find((item) => item === props.initialValue) ?? items.value[0]
-);
+const update = (item: any) => {
+  emit('update:modelValue', item as string);
+};
 </script>
 
 <template>
-  <Listbox v-model="selected">
+  <Listbox v-model="modelValue">
     <div class="relative mt-1">
       <ListboxButton
         class="listbox-btn relative w-full cursor-pointer rounded-xl bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
       >
         <span class="block truncate"
-          ><slot name="title" v-bind="{ selected }">{{ selected }}</slot></span
+          ><slot name="title" v-bind="{ modelValue }">{{
+            modelValue
+          }}</slot></span
         >
         <span
           class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
@@ -59,7 +59,7 @@ const selected = ref(
             :value="item"
             :key="item"
             as="template"
-            @click="$emit('change', selected)"
+            @click="update(item)"
           >
             <li
               class="unselectable cursor-pointer relative py-2 pl-10 pr-4"

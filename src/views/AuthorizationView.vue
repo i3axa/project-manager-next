@@ -8,9 +8,9 @@ const categoriesLocaleKeys = ref(['auth.authorization', 'auth.registration']);
 </script>
 
 <template>
-  <div class="outer w-full max-w-xl px-2 py-16 sm:px-0">
+  <div class="outer">
     <TabGroup>
-      <TabPanels class="mt-2 bg-white dark:bg-gray-900/50 rounded-3xl p-3">
+      <TabPanels class="bg-white dark:bg-gray-900/50 rounded-3xl p-3">
         <TabList class="flex mb-10 flex-col md:flex-row gap-2">
           <Tab
             v-for="category in categoriesLocaleKeys"
@@ -49,6 +49,10 @@ const categoriesLocaleKeys = ref(['auth.authorization', 'auth.registration']);
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
+  width: 100%;
+  max-width: 36rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .tab-btn {

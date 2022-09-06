@@ -7,14 +7,15 @@ import { StyleActions } from '@/store/modules/style';
 </script>
 
 <template>
-  <HeaderBar></HeaderBar>
   <NavigationBar></NavigationBar>
+  <HeaderBar></HeaderBar>
 
   <div id="content">
-    <RouterView class="mt-16 mb-2 mx-5"></RouterView>
+    <RouterView class="mt-3 mx-5"></RouterView>
   </div>
 
   <div
+    v-show="store.state.style.isGlobalSpinnerShown"
     id="global-overlay"
     class="bg-dark/70"
     @click="
@@ -24,19 +25,21 @@ import { StyleActions } from '@/store/modules/style';
     "
   ></div>
 
-  <LoadingSpinner id="global-spinner" />
+  <LoadingSpinner
+    id="global-spinner"
+    v-show="store.state.style.isGlobalSpinnerShown"
+  />
 </template>
 
 <style lang="scss">
 @import '@/assets/base.scss';
 
 #content {
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
 }
 
 #global-spinner {
-  display: none;
   position: fixed;
   left: 50%;
   top: 50%;
@@ -44,7 +47,7 @@ import { StyleActions } from '@/store/modules/style';
 }
 
 #global-overlay {
-  display: none;
+  display: block;
   position: fixed;
   width: 100%;
   height: 100%;

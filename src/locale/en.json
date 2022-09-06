@@ -31,11 +31,51 @@
     "password": "Password",
     "confirmPassword": "Confirm password",
     "name": "Name",
-    "surname": "Surname"
+    "surname": "Surname",
+    "skills": "Skills",
+    "admin": "Admin",
+    "user": "User",
+    "inviteCode": "Invite code",
+    "validator": {
+      "required": "Value is required.",
+      "email": "Value is not a valid email.",
+      "minLength": "Value must have a min length of {min}.",
+      "maxLength": "Value must have a min length of {max}.",
+      "sameAs": "Value must be same as {otherName}."
+    },
+    "activationModal": {
+      "header": "Activate your account",
+      "content": "Follow instructions on your email."
+    }
   },
   "dashboard": {
     "totalDifficulty": "Total difficulty",
     "employees": "Employees",
-    "tasks": "Tasks"
+    "tasks": "Tasks",
+    "toDos": "To do`s",
+    "inProgress": "In progress",
+    "review": "Review",
+    "done": "Done",
+    "addTask": "Add task",
+    "director": "Director",
+    "standard": "Standard",
+    "used": "Used",
+    "h": "h",
+    "difficulty": "Difficulty",
+    "progress": "Progress",
+    "daysLeft": "days left",
+    "expired": "Expired",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "task": {
+    "title": "Title",
+    "description": "Description",
+    "difficulty": "Difficulty",
+    "deadline": "Deadline"
+  },
+  "createTask": {
+    "attach": "Attach",
+    "submit": "Submit"
   }
 }

@@ -1,9 +1,13 @@
 export default interface ITask {
-  id: string;
+  _id: string;
   title: string;
   difficulty: number;
   description: string;
   attachments: string[];
   donePercents: number;
-  deadline: Date;
+  startTime: string;
+  deadline: string;
+  state: string;
+  usedHours: number;
+  isFree: boolean;
 }
