@@ -20,7 +20,8 @@
     "language": "Language"
   },
   "modal": {
-    "closeInfo": "Got it, thanks!"
+    "closeInfo": "Got it, thanks!",
+    "confirm": "Are you sure?"
   },
   "auth": {
     "authorization": "Authorization",
@@ -66,7 +67,12 @@
     "daysLeft": "days left",
     "expired": "Expired",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "remove": "Remove",
+    "inviteModal": {
+      "header": "Adding new employee",
+      "content": "Invitation code ({inviteCode}) has been successfully copied to clipboard. Send it to employee."
+    }
   },
   "task": {
     "title": "Title",

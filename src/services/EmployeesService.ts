@@ -1,18 +1,18 @@
 import { AuthAPIInstance } from '@/http';
 import type IEmployee from '@/models/IEmployee';
 import type IEmployeeResponse from '@/models/response/IEmployeeResponse';
-import type IEmployeesResponse from '@/models/response/IEmployeesResponse';
+import type IEmployeesIdResponse from '@/models/response/IEmployeesIdResponse';
 import type { PartialDeep } from 'type-fest';
 
 export default class EmployeesService {
   static async fetchEmployees() {
     const url = '/employees';
 
-    return AuthAPIInstance.get<IEmployeesResponse>(url);
+    return AuthAPIInstance.get<IEmployeesIdResponse>(url);
   }
 
-  static async fetchEmployee(employeeUserId: string) {
-    const url = `/employees/${employeeUserId}`;
+  static async fetchEmployeeById(employeeId: string) {
+    const url = `/employees/${employeeId}`;
 
     return AuthAPIInstance.get<IEmployeeResponse>(url);
   }
@@ -20,6 +20,6 @@ export default class EmployeesService {
   static async putEmployee(employeeId: string, data: PartialDeep<IEmployee>) {
     const url = `/employees/${employeeId}`;
 
-    return AuthAPIInstance.put(url, data);
+    return AuthAPIInstance.put<IEmployeeResponse>(url, data);
   }
 }

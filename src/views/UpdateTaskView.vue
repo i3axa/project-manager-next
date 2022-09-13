@@ -31,8 +31,8 @@ watch(isLoading, () => {
   }
 });
 
-const onSubmit = async (task: ITask, files?: File[]) => {
-  let formData = new FormData();
+const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
+  const formData = new FormData();
 
   for (const key in task) {
     const safeKey = key as keyof ITask;
@@ -46,7 +46,7 @@ const onSubmit = async (task: ITask, files?: File[]) => {
 
   store.commit(StyleMutations.setIsGlobalSpinnerShown, true);
 
-  const response = await TaskService.putTask(task._id, formData);
+  const response = await TaskService.putTask(task._id!, formData);
 
   selectedTask.value = response.data.task;
 

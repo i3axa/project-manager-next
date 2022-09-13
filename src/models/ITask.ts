@@ -9,5 +9,5 @@ export default interface ITask {
   deadline: string;
   state: string;
   usedHours: number;
-  isFree: boolean;
+  director: string;
 }

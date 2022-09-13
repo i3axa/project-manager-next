@@ -1,7 +1,11 @@
 import type ITask from '@/models/ITask';
+import type IUser from '@/models/IUser';
+import type IUserResponse from '@/models/response/IUserResponse';
 import TaskService from '@/services/TaskService';
+import UserService from '@/services/UserService';
 import store from '@/store';
 import { StyleMutations } from '@/store/modules/style';
+import type { AxiosResponse } from 'axios';
 
 export interface ITaskInStateColumn {
   toggleInfo(): void;
@@ -21,6 +25,7 @@ export interface ITaskInStateColumn {
   get days(): number;
   get hours(): number;
   get infoToggled(): boolean;
+  get taskDirector(): IUser | undefined;
 
   readonly task: ITask;
 }
@@ -35,8 +40,13 @@ export interface ITaskStateColumn {
 export class TaskInStateColumn implements ITaskInStateColumn {
   constructor(task: ITask) {
     this.task = task;
+
+    UserService.getUser(this.task.director).then(
+      (response) => (this._taskDirector = response.data.user)
+    );
   }
 
+  private _taskDirector?: IUser;
   private _infoToggled = false;
   private _timerInterval = 100;
   private _incrementProgressTimer: number | null = null;
@@ -207,6 +217,10 @@ export class TaskInStateColumn implements ITaskInStateColumn {
     const diff = date1.getTime() - date2.getTime();
 
     return diff / (1000 * 60 * 60);
+  }
+
+  public get taskDirector(): IUser | undefined {
+    return this._taskDirector;
   }
 
   public readonly task: ITask;

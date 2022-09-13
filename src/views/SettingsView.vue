@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import useTheme from '@/hooks/useTheme';
 import useLocale from '@/hooks/useLocale';
 import RadioButton from '@/components/UI/RadioButton.vue';
-import { Theme } from '@/hooks/useTheme';
 import ListBox from '@/components/UI/ListBox.vue';
+import { useTheme, ThemeValue } from '@/plugins/theme';
 
-const { theme } = useTheme();
+const { themeProvider } = useTheme();
+
 const { i18n, getLanguageName } = useLocale();
 </script>
 
@@ -18,13 +18,25 @@ const { i18n, getLanguageName } = useLocale();
         {{ $t('themes.theme') }}
       </legend>
       <div class="mt-4 space-y-4">
-        <RadioButton :id="'theme-light'" :value="Theme.light" v-model="theme">
+        <RadioButton
+          :id="'theme-light'"
+          :value="ThemeValue.light"
+          v-model="themeProvider.theme"
+        >
           {{ $t('themes.light') }}
         </RadioButton>
-        <RadioButton :id="'theme-dark'" :value="Theme.dark" v-model="theme">
+        <RadioButton
+          :id="'theme-dark'"
+          :value="ThemeValue.dark"
+          v-model="themeProvider.theme"
+        >
           {{ $t('themes.dark') }}
         </RadioButton>
-        <RadioButton :id="'theme-system'" :value="Theme.system" v-model="theme">
+        <RadioButton
+          :id="'theme-system'"
+          :value="ThemeValue.system"
+          v-model="themeProvider.theme"
+        >
           {{ $t('themes.system') }}
         </RadioButton>
       </div>

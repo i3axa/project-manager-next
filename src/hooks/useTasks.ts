@@ -9,7 +9,11 @@ export default function () {
   onMounted(async () => {
     const tasksResponse = await TaskService.fetchTasks();
 
-    tasks.value = tasksResponse.data.tasks;
+    for (const id of tasksResponse.data.tasks) {
+      const response = await TaskService.fetchTaskById(id);
+
+      tasks.value.push(response.data.task);
+    }
 
     isLoading.value = false;
   });

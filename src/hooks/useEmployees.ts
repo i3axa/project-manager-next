@@ -12,7 +12,6 @@ export default function () {
     const dto = employee.takenTasks.map((task) => {
       return {
         _id: task._id,
-        isFree: false,
       };
     });
 
@@ -26,7 +25,11 @@ export default function () {
   onMounted(async () => {
     const employeesResponse = await EmployeesService.fetchEmployees();
 
-    employees.value = employeesResponse.data.employees;
+    for (const id of employeesResponse.data.employees) {
+      const response = await EmployeesService.fetchEmployeeById(id);
+
+      employees.value.push(response.data.employee);
+    }
 
     isLoading.value = false;
 

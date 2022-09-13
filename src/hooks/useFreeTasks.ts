@@ -1,16 +1,20 @@
 import type ITask from '@/models/ITask';
-import { ref, watch } from 'vue';
-import useTasks from './useTasks';
+import TaskService from '@/services/TaskService';
+import { onMounted, ref } from 'vue';
 
 export default function () {
-  const { tasks } = useTasks();
-
+  const freeTasks = ref<ITask[]>([]);
   const isLoading = ref(true);
 
-  let freeTasks = ref<ITask[]>([]);
+  onMounted(async () => {
+    const tasksResponse = await TaskService.fetchFreeTasks();
 
-  watch(tasks, () => {
-    freeTasks.value = tasks.value.filter((task) => task.isFree === true);
+    for (const id of tasksResponse.data.tasks) {
+      const response = await TaskService.fetchTaskById(id);
+
+      freeTasks.value.push(response.data.task);
+    }
+
     isLoading.value = false;
   });
 

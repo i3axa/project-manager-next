@@ -3,7 +3,7 @@ import DateTimePicker from '@/components/UI/DateTimePicker.vue';
 import RichText from '@/components/UI/RichText.vue';
 import { ref } from 'vue';
 import type ITask from '@/models/ITask';
-import FileIcon from '@/components/FileIcon.vue';
+import FileCard from '@/components/FileCard.vue';
 
 interface IProps {
   task?: Partial<ITask>;
@@ -91,13 +91,13 @@ const fileLink = import.meta.env.VITE_API_URL + '/static/uploads/';
       />
     </div>
     <div class="files-row">
-      <FileIcon
+      <FileCard
         v-for="(attachment, index) in props.task?.attachments"
         :file-name="attachment"
         :link="fileLink + attachment"
         @delete="props.task?.attachments?.splice(index, 1)"
       />
-      <FileIcon
+      <FileCard
         v-for="(file, index) in fileList"
         :fileName="file.name"
         @delete="onFileDelete(index)"

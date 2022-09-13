@@ -2,7 +2,6 @@
 import useTaskStateColumns from '@/hooks/useTaskStateColumns';
 import type ITask from '@/models/ITask';
 import type { ITaskInStateColumn } from '@/types/TaskStateColumn';
-import { watch } from 'vue';
 
 interface IProps {
   tasks: ITask[];
@@ -79,8 +78,13 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
             </div>
 
             <div class="task" v-show="element.infoToggled">
-              <h5>
+              <h5 class="text-ellipsis overflow-hidden">
                 <strong>{{ $t('dashboard.director') }}: </strong>
+                {{
+                  `${element.taskDirector?.name} ${
+                    element.taskDirector?.surname || ''
+                  }`
+                }}
               </h5>
 
               <h5>

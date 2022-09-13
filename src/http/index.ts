@@ -28,7 +28,7 @@ const tokenInterceptor = (config: AxiosRequestConfig) => {
   return config;
 };
 
-const requests = new Map<AxiosRequestConfig, boolean>();
+const requests = new Map<string, boolean>();
 
 const errorInterceptor = async (error: AxiosError) => {
   const originalRequest = error.config;
@@ -36,9 +36,9 @@ const errorInterceptor = async (error: AxiosError) => {
   if (
     error.response?.status == 401 &&
     error.config &&
-    !requests.get(originalRequest)
+    !requests.get(originalRequest.url!)
   ) {
-    requests.set(originalRequest, true);
+    requests.set(originalRequest.url!, true);
 
     await store.dispatch(AuthActions.refreshToken);
 

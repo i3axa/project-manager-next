@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import useFreeTasks from '@/hooks/useFreeTasks';
-import DropDown from '@/components/UI/DropDown.vue';
 import type ITask from '@/models/ITask';
-import { MenuItem } from '@headlessui/vue';
-import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
+import FreeTaskEditDropdown from '@/components/FreeTaskEditDropdown.vue';
+import { watch } from 'vue';
+import TaskService from '@/services/TaskService';
+import store from '@/store';
+import { StyleMutations } from '@/store/modules/style';
 
 interface IProps {
   tasks: ITask[];
@@ -24,7 +25,6 @@ defineEmits<IEmits>();
     itemKey="id"
     group="tasks"
     animation="150"
-    force-fallback="true"
     filter=".ignore"
     handle=".handle"
   >
@@ -44,40 +44,11 @@ defineEmits<IEmits>();
           <h4 class="unselectable w-max !text-dark">
             {{ element.title }} ({{ element.difficulty }})
           </h4>
-          <DropDown class="ignore">
-            <template #title>
-              <b-icon-three-dots class="text-2xl" />
-            </template>
-            <template #items>
-              <MenuItem
-                v-slot="{ active }"
-                @click="$router.push(`taskUpdate/${element._id}`)"
-              >
-                <div
-                  class="drop-down-item unselectable rounded-t-2xl"
-                  :class="[
-                    active
-                      ? 'bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-200 '
-                      : 'text-gray-900 dark:text-gray-400',
-                  ]"
-                >
-                  <b-icon-pencil /> {{ $t('dashboard.edit') }}
-                </div>
-              </MenuItem>
-              <MenuItem v-slot="{ active }" @click="$emit('taskDelete', index)">
-                <div
-                  class="drop-down-item unselectable rounded-b-2xl"
-                  :class="[
-                    active
-                      ? 'bg-gray-100 dark:bg-gray-600 text-error/70'
-                      : 'text-error',
-                  ]"
-                >
-                  <b-icon-trash-2 /> {{ $t('dashboard.delete') }}
-                </div>
-              </MenuItem>
-            </template>
-          </DropDown>
+          <FreeTaskEditDropdown
+            class="ignore"
+            :task-id="element._id"
+            @taskDelete="$emit('taskDelete', index)"
+          />
         </div>
         <div class="task-body">
           <p
@@ -110,17 +81,5 @@ defineEmits<IEmits>();
   align-items: center;
   display: flex;
   cursor: move;
-}
-
-.dark .task {
-  filter: brightness(0.8);
-}
-
-.drop-down-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-  padding: 0.5rem 1rem 0.5rem 1rem;
 }
 </style>

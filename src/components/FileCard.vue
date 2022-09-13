@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import TooltipPopper from '@/components/UI/TooltipPopper.vue';
+import FileExtensionIcon from '@/components/FileExtensionIcon.vue';
+
 interface IProps {
   fileName: string;
   link?: string;
@@ -23,23 +26,29 @@ const openLink = () => {
     <button type="button" class="close-btn bg-white" @click="$emit('delete')">
       <b-icon-x-lg class="text-sm" />
     </button>
-    <div class="card file-icon" @click="openLink">
-      <b-icon-file-earmark-pdf class="text-5xl text-red-700 self-center" />
-      <h6 class="file-name text-gray-400 dark:text-gray-500">
-        {{ fileName }}
-      </h6>
-    </div>
+    <TooltipPopper :text="fileName">
+      <div class="card file-card" @click="openLink">
+        <FileExtensionIcon
+          :extension="fileName.substring(fileName.lastIndexOf('.') + 1)"
+          class="text-5xl self-center"
+        />
+        <h6 class="file-name text-gray-400 dark:text-gray-500">
+          {{ fileName }}
+        </h6>
+      </div>
+    </TooltipPopper>
   </div>
 </template>
 
 <style scoped lang="scss">
-.file-icon {
+.file-card {
   margin-top: 5px;
   margin-right: 5px;
   padding: 8px;
   gap: 5px;
   display: flex;
   flex-direction: column;
+  min-width: 100px;
   max-width: 150px;
   cursor: pointer;
 }

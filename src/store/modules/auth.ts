@@ -5,13 +5,19 @@ import AuthService, {
   type ILoginParameters,
   type IRegistrationParameters,
 } from '@/services/AuthService';
-import { useRouter } from 'vue-router';
+
+interface IUserData {
+  id: string;
+  project: string;
+  roles: string[];
+  isActivated: boolean;
+}
 
 export interface AuthState {
   isAuth: boolean;
   credentials: {
     token?: string;
-    user?: Object;
+    user?: IUserData;
   };
 }
 
@@ -54,7 +60,7 @@ export const authModule: Module<AuthState, State> = {
       state.credentials.token = undefined;
       localStorage.removeItem('token');
     },
-    setUser(state, user: Object) {
+    setUser(state, user: IUserData) {
       state.credentials.user = user;
       localStorage.setItem('user', JSON.stringify(user));
     },
@@ -72,8 +78,6 @@ export const authModule: Module<AuthState, State> = {
       try {
         const response = await AuthService.login(payload);
 
-        console.log(response);
-
         commit(AuthMutations.setToken, response.data.accessToken);
         commit(AuthMutations.setUser, response.data.user);
         commit(AuthMutations.setIsAuth, true);
@@ -81,7 +85,7 @@ export const authModule: Module<AuthState, State> = {
         return response;
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
-          console.log(error.response?.data.message);
+          console.log(error.response);
           return error;
         }
       }
@@ -99,7 +103,7 @@ export const authModule: Module<AuthState, State> = {
         return response;
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
-          console.log(error.response?.data.message);
+          console.log(error.response);
           return error;
         }
       }
@@ -117,7 +121,7 @@ export const authModule: Module<AuthState, State> = {
         return response;
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
-          console.log(error.response?.data.message);
+          console.log(error.response);
         }
       }
     },
@@ -134,7 +138,7 @@ export const authModule: Module<AuthState, State> = {
         return response;
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
-          console.log(error.response?.data.message);
+          console.log(error.response);
         }
       }
     },

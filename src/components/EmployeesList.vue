@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import useEmployees from '@/hooks/useEmployees';
 import type ITask from '@/models/ITask';
-import { watch } from 'vue';
-import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
-import TaskService from '@/services/TaskService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
 import type IEmployee from '@/models/IEmployee';
+import EmployeesTaskEditDropdown from './EmployeesTaskEditDropdown.vue';
 
 interface IEmits {
   (eventName: 'taskRelease', task: ITask, employee: IEmployee): void;
+  (eventName: 'taskDelete', taskIndex: number, employeeIndex: number): void;
 }
 
 interface IProps {
@@ -34,13 +30,17 @@ const releaseTask = (taskIndex: number, employee: IEmployee) => {
 
 <template>
   <div class="employees-list">
-    <div class="card" v-for="employee in employees">
+    <div
+      class="card"
+      v-for="(employee, employeeIndex) in employees"
+      :key="employee.id"
+    >
       <div class="mb-4 w-max flex flex-col gap-2">
         <div class="min-w-max flex flex-row gap-5">
           <h4>{{ employee.name }} {{ employee.surname }}</h4>
           <router-link
             class="btn-outline-secondary text-sm !opacity-100"
-            :to="`/employee/${employee.user}`"
+            :to="`/employee/${employee.id}`"
           >
             <b-icon-box-arrow-up-right />
           </router-link>
@@ -55,7 +55,15 @@ const releaseTask = (taskIndex: number, employee: IEmployee) => {
         itemKey="id"
         filter=".ignore"
       >
-        <template #item="{ element, index }: { element: ITask, index: number }">
+        <template
+          #item="{
+            element,
+            index: taskIndex,
+          }: {
+            element: ITask,
+            index: number,
+          }"
+        >
           <div
             class="task rounded-2xl shadow !border-none"
             :style="{
@@ -65,12 +73,12 @@ const releaseTask = (taskIndex: number, employee: IEmployee) => {
             <h5 class="unselectable w-max !text-dark">
               {{ element.title }} ({{ element.difficulty }})
             </h5>
-            <button class="ignore text-gray-800 hover:opacity-70">
-              <b-icon-x-lg
-                class="close"
-                @click="releaseTask(index, employee)"
-              />
-            </button>
+            <EmployeesTaskEditDropdown
+              class="ignore"
+              :task-id="element._id"
+              @taskDelete="$emit('taskDelete', taskIndex, employeeIndex)"
+              @taskRemove="releaseTask(taskIndex, employee)"
+            />
           </div>
         </template>
       </base-draggable>
@@ -126,16 +134,13 @@ const releaseTask = (taskIndex: number, employee: IEmployee) => {
   cursor: move;
 }
 
-.dark .task {
-  filter: brightness(0.8);
-}
-
 .employees-list {
   display: flex;
   flex-direction: row;
   gap: 1.25rem;
   overflow-x: auto;
-  padding-bottom: 20px;
+  overflow-y: clip;
+  padding-bottom: 90px;
 }
 
 .employees-list::before,

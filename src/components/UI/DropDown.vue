@@ -43,5 +43,6 @@ import { Menu, MenuButton, MenuItems } from '@headlessui/vue';
   position: absolute;
   width: 10rem;
   margin-top: 0.5rem;
+  z-index: 1;
 }
 </style>

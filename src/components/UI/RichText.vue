@@ -18,7 +18,6 @@ const emit = defineEmits<IEmits>();
 
 const editor = useEditor({
   content: props.modelValue,
-  extensions: [StarterKit],
   extensions: [
     StarterKit.configure({
       paragraph: {

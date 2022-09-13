@@ -4,9 +4,12 @@ import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import store from '@/store';
 import { StyleMutations } from '@/store/modules/style';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
-  let formData = new FormData();
+  const formData = new FormData();
 
   task.isFree = true;
 
@@ -23,6 +26,8 @@ const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
   store.commit(StyleMutations.setIsGlobalSpinnerShown, true);
 
   await TaskService.createTask(formData);
+
+  router.back();
 
   store.commit(StyleMutations.setIsGlobalSpinnerShown, false);
 };
