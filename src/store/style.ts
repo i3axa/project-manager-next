@@ -1,5 +1,4 @@
-import type { State } from '..';
-import type { Module } from 'vuex';
+import { defineStore } from 'pinia';
 
 export interface StyleState {
   isNavbarHidden: boolean;
@@ -7,18 +6,7 @@ export interface StyleState {
   isGlobalSpinnerShown: boolean;
 }
 
-export enum StyleActions {
-  toggleNavigationBar = 'style/toggleNavigationBar',
-}
-
-export enum StyleMutations {
-  setIsSyncIndicatorToggled = 'style/setIsSyncIndicatorToggled',
-  setIsGlobalSpinnerShown = 'style/setIsGlobalSpinnerShown',
-}
-
-export const styleModule: Module<StyleState, State> = {
-  namespaced: true,
-
+export const useStyleStore = defineStore('style', {
   state: (): StyleState => {
     return {
       isNavbarHidden: true,
@@ -26,27 +14,23 @@ export const styleModule: Module<StyleState, State> = {
       isGlobalSpinnerShown: false,
     };
   },
-
-  mutations: {
-    setIsSyncIndicatorToggled(state, value: boolean) {
-      state.isSyncIndicatorToggled = value;
+  actions: {
+    setIsSyncIndicatorToggled(value: boolean) {
+      this.isSyncIndicatorToggled = value;
       window.onbeforeunload = value
         ? () => {
             return 'Do you really want to leave?';
           }
         : null;
     },
-    setIsGlobalSpinnerShown(state, value: boolean) {
-      state.isGlobalSpinnerShown = value;
+    setIsGlobalSpinnerShown(value: boolean) {
+      this.isGlobalSpinnerShown = value;
     },
-  },
-
-  actions: {
-    toggleNavigationBar({ state }): void {
+    toggleNavigationBar(): void {
       const navbar = document.getElementById('navbar');
       const globalOverlay = document.getElementById('global-overlay');
 
-      if (state.isNavbarHidden) {
+      if (this.isNavbarHidden) {
         navbar!.style.left = '0';
         globalOverlay!.style.display = 'block';
       } else {
@@ -54,7 +38,7 @@ export const styleModule: Module<StyleState, State> = {
         globalOverlay!.style.display = 'none';
       }
 
-      state.isNavbarHidden = !state.isNavbarHidden;
+      this.isNavbarHidden = !this.isNavbarHidden;
     },
   },
-};
+});

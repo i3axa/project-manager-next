@@ -7,13 +7,15 @@ import useFreeTasks from '@/hooks/useFreeTasks';
 import type IEmployee from '@/models/IEmployee';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
 import { useI18n } from 'vue-i18n';
 import InfoModal from '@/components/UI/InfoModal.vue';
 import { ref } from 'vue';
+import { useAuthStore } from '@/store/auth';
 
 const i18n = useI18n();
+const authStore = useAuthStore();
+const styleStore = useStyleStore();
 
 const {
   employees,
@@ -24,11 +26,13 @@ const {
 const { freeTasks, isLoading: isFreeTasksLoading } = useFreeTasks();
 
 const onTaskRelease = async (task: ITask, employee: IEmployee) => {
-  store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+  styleStore.setIsSyncIndicatorToggled(true);
 
   freeTasks.value.push(task);
 
   await updateTasks(employee);
+
+  styleStore.setIsSyncIndicatorToggled(false);
 };
 
 const onFreeTaskDelete = async (taskIndex: number) => {
@@ -36,13 +40,13 @@ const onFreeTaskDelete = async (taskIndex: number) => {
     return;
   }
 
-  store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+  styleStore.setIsSyncIndicatorToggled(true);
 
   const deleted = freeTasks.value.splice(taskIndex, 1);
 
   await TaskService.deleteTask(deleted[0]._id);
 
-  store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+  styleStore.setIsSyncIndicatorToggled(false);
 };
 
 const onEmployeesTaskDelete = async (
@@ -53,7 +57,7 @@ const onEmployeesTaskDelete = async (
     return;
   }
 
-  store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+  styleStore.setIsSyncIndicatorToggled(true);
 
   const employee = employees.value[employeeIndex];
 
@@ -62,14 +66,12 @@ const onEmployeesTaskDelete = async (
   await updateTasks(employee);
   await TaskService.deleteTask(deleted[0]._id);
 
-  store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+  styleStore.setIsSyncIndicatorToggled(false);
 };
 
 const isInviteModalOpen = ref(false);
 const openInviteModal = () => {
-  navigator.clipboard.writeText(
-    store.state.auth.credentials.user?.project || ''
-  );
+  navigator.clipboard.writeText(authStore.credentials.user?.project || '');
   isInviteModalOpen.value = true;
 };
 </script>
@@ -114,7 +116,7 @@ const openInviteModal = () => {
       <template #content>
         {{
           $t('dashboard.inviteModal.content', {
-            inviteCode: store.state.auth.credentials.user?.project,
+            inviteCode: authStore.credentials.user?.project,
           })
         }}
       </template>

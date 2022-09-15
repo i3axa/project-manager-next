@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import store from '@/store';
-import { StyleActions } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
 </script>
 
 <template>
@@ -8,14 +9,14 @@ import { StyleActions } from '@/store/modules/style';
     <button
       class="btn text-4xl text-dark dark:text-light shadow-none"
       id="navbar-toggle-btn"
-      @click="store.dispatch(StyleActions.toggleNavigationBar)"
+      @click="styleStore.toggleNavigationBar()"
     >
       <b-icon-list />
     </button>
 
     <span
       class="sync-indicator text-xl text-gray-500"
-      v-show="store.state.style.isSyncIndicatorToggled"
+      v-show="styleStore.isSyncIndicatorToggled"
     >
       <b-icon-arrow-clockwise class="animate-spin" />
     </span>

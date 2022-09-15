@@ -1,11 +1,10 @@
 import type ITask from '@/models/ITask';
 import type IUser from '@/models/IUser';
-import type IUserResponse from '@/models/response/IUserResponse';
 import TaskService from '@/services/TaskService';
 import UserService from '@/services/UserService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
-import type { AxiosResponse } from 'axios';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
 
 export interface ITaskInStateColumn {
   toggleInfo(): void;
@@ -88,12 +87,12 @@ export class TaskInStateColumn implements ITaskInStateColumn {
     clearInterval(this._incrementProgressTimer);
     this._incrementProgressTimer = null;
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+    styleStore.setIsSyncIndicatorToggled(true);
 
     TaskService.patchTask(this.task._id, {
       donePercents: this.task.donePercents,
     }).then(() => {
-      store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+      styleStore.setIsSyncIndicatorToggled(false);
     });
   }
 
@@ -127,12 +126,12 @@ export class TaskInStateColumn implements ITaskInStateColumn {
     clearInterval(this._decrementProgressTimer);
     this._decrementProgressTimer = null;
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+    styleStore.setIsSyncIndicatorToggled(true);
 
     TaskService.patchTask(this.task._id, {
       donePercents: this.task.donePercents,
     }).then(() => {
-      store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+      styleStore.setIsSyncIndicatorToggled(false);
     });
   }
 
@@ -156,12 +155,12 @@ export class TaskInStateColumn implements ITaskInStateColumn {
     clearInterval(this._incrementUsedHoursTimer);
     this._incrementUsedHoursTimer = null;
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+    styleStore.setIsSyncIndicatorToggled(true);
 
     TaskService.patchTask(this.task._id, {
       usedHours: this.task.usedHours,
     }).then(() => {
-      store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+      styleStore.setIsSyncIndicatorToggled(false);
     });
   }
 
@@ -192,12 +191,12 @@ export class TaskInStateColumn implements ITaskInStateColumn {
     clearInterval(this._decrementUsedHoursTimer);
     this._decrementUsedHoursTimer = null;
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+    styleStore.setIsSyncIndicatorToggled(true);
 
     TaskService.patchTask(this.task._id, {
       usedHours: this.task.usedHours,
     }).then(() => {
-      store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+      styleStore.setIsSyncIndicatorToggled(false);
     });
   }
 
@@ -250,10 +249,10 @@ export class TaskStateColumn implements ITaskStateColumn {
 
       task.task.state = this.state;
 
-      store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+      styleStore.setIsSyncIndicatorToggled(true);
 
       TaskService.patchTask(task.task._id, { state: this.state }).then(() => {
-        store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+        styleStore.setIsSyncIndicatorToggled(false);
       });
     }
 

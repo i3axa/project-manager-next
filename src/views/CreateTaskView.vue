@@ -2,16 +2,14 @@
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const styleStore = useStyleStore();
 
 const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
   const formData = new FormData();
-
-  task.isFree = true;
 
   for (const key in task) {
     const safeKey = key as keyof ITask;
@@ -23,13 +21,13 @@ const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
     formData.append('files', file);
   });
 
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, true);
+  styleStore.setIsGlobalSpinnerShown(true);
 
   await TaskService.createTask(formData);
 
   router.back();
 
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, false);
+  styleStore.setIsGlobalSpinnerShown(false);
 };
 </script>
 

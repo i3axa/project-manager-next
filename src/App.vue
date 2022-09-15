@@ -2,8 +2,9 @@
 import NavigationBar from '@/components/NavigationBar.vue';
 import HeaderBar from '@/components/HeaderBar.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
-import store from '@/store';
-import { StyleActions } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
 </script>
 
 <template>
@@ -15,19 +16,17 @@ import { StyleActions } from '@/store/modules/style';
   </div>
 
   <div
-    v-show="store.state.style.isGlobalSpinnerShown"
+    v-show="styleStore.isGlobalSpinnerShown"
     id="global-overlay"
     class="bg-dark/70"
     @click="
-      store.state.style.isNavbarHidden
-        ? undefined
-        : store.dispatch(StyleActions.toggleNavigationBar)
+      styleStore.isNavbarHidden ? undefined : styleStore.toggleNavigationBar()
     "
   ></div>
 
   <LoadingSpinner
     id="global-spinner"
-    v-show="store.state.style.isGlobalSpinnerShown"
+    v-show="styleStore.isGlobalSpinnerShown"
   />
 </template>
 

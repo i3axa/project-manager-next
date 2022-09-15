@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type ITask from '@/models/ITask';
 import FreeTaskEditDropdown from '@/components/FreeTaskEditDropdown.vue';
-import { watch } from 'vue';
-import TaskService from '@/services/TaskService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
 
 interface IProps {
   tasks: ITask[];

@@ -1,25 +1,21 @@
 import type IEmployee from '@/models/IEmployee';
 import EmployeesService from '@/services/EmployeesService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
 import { onMounted, ref, watch } from 'vue';
 
 export default function () {
   const isLoading = ref(true);
   const employees = ref<IEmployee[]>([]);
+  const styleStore = useStyleStore();
 
   const updateTasks = async (employee: IEmployee) => {
-    const dto = employee.takenTasks.map((task) => {
-      return {
-        _id: task._id,
-      };
-    });
+    const tasksIds = employee.takenTasks.map((task) => task._id);
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, true);
+    styleStore.setIsSyncIndicatorToggled(true);
 
-    await EmployeesService.putEmployee(employee.id, { takenTasks: dto });
+    await EmployeesService.patchEmployee(employee.id, { takenTasks: tasksIds });
 
-    store.commit(StyleMutations.setIsSyncIndicatorToggled, false);
+    styleStore.setIsSyncIndicatorToggled(false);
   };
 
   onMounted(async () => {

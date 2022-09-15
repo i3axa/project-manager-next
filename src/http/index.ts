@@ -1,8 +1,6 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import store from '@/store';
-import { AuthActions } from '@/store/modules/auth';
-import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/auth';
 
 const defaultConfig = {
   baseURL: import.meta.env.VITE_API_URL + '/api',
@@ -21,8 +19,10 @@ const formConfig = {
 };
 
 const tokenInterceptor = (config: AxiosRequestConfig) => {
+  const authStore = useAuthStore();
+
   if (config.headers) {
-    config.headers.Authorization = `Bearer ${store.state.auth.credentials.token}`;
+    config.headers.Authorization = `Bearer ${authStore.credentials.token}`;
   }
 
   return config;
@@ -31,6 +31,7 @@ const tokenInterceptor = (config: AxiosRequestConfig) => {
 const requests = new Map<string, boolean>();
 
 const errorInterceptor = async (error: AxiosError) => {
+  const authStore = useAuthStore();
   const originalRequest = error.config;
 
   if (
@@ -40,7 +41,7 @@ const errorInterceptor = async (error: AxiosError) => {
   ) {
     requests.set(originalRequest.url!, true);
 
-    await store.dispatch(AuthActions.refreshToken);
+    await authStore.refreshToken();
 
     const response = await AuthAPIInstance.request(originalRequest);
 

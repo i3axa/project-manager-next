@@ -5,17 +5,18 @@ import './index.scss';
 import i18n from './locale';
 import { BootstrapIconsPlugin } from 'bootstrap-icons-vue';
 import Draggable from 'vuedraggable';
-import { createTheme, ThemeValue } from './plugins/theme';
+import { createTheme } from './plugins/theme';
+import { createPinia } from 'pinia';
 
 const app = createApp(App);
-
 const theme = createTheme();
+const pinia = createPinia();
 
 app
+  .use(pinia)
   .use(router)
   .use(i18n)
   .use(BootstrapIconsPlugin)
   .use(theme)
-  .component('base-draggable', Draggable);
-
-app.mount('#app');
+  .component('base-draggable', Draggable)
+  .mount('#app');

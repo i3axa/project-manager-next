@@ -34,5 +34,12 @@ export default function () {
     messagePath: () => 'auth.validator.maxLength',
   });
 
-  return { required, requiredIf, email, sameAs, minLength, maxLength };
+  return {
+    required,
+    requiredIf,
+    email,
+    sameAs,
+    minLength,
+    maxLength,
+  };
 }

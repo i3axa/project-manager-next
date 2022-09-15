@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import store from '@/store';
-import { AuthActions } from '@/store/modules/auth';
+import { useAuthStore } from '@/store/auth';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
+const authStore = useAuthStore();
 
 let isNavBarExpanded = true;
 
@@ -26,7 +29,7 @@ const expand = () => {
     <div class="flex flex-row items-center mb-5">
       <button
         class="btn btn-outline-dark dark:btn-outline-light max-w-min !border-none !shadow-none self-center"
-        @click="store.dispatch('style/toggleNavigationBar')"
+        @click="styleStore.toggleNavigationBar()"
       >
         <b-icon-list class="text-2xl" />
       </button>
@@ -78,10 +81,7 @@ const expand = () => {
         </router-link>
       </li>
       <li class="nav-item">
-        <button
-          class="btn-primary nav-link"
-          @click="store.dispatch(AuthActions.logout)"
-        >
+        <button class="btn-primary nav-link" @click="authStore.logout()">
           <b-icon-arrow-right-circle class="mr-1" />
           <div class="nav-link-title">{{ $t('navigationBar.logOut') }}</div>
         </button>

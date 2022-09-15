@@ -6,11 +6,16 @@ import { Role } from '@/types/Authorization';
 import { reactive, computed, ref } from 'vue';
 import RadioButton from '@/components/UI/RadioButton.vue';
 import ValidationInput from '@/components/UI/ValidationInput.vue';
-import store from '@/store';
-import { AuthActions } from '@/store/modules/auth';
-import { StyleMutations } from '@/store/modules/style';
+import { useAuthStore } from '@/store/auth';
+import { useStyleStore } from '@/store/style';
 import InfoModal from '@/components/UI/InfoModal.vue';
+import { useRouter } from 'vue-router';
+import type IValidationErrorResponse from '@/models/response/IValidationErrorResponse';
+import { AxiosError } from 'axios';
 
+const router = useRouter();
+const authStore = useAuthStore();
+const styleStore = useStyleStore();
 const i18n = useI18n();
 const validators = useI18nValidators();
 
@@ -58,7 +63,9 @@ const rules = computed(() => {
   };
 });
 
-const v$ = useVuelidate(rules, newUser, { $autoDirty: true });
+const $externalResults = ref();
+
+const v$ = useVuelidate(rules, newUser, { $autoDirty: true, $externalResults });
 
 const isModalOpen = ref(false);
 
@@ -69,18 +76,30 @@ const submit = async () => {
     return;
   }
 
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, true);
-  const registrationResult = await store.dispatch(
-    AuthActions.register,
-    newUser
-  );
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, false);
+  styleStore.setIsGlobalSpinnerShown(true);
 
-  if (registrationResult.name === 'AxiosError') {
-    alert(registrationResult.response.data.message);
+  const registrationResult = await authStore.register(newUser);
+
+  if (registrationResult instanceof AxiosError) {
+    const errors = (
+      registrationResult.response?.data as IValidationErrorResponse
+    ).fields;
+
+    for (const key in errors as any) {
+      if (errors.hasOwnProperty(key)) {
+        const safeKey = key as keyof typeof errors;
+
+        errors[safeKey] = i18n.t('auth.validator.' + errors[safeKey]);
+      }
+    }
+
+    $externalResults.value = errors;
   } else {
-    isModalOpen.value = true;
+    const to = '/' + authStore.credentials.user?.roles[0].toLowerCase();
+    router.push(to);
   }
+
+  styleStore.setIsGlobalSpinnerShown(false);
 };
 </script>
 
@@ -88,14 +107,17 @@ const submit = async () => {
   <div class="flex flex-col gap-5">
     <ValidationInput
       :validation="v$.email"
+      type="email"
       placeholder-locale-key="auth.email"
     />
     <ValidationInput
       :validation="v$.password"
+      type="password"
       placeholder-locale-key="auth.password"
     />
     <ValidationInput
       :validation="v$.confirmPassword"
+      type="password"
       placeholder-locale-key="auth.confirmPassword"
     />
 

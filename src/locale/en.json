@@ -42,7 +42,11 @@
       "email": "Value is not a valid email.",
       "minLength": "Value must have a min length of {min}.",
       "maxLength": "Value must have a min length of {max}.",
-      "sameAs": "Value must be same as {otherName}."
+      "sameAs": "Value must be same as {otherName}.",
+      "uniqueEmailError": "User with given email has already registered",
+      "existingInviteCodeError": "Given invite code doesn't exist",
+      "existingEmailError": "User with given email doesn't exist",
+      "correctPasswordError": "Wrong password"
     },
     "activationModal": {
       "header": "Activate your account",

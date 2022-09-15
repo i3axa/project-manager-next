@@ -2,6 +2,7 @@
 import type { BaseValidation } from '@vuelidate/core';
 
 interface IProps {
+  type?: string;
   validation: BaseValidation;
   placeholderLocaleKey: string;
 }
@@ -13,7 +14,7 @@ defineProps<IProps>();
   <div class="form-group">
     <input
       class="form-control"
-      type="email"
+      :type="type || 'text'"
       :placeholder="$t(placeholderLocaleKey)"
       v-model="validation.$model"
       :class="{

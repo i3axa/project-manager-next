@@ -6,10 +6,10 @@ import useTasks from '@/hooks/useTasks';
 import { ref, watch } from 'vue';
 import LoadingSpinner from '../components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
-import store from '@/store';
-import { StyleMutations } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
 
 const route = useRoute();
+const styleStore = useStyleStore();
 
 if (route.params.id === undefined) {
   throw new Error('Unknown id');
@@ -44,13 +44,13 @@ const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
     formData.append('files', file);
   });
 
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, true);
+  styleStore.setIsGlobalSpinnerShown(true);
 
   const response = await TaskService.putTask(task._id!, formData);
 
   selectedTask.value = response.data.task;
 
-  store.commit(StyleMutations.setIsGlobalSpinnerShown, false);
+  styleStore.setIsGlobalSpinnerShown(false);
 };
 </script>
 
