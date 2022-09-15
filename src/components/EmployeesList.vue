@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type ITask from '@/models/ITask';
 import type IEmployee from '@/models/IEmployee';
-import EmployeesTaskEditDropdown from './EmployeesTaskEditDropdown.vue';
+import EmployeesTaskEditDropdown from '@/components/EmployeesTaskEditDropdown.vue';
 
 interface IEmits {
   (eventName: 'taskRelease', task: ITask, employee: IEmployee): void;

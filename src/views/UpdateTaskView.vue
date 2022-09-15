@@ -4,7 +4,7 @@ import TaskEditForm from '@/components/TaskEditForm.vue';
 import { useRoute } from 'vue-router';
 import useTasks from '@/hooks/useTasks';
 import { ref, watch } from 'vue';
-import LoadingSpinner from '../components/UI/LoadingSpinner.vue';
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 

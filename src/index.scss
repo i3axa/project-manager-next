@@ -218,7 +218,7 @@
 
   .form-control, .ProseMirror {
     @apply border-gray-300 dark:border-gray-700 #{!important};
-    @apply rounded-xl shadow-sm border bg-light dark:bg-dark text-gray-600 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-opacity-30 focus:ring-primary;
+    @apply rounded-3xl shadow-sm border bg-light dark:bg-dark text-gray-600 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-opacity-30 focus:ring-primary;
     transition: box-shadow 0.3s ease-in-out;
   }
 }

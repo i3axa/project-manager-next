@@ -3,7 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { useStyleStore } from '@/store/style';
 import useI18nValidators from '@/hooks/useI18nValidators';
 import { useI18n } from 'vue-i18n';
-import useVuelidate from '@vuelidate/core';
+import useVuelidate, { type ServerErrors } from '@vuelidate/core';
 import ValidationInput from '@/components/UI/ValidationInput.vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
@@ -35,7 +35,7 @@ const rules = computed(() => {
   };
 });
 
-const $externalResults = ref();
+const $externalResults = ref<ServerErrors>({});
 
 const v$ = useVuelidate(rules, user, { $autoDirty: true, $externalResults });
 

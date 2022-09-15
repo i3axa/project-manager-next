@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import useI18nValidators from '@/hooks/useI18nValidators';
-import useVuelidate from '@vuelidate/core';
+import useVuelidate, { type ServerErrors } from '@vuelidate/core';
 import { Role } from '@/types/Authorization';
 import { reactive, computed, ref } from 'vue';
 import RadioButton from '@/components/UI/RadioButton.vue';
@@ -63,7 +63,7 @@ const rules = computed(() => {
   };
 });
 
-const $externalResults = ref();
+const $externalResults = ref<ServerErrors>({});
 
 const v$ = useVuelidate(rules, newUser, { $autoDirty: true, $externalResults });
 

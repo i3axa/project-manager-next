@@ -4,6 +4,15 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      keyframes: {
+        shake: {
+          '0%, 100%': { transform: 'translate(-5px)' },
+          '50%': { transform: 'translate(5px)' },
+        },
+      },
+      animation: {
+        shake: 'shake 0.15s ease-in-out 2',
+      },
       colors: {
         primary: 'rgb(58 54 219)',
         secondary: 'rgb(0 128 128)',

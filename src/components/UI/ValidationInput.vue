@@ -20,6 +20,7 @@ defineProps<IProps>();
       :class="{
         'is-invalid': validation.$error,
         'is-valid': !validation.$invalid,
+        'animate-shake': validation.$externalResults.length > 0,
       }"
     />
     <div class="ml-1 text-sm text-error" v-for="error in validation.$errors">
@@ -35,7 +36,7 @@ defineProps<IProps>();
   gap: 4px;
 }
 
-.form-group > .form-control {
+.form-control {
   width: 100%;
 }
 </style>

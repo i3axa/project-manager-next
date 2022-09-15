@@ -1,11 +1,11 @@
 import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import './index.scss';
-import i18n from './locale';
+import App from '@/App.vue';
+import router from '@/router';
+import '@/index.scss';
+import i18n from '@/locale';
 import { BootstrapIconsPlugin } from 'bootstrap-icons-vue';
 import Draggable from 'vuedraggable';
-import { createTheme } from './plugins/theme';
+import { createTheme } from '@/plugins/theme';
 import { createPinia } from 'pinia';
 
 const app = createApp(App);
