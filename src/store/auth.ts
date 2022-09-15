@@ -6,6 +6,7 @@ import AuthService, {
 import type IValidationErrorResponse from '@/models/response/IValidationErrorResponse';
 import { defineStore } from 'pinia';
 import type IAuthResponse from '@/models/response/IAuthResponse';
+import { readonly, ref } from 'vue';
 
 interface IUserData {
   id: string;
@@ -14,120 +15,129 @@ interface IUserData {
   isActivated: boolean;
 }
 
-interface AuthState {
-  isAuth: boolean;
-  credentials: {
-    token?: string;
-    user?: IUserData;
-  };
+interface ICredentials {
+  token?: string;
+  user?: IUserData;
 }
 
-export const useAuthStore = defineStore('auth', {
-  state: (): AuthState => {
-    return {
-      isAuth: localStorage.getItem('token') !== null,
-      credentials: {
-        token: localStorage.getItem('token') || undefined,
-        user: localStorage.getItem('user')
-          ? JSON.parse(localStorage.getItem('user')!)
-          : undefined,
-      },
-    };
-  },
-  actions: {
-    setToken(token: string) {
-      this.credentials.token = token;
-      localStorage.setItem('token', token);
-    },
-    deleteToken() {
-      this.credentials.token = undefined;
-      localStorage.removeItem('token');
-    },
-    setUser(user: IUserData) {
-      this.credentials.user = user;
-      localStorage.setItem('user', JSON.stringify(user));
-    },
-    deleteUser() {
-      this.credentials.user = undefined;
-      localStorage.removeItem('user');
-    },
-    setIsAuth(isAuth: boolean) {
-      this.isAuth = isAuth;
-    },
-    async login(
-      payload: ILoginParameters
-    ): Promise<
-      | AxiosResponse<IAuthResponse>
-      | AxiosError<IValidationErrorResponse | unknown>
-    > {
-      try {
-        const response = await AuthService.login(payload);
+export const useAuthStore = defineStore('auth', () => {
+  const isAuth = ref(localStorage.getItem('token') !== null);
+  const credentials = ref<ICredentials>({
+    token: localStorage.getItem('token') || undefined,
+    user: localStorage.getItem('user')
+      ? JSON.parse(localStorage.getItem('user')!)
+      : undefined,
+  });
 
-        this.setToken(response.data.accessToken);
-        this.setUser(response.data.user);
-        this.isAuth = true;
+  const setToken = (token: string) => {
+    credentials.value.token = token;
+    localStorage.setItem('token', token);
+  };
 
-        return response;
-      } catch (error: unknown) {
-        console.log(error);
+  const deleteToken = () => {
+    credentials.value.token = undefined;
+    localStorage.removeItem('token');
+  };
+  const setUser = (user: IUserData) => {
+    credentials.value.user = user;
+    localStorage.setItem('user', JSON.stringify(user));
+  };
 
-        if (error instanceof AxiosError<IValidationErrorResponse>) {
-          return error as AxiosError<IValidationErrorResponse>;
-        }
+  const deleteUser = () => {
+    credentials.value.user = undefined;
+    localStorage.removeItem('user');
+  };
 
-        return error as AxiosError;
+  const login = async (
+    payload: ILoginParameters
+  ): Promise<
+    | AxiosResponse<IAuthResponse>
+    | AxiosError<IValidationErrorResponse | unknown>
+  > => {
+    try {
+      const response = await AuthService.login(payload);
+
+      setToken(response.data.accessToken);
+      setUser(response.data.user);
+      isAuth.value = true;
+
+      return response;
+    } catch (error: unknown) {
+      console.log(error);
+
+      if (error instanceof AxiosError<IValidationErrorResponse>) {
+        return error as AxiosError<IValidationErrorResponse>;
       }
-    },
-    async register(payload: IRegistrationParameters) {
-      try {
-        const response = await AuthService.register(payload);
 
-        this.setToken(response.data.accessToken);
-        this.setUser(response.data.user);
-        this.isAuth = true;
+      return error as AxiosError;
+    }
+  };
 
-        return response;
-      } catch (error: unknown) {
-        console.log(error);
+  const register = async (
+    payload: IRegistrationParameters
+  ): Promise<
+    | AxiosResponse<IAuthResponse>
+    | AxiosError<IValidationErrorResponse | unknown>
+  > => {
+    try {
+      const response = await AuthService.register(payload);
 
-        if (error instanceof AxiosError<IValidationErrorResponse>) {
-          return error as AxiosError<IValidationErrorResponse>;
-        }
+      setToken(response.data.accessToken);
+      setUser(response.data.user);
+      isAuth.value = true;
 
-        return error as AxiosError;
+      return response;
+    } catch (error: unknown) {
+      console.log(error);
+
+      if (error instanceof AxiosError<IValidationErrorResponse>) {
+        return error as AxiosError<IValidationErrorResponse>;
       }
-    },
-    async logout() {
-      try {
-        const response = await AuthService.logout();
 
-        this.isAuth = false;
-        this.deleteToken();
-        this.deleteUser();
+      return error as AxiosError;
+    }
+  };
 
-        return response;
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          console.log(error.response);
-        }
+  const logout = async () => {
+    try {
+      const response = await AuthService.logout();
+
+      isAuth.value = false;
+      deleteToken();
+      deleteUser();
+
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.log(error.response);
       }
-    },
-    async refreshToken() {
-      try {
-        const response = await AuthService.refreshToken();
+    }
+  };
 
-        console.log(response);
+  const refreshToken = async () => {
+    try {
+      const response = await AuthService.refreshToken();
 
-        this.setToken(response.data.accessToken);
-        this.setUser(response.data.user);
-        this.isAuth = true;
+      console.log(response);
 
-        return response;
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          console.log(error.response);
-        }
+      setToken(response.data.accessToken);
+      setUser(response.data.user);
+      isAuth.value = true;
+
+      return response;
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.log(error.response);
       }
-    },
-  },
+    }
+  };
+
+  return {
+    isAuth: readonly(isAuth),
+    credentials: readonly(credentials),
+    login,
+    logout,
+    register,
+    refreshToken,
+  };
 });
