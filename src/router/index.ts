@@ -8,6 +8,7 @@ const SettingsView = () => import('@/views/SettingsView.vue');
 const EmployeeView = () => import('@/views/EmployeeView.vue');
 const CreateTaskView = () => import('@/views/CreateTaskView.vue');
 const UpdateTaskView = () => import('@/views/UpdateTaskView.vue');
+const MeView = () => import('@/views/MeView.vue');
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,9 @@ const router = createRouter({
       path: '/taskCreation',
       name: 'TaskCreation',
       component: CreateTaskView,
+      props: (route) => ({
+        task: route.query,
+      }),
     },
     {
       path: '/taskUpdate/:id',
@@ -51,6 +55,11 @@ const router = createRouter({
       path: '/settings',
       name: 'Settings',
       component: SettingsView,
+    },
+    {
+      path: '/me',
+      name: 'Me',
+      component: MeView,
     },
   ],
 });

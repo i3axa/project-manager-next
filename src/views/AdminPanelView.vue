@@ -3,34 +3,46 @@ import EmployeesList from '@/components/EmployeesList.vue';
 import FreeTasksList from '@/components/FreeTasksList.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import useEmployees from '@/hooks/useEmployees';
-import useFreeTasks from '@/hooks/useFreeTasks';
-import type IEmployee from '@/models/IEmployee';
-import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import { useI18n } from 'vue-i18n';
 import InfoModal from '@/components/UI/InfoModal.vue';
-import { ref } from 'vue';
-import { useAuthStore } from '@/store/auth';
+import { ref, watch } from 'vue';
+import useTasks from '@/hooks/useTasks';
+import type { Id } from '@/types/API';
 
 const i18n = useI18n();
-const authStore = useAuthStore();
 const styleStore = useStyleStore();
 
-const {
-  employees,
-  isLoading: isEmployeesLoading,
-  updateTasks,
-} = useEmployees();
+const project = '632f28765e28ff847f1f7d9d';
 
-const { freeTasks, isLoading: isFreeTasksLoading } = useFreeTasks();
+const { employees, isLoading: areEmployeesLoading } = useEmployees({ project });
 
-const onTaskRelease = async (task: ITask, employee: IEmployee) => {
+const { tasks: freeTasks, isLoading: areFreeTasksLoading } = useTasks({
+  project,
+  isFree: '1',
+});
+
+const onFreeTaskAdd = async (newIndex: number) => {
+  const newTask = freeTasks.value[newIndex];
+
+  if (newTask.employee === null) {
+    return;
+  }
+
   styleStore.setIsSyncIndicatorToggled(true);
 
-  freeTasks.value.push(task);
+  await TaskService.patchTask(newTask._id, { employee: null });
+  newTask.employee = null;
 
-  await updateTasks(employee);
+  styleStore.setIsSyncIndicatorToggled(false);
+};
+
+const onTaskRelease = async (taskId: Id) => {
+  styleStore.setIsSyncIndicatorToggled(true);
+
+  const response = await TaskService.patchTask(taskId, { employee: null });
+  freeTasks.value.push(response.data.task);
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -49,36 +61,15 @@ const onFreeTaskDelete = async (taskIndex: number) => {
   styleStore.setIsSyncIndicatorToggled(false);
 };
 
-const onEmployeesTaskDelete = async (
-  taskIndex: number,
-  employeeIndex: number
-) => {
-  if (!confirm(i18n.t('modal.confirm'))) {
-    return;
-  }
-
-  styleStore.setIsSyncIndicatorToggled(true);
-
-  const employee = employees.value[employeeIndex];
-
-  const deleted = employee.takenTasks.splice(taskIndex, 1);
-
-  await updateTasks(employee);
-  await TaskService.deleteTask(deleted[0]._id);
-
-  styleStore.setIsSyncIndicatorToggled(false);
-};
-
 const isInviteModalOpen = ref(false);
 const openInviteModal = () => {
-  navigator.clipboard.writeText(authStore.credentials.user?.project || '');
   isInviteModalOpen.value = true;
 };
 </script>
 
 <template>
   <div class="admin-panel bg-white dark:bg-slate-800 dark:bg-opacity-50">
-    <div class="header mb-8">
+    <div class="header">
       <h2 style="line-height: 2.15rem">{{ $t('dashboard.employees') }}</h2>
       <button
         class="btn-outline-primary px-2 py-2 text-xs"
@@ -87,11 +78,10 @@ const openInviteModal = () => {
         <b-icon-plus-lg />
       </button>
     </div>
-    <LoadingSpinner v-if="isEmployeesLoading" />
+    <LoadingSpinner v-if="areEmployeesLoading" />
     <EmployeesList
       :employees="employees"
-      @taskRelease="onTaskRelease"
-      @taskDelete="onEmployeesTaskDelete"
+      @task-release="onTaskRelease"
       v-else
     ></EmployeesList>
 
@@ -99,26 +89,28 @@ const openInviteModal = () => {
       <h2 style="line-height: 2.15rem">{{ $t('dashboard.tasks') }}</h2>
       <button
         class="btn-outline-secondary px-2 py-2 text-xs"
-        @click="$router.push('/taskCreation')"
+        @click="
+          $router.push({
+            path: 'taskCreation',
+            query: { project },
+          })
+        "
       >
         <b-icon-plus-lg />
       </button>
     </div>
-    <LoadingSpinner v-if="isFreeTasksLoading" />
+    <LoadingSpinner v-if="areFreeTasksLoading" />
     <FreeTasksList
       :tasks="freeTasks"
-      @taskDelete="onFreeTaskDelete"
+      @task-delete="onFreeTaskDelete"
+      @task-add="onFreeTaskAdd"
       v-else
     ></FreeTasksList>
 
     <InfoModal :isOpen="isInviteModalOpen" @close="isInviteModalOpen = false">
       <template #header> {{ $t('dashboard.inviteModal.header') }} </template>
       <template #content>
-        {{
-          $t('dashboard.inviteModal.content', {
-            inviteCode: authStore.credentials.user?.project,
-          })
-        }}
+        {{ $t('dashboard.inviteModal.content') }}
       </template>
       <template #close-button>
         {{ $t('modal.closeInfo') }}
@@ -138,6 +130,7 @@ h2 {
   align-self: center;
   align-items: flex-end;
   gap: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .admin-panel {

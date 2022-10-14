@@ -1,16 +1,46 @@
 <script setup lang="ts">
 import useTaskStateColumns from '@/hooks/useTaskStateColumns';
+import type IEmployee from '@/models/IEmployee';
 import type ITask from '@/models/ITask';
-import type { ITaskInStateColumn } from '@/types/TaskStateColumn';
+import TaskService from '@/services/TaskService';
+import { useStyleStore } from '@/store/style';
+import type { TaskState } from '@/types/API';
+import type { ITaskInStateColumn, IStateColumn } from '@/types/TaskStateColumn';
 
 interface IProps {
+  employee?: IEmployee;
   tasks: ITask[];
   isInteractive: boolean;
 }
 
+const project = '632f28765e28ff847f1f7d9d';
+
 const props = defineProps<IProps>();
 
 const { taskStateColumns } = useTaskStateColumns(props.tasks);
+
+const styleStore = useStyleStore();
+
+const getRouteQuery = (state: TaskState) => {
+  return {
+    project,
+    state,
+    employee: props.employee?._id,
+  };
+};
+
+const onTaskAdd = async (
+  { newIndex }: { newIndex: number },
+  column: IStateColumn
+) => {
+  const newTask = column.tasks[newIndex];
+
+  styleStore.setIsSyncIndicatorToggled(true);
+
+  await TaskService.patchTask(newTask.task._id, { state: column.state });
+
+  styleStore.setIsSyncIndicatorToggled(false);
+};
 </script>
 
 <template>
@@ -28,13 +58,18 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
         </div>
       </div>
 
-      <router-link
+      <div
         class="add-task bg-gray-300 text-slate-400 unselectable"
-        v-if="isInteractive"
-        to="/taskCreation"
+        v-if="isInteractive && employee"
+        @click="
+          $router.push({
+            path: 'taskCreation',
+            query: getRouteQuery(taskStateColumn.state),
+          })
+        "
       >
         + {{ $t('dashboard.addTask') }}
-      </router-link>
+      </div>
 
       <base-draggable
         class="task-list"
@@ -44,6 +79,7 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
         group="tasks"
         itemKey="id"
         filter=".ignore"
+        @add="onTaskAdd($event, taskStateColumn)"
       >
         <template #item="{ element }: { element: ITaskInStateColumn }">
           <div
@@ -62,7 +98,7 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
                 <div
                   class="progress-bar-value bg-secondary"
                   :style="{
-                    width: `${element.task.donePercents * 100}%`,
+                    width: `${element.task.progress * 100}%`,
                     backgroundColor: `var(--difficulty-${element.task.difficulty})`,
                   }"
                 ></div>
@@ -123,11 +159,11 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
 
               <h5 class="w-full flex gap-1 items-center">
                 <strong>{{ $t('dashboard.progress') }}: </strong
-                >{{ Math.trunc(element.task.donePercents * 100) }}%
+                >{{ Math.trunc(element.task.progress * 100) }}%
                 <span class="ml-auto ignore" v-if="isInteractive">
                   <button
                     class="btn-secondary p-1 rounded-lg text-xs mr-1"
-                    :disabled="element.task.donePercents === 1"
+                    :disabled="element.task.progress === 1"
                     @pointerdown="element.startIncrementProgress()"
                     @pointerup="element.stopIncrementProgress()"
                     @pointerleave="element.stopIncrementProgress()"
@@ -136,7 +172,7 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
                   </button>
                   <button
                     class="btn-secondary p-1 rounded-lg text-xs"
-                    :disabled="element.task.donePercents === 0"
+                    :disabled="element.task.progress === 0"
                     @pointerdown="element.startDecrementProgress()"
                     @pointerup="element.stopDecrementProgress()"
                     @pointerleave="element.stopDecrementProgress()"
@@ -150,7 +186,7 @@ const { taskStateColumns } = useTaskStateColumns(props.tasks);
                 <div
                   class="progress-bar-value"
                   :style="{
-                    width: `${element.task.donePercents * 100}%`,
+                    width: `${element.task.progress * 100}%`,
                     backgroundColor: `var(--difficulty-${element.task.difficulty})`,
                   }"
                 ></div>

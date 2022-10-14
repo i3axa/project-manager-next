@@ -1,48 +1,49 @@
 import type ITask from '@/models/ITask';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import {
+  StateColumn,
   TaskInStateColumn,
-  TaskStateColumn,
-  type ITaskStateColumn,
+  type IStateColumn,
   type ITaskInStateColumn,
 } from '@/types/TaskStateColumn';
+import { TaskState } from '@/types/API';
 
 export default function (tasks: ITask[]) {
   const waitingTasks: ITaskInStateColumn[] = tasks
-    .filter((task) => task.state === 'waiting')
+    .filter((task) => task.state === TaskState.WAITING)
     .map((task) => new TaskInStateColumn(task));
 
   const inProgressTasks: ITaskInStateColumn[] = tasks
-    .filter((task) => task.state === 'in progress')
+    .filter((task) => task.state === TaskState.IN_PROGRESS)
     .map((task) => new TaskInStateColumn(task));
 
   const stopedTasks: ITaskInStateColumn[] = tasks
-    .filter((task) => task.state === 'stoped')
+    .filter((task) => task.state === TaskState.STOPED)
     .map((task) => new TaskInStateColumn(task));
 
   const closedTasks: ITaskInStateColumn[] = tasks
-    .filter((task) => task.state === 'closed')
+    .filter((task) => task.state === TaskState.CLOSED)
     .map((task) => new TaskInStateColumn(task));
 
-  const taskStateColumns = ref<ITaskStateColumn[]>([
-    new TaskStateColumn({
+  const taskStateColumns = ref<IStateColumn[]>([
+    new StateColumn({
       titleLocaleKey: 'dashboard.toDos',
-      state: 'waiting',
+      state: TaskState.WAITING,
       tasks: waitingTasks,
     }),
-    new TaskStateColumn({
+    new StateColumn({
       titleLocaleKey: 'dashboard.inProgress',
-      state: 'in progress',
+      state: TaskState.IN_PROGRESS,
       tasks: inProgressTasks,
     }),
-    new TaskStateColumn({
+    new StateColumn({
       titleLocaleKey: 'dashboard.review',
-      state: 'stoped',
+      state: TaskState.STOPED,
       tasks: stopedTasks,
     }),
-    new TaskStateColumn({
+    new StateColumn({
       titleLocaleKey: 'dashboard.done',
-      state: 'closed',
+      state: TaskState.CLOSED,
       tasks: closedTasks,
     }),
   ]);

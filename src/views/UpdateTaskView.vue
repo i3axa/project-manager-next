@@ -3,10 +3,11 @@ import type ITask from '@/models/ITask';
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import { useRoute } from 'vue-router';
 import useTasks from '@/hooks/useTasks';
-import { ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
+import useTask from '@/hooks/useTask';
 
 const route = useRoute();
 const styleStore = useStyleStore();
@@ -15,29 +16,15 @@ if (route.params.id === undefined) {
   throw new Error('Unknown id');
 }
 
-const { tasks, isLoading } = useTasks();
+const { task: selectedTask, isLoading } = useTask(route.params.id as string);
 
-const selectedTask = ref<ITask>();
-
-watch(isLoading, () => {
-  if (isLoading.value) {
-    return;
-  }
-
-  selectedTask.value = tasks.value.find((task) => task._id === route.params.id);
-
-  if (selectedTask.value === undefined) {
-    throw new Error('Invalid task id');
-  }
-});
-
-const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
+const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
   const formData = new FormData();
 
-  for (const key in task) {
+  for (const key in task.value) {
     const safeKey = key as keyof ITask;
 
-    formData.append(key, task[safeKey] as string);
+    formData.append(key, task.value[safeKey] as string);
   }
 
   files?.forEach((file) => {
@@ -46,9 +33,9 @@ const onSubmit = async (task: Partial<ITask>, files?: File[]) => {
 
   styleStore.setIsGlobalSpinnerShown(true);
 
-  const response = await TaskService.putTask(task._id!, formData);
+  const response = await TaskService.putTask(task.value._id!, formData);
 
-  selectedTask.value = response.data.task;
+  task.value = response.data.task;
 
   styleStore.setIsGlobalSpinnerShown(false);
 };

@@ -1,25 +1,31 @@
 <script setup lang="ts">
 import DateTimePicker from '@/components/UI/DateTimePicker.vue';
 import RichText from '@/components/UI/RichText.vue';
-import { ref } from 'vue';
+import { reactive, ref, type Ref } from 'vue';
 import type ITask from '@/models/ITask';
 import FileCard from '@/components/FileCard.vue';
+import { useAuthStore } from '@/store/auth';
+import useTouchDeviceDetection from '@/hooks/useTouchDeviceDetection';
+
+const authStore = useAuthStore();
+const { isTouchDevice } = useTouchDeviceDetection();
 
 interface IProps {
   task?: Partial<ITask>;
 }
 
 interface IEmits {
-  (eventName: 'submit', task: Partial<ITask>, files?: File[]): void;
+  (eventName: 'submit', task: Ref<Partial<ITask>>, files?: File[]): void;
 }
 
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
 const task = ref<Partial<ITask>>(props.task || {});
+task.value.attachments = task.value.attachments ?? [];
 
 const fileInput = ref<HTMLInputElement>();
-const fileList = ref<File[]>();
+const fileList = ref<File[]>([]);
 
 const triggerFilesInput = () => {
   fileInput.value?.click();
@@ -34,12 +40,16 @@ const onFileInputChange = () => {
   fileInput.value.value = '';
 };
 
-const onFileDelete = (fileIndex: number) => {
-  fileList.value?.splice(fileIndex, 1);
+const onFileDelete = (index: number) => {
+  fileList.value?.splice(index, 1);
+};
+
+const onAttachmentDelete = (index: number) => {
+  task.value.attachments?.splice(index, 1);
 };
 
 const submit = () => {
-  emit('submit', task.value as Partial<ITask>, fileList.value);
+  emit('submit', task, fileList.value);
 
   if (fileInput.value) {
     fileInput.value.value = '';
@@ -47,11 +57,41 @@ const submit = () => {
   }
 };
 
-const fileLink = import.meta.env.VITE_API_URL + '/static/uploads/';
+if (!authStore.credentials.user) {
+  throw new Error('User is not logged in');
+}
+
+const userId = authStore.credentials.user.id;
+const fileLink = import.meta.env.VITE_STORAGE_URL + `${userId}/`;
+
+const onFileDrop = (event: DragEvent) => {
+  const newFiles = Array.from(event.dataTransfer?.files || []);
+
+  fileList.value = [...fileList.value, ...newFiles];
+
+  const filesRow = document.getElementById('files-row');
+
+  filesRow?.classList.remove('drag-enter');
+};
+
+const onFileEnter = (event: DragEvent) => {
+  const filesRow = document.getElementById('files-row');
+  filesRow?.classList.add('drag-enter');
+};
+
+const onFileLeave = (event: DragEvent) => {
+  const filesRow = document.getElementById('files-row');
+  filesRow?.classList.remove('drag-enter');
+};
 </script>
 
 <template>
-  <form class="task-form" @submit.prevent="submit">
+  <form
+    class="task-form"
+    @submit.prevent="submit"
+    @dragover.prevent
+    @drop.prevent
+  >
     <div class="form-group">
       <b-icon-card-heading class="text-xl dark:text-light" />
       <input
@@ -90,12 +130,27 @@ const fileLink = import.meta.env.VITE_API_URL + '/static/uploads/';
         required
       />
     </div>
-    <div class="files-row">
+    <div
+      class="files-row border-gray-300 dark:border-gray-400"
+      :class="isTouchDevice() ? '!border-none !min-h-0' : ''"
+      id="files-row"
+      @drop="onFileDrop"
+      @dragenter="onFileEnter"
+      @dragleave="onFileLeave"
+    >
+      <div
+        class="drag-tip text-lg text-gray-500 dark:text-gray-300 unselectable"
+        v-if="!isTouchDevice()"
+        v-show="task?.attachments?.length === 0 && fileList.length === 0"
+      >
+        <b-icon-paperclip /> Drop files here
+      </div>
+
       <FileCard
-        v-for="(attachment, index) in props.task?.attachments"
-        :file-name="attachment"
+        v-for="(attachment, index) in task?.attachments"
+        :file-name="attachment.split('-', 2)[1]"
         :link="fileLink + attachment"
-        @delete="props.task?.attachments?.splice(index, 1)"
+        @delete="onAttachmentDelete(index)"
       />
       <FileCard
         v-for="(file, index) in fileList"
@@ -146,7 +201,27 @@ const fileLink = import.meta.env.VITE_API_URL + '/static/uploads/';
 
 .files-row {
   overflow-x: auto;
-  padding: 0rem 1rem 1rem 1rem;
+  padding: 1rem;
+  min-height: 70px;
+  border-width: 2px;
+  border-radius: 1.5rem;
+  border-style: dashed;
+  transition: border-color 0.2s linear;
+}
+
+.files-row.drag-enter {
+  @apply border-secondary;
+}
+
+.drag-tip {
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  margin: auto;
+  font-weight: 300;
+  font-style: italic;
 }
 
 @media only screen and (max-width: 1200px) {

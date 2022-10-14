@@ -33,6 +33,10 @@ const styleStore = useStyleStore();
 <style lang="scss">
 @import '@/assets/base.scss';
 
+#app {
+  position: relative;
+}
+
 #content {
   min-height: 90vh;
   display: flex;
@@ -54,6 +58,6 @@ const styleStore = useStyleStore();
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 2;
 }
 </style>

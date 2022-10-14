@@ -1,4 +1,8 @@
+import type { EmployeeSpeciality, Id } from '@/types/API';
+
 export default interface IEmployeeDto {
-  user: string;
-  takenTasks: string[];
+  _id: Id;
+  user: Id;
+  project: Id;
+  speciality: EmployeeSpeciality;
 }

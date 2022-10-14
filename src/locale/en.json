@@ -75,7 +75,7 @@
     "remove": "Remove",
     "inviteModal": {
       "header": "Adding new employee",
-      "content": "Invitation code ({inviteCode}) has been successfully copied to clipboard. Send it to employee."
+      "content": "Test"
     }
   },
   "task": {

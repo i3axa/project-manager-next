@@ -22,7 +22,9 @@ const updateInput = (event: Event) => {
 };
 
 const onFocusIn = () => {
-  input.value!.type = 'datetime-local';
+  if (input.value) {
+    input.value.type = 'datetime-local';
+  }
 };
 
 const onFocusOut = () => {
@@ -30,7 +32,9 @@ const onFocusOut = () => {
     return;
   }
 
-  input.value!.type = 'text';
+  if (input.value) {
+    input.value.type = 'text';
+  }
 };
 
 onMounted(() => {

@@ -4,17 +4,17 @@ import type { Id, TasksQuery } from '@/types/API';
 import { TasksConverter } from '@/types/API/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
-export default function (tasksQuery?: TasksQuery) {
+export default function (id: Id) {
   const isLoading = ref(true);
-  const tasks = ref<ITask[]>([]);
+  const task = ref<ITask>();
 
   onMounted(async () => {
-    const response = await TaskService.fetchTasks(tasksQuery);
+    const response = await TaskService.fetchTaskById(id);
 
-    tasks.value = await TasksConverter.getTasksFromIds(response);
+    task.value = response.data.task;
 
     isLoading.value = false;
   });
 
-  return { tasks, isLoading };
+  return { task, isLoading };
 }

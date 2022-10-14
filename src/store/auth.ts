@@ -10,7 +10,6 @@ import { readonly, ref } from 'vue';
 
 interface IUserData {
   id: string;
-  project: string;
   roles: string[];
   isActivated: boolean;
 }
@@ -128,6 +127,8 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         console.log(error.response);
+
+        location.assign('/auth');
       }
     }
   };

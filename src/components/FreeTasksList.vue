@@ -8,6 +8,7 @@ interface IProps {
 
 interface IEmits {
   (eventName: 'taskDelete', taskIndex: number): void;
+  (eventName: 'taskAdd', newIndex: number): void;
 }
 
 defineProps<IProps>();
@@ -16,13 +17,14 @@ defineEmits<IEmits>();
 
 <template>
   <base-draggable
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     :list="tasks"
     itemKey="id"
     group="tasks"
     animation="150"
     filter=".ignore"
     handle=".handle"
+    @add="$emit('taskAdd', $event.newIndex)"
   >
     <template #item="{ element, index }: { element: ITask, index: number }">
       <div

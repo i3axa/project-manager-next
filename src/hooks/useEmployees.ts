@@ -1,38 +1,26 @@
 import type IEmployee from '@/models/IEmployee';
+import type ITask from '@/models/ITask';
 import EmployeesService from '@/services/EmployeesService';
+import TaskService from '@/services/TaskService';
+import UserService from '@/services/UserService';
 import { useStyleStore } from '@/store/style';
-import { onMounted, ref, watch } from 'vue';
+import type { EmployeesQuery } from '@/types/API';
+import { EmployeesConverter } from '@/types/API/ResponseToModelConverter';
+import { onMounted, ref } from 'vue';
 
-export default function () {
+export default function (query?: EmployeesQuery) {
   const isLoading = ref(true);
   const employees = ref<IEmployee[]>([]);
-  const styleStore = useStyleStore();
-
-  const updateTasks = async (employee: IEmployee) => {
-    const tasksIds = employee.takenTasks.map((task) => task._id);
-
-    styleStore.setIsSyncIndicatorToggled(true);
-
-    await EmployeesService.patchEmployee(employee.id, { takenTasks: tasksIds });
-
-    styleStore.setIsSyncIndicatorToggled(false);
-  };
 
   onMounted(async () => {
-    const employeesResponse = await EmployeesService.fetchEmployees();
+    const employeesResponse = await EmployeesService.fetchEmployees(query);
 
-    for (const id of employeesResponse.data.employees) {
-      const response = await EmployeesService.fetchEmployeeById(id);
-
-      employees.value.push(response.data.employee);
-    }
+    employees.value = await EmployeesConverter.getEmployeesFromIds(
+      employeesResponse
+    );
 
     isLoading.value = false;
-
-    employees.value.forEach((employee) => {
-      watch(employee, () => updateTasks(employee), { deep: true });
-    });
   });
 
-  return { employees, isLoading, updateTasks };
+  return { employees, isLoading };
 }

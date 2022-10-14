@@ -1,5 +1,5 @@
-import type IUser from '../IUser';
+import type IUserDto from '../dto/IUserDto';
 
 export default interface IUserResponse {
-  user: IUser;
+  user: IUserDto;
 }

@@ -1,10 +1,9 @@
-import type { Role } from '@/types/Authorization';
+import type { Id, Role } from '@/types/API';
 
 export default interface IAuthResponse {
   accessToken: string;
   user: {
-    id: string;
-    project: string;
+    id: Id;
     isActivated: boolean;
     roles: Role[];
   };

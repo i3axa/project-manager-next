@@ -29,8 +29,6 @@ const rules = computed(() => {
     },
     password: {
       required: validators.required,
-      minLength: validators.minLength(6),
-      maxLength: validators.maxLength(32),
     },
   };
 });
@@ -73,7 +71,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <form class="flex flex-col gap-5" @submit.prevent="submit">
     <ValidationInput
       :validation="v$.email"
       type="email"
@@ -86,10 +84,10 @@ const submit = async () => {
       placeholder-locale-key="auth.password"
     />
 
-    <button class="btn-flat-secondary" @click="submit">
+    <button class="btn-flat-secondary" type="submit">
       {{ $t('auth.logIn') }}
     </button>
-  </div>
+  </form>
 </template>
 
 <style scoped lang="scss"></style>

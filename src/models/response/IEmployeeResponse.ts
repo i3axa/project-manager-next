@@ -1,5 +1,5 @@
-import type IEmployee from '../IEmployee';
+import type IEmployeeDto from '../dto/IEmployeeDto';
 
 export default interface IEmployeeResponse {
-  employee: IEmployee;
+  employee: IEmployeeDto;
 }

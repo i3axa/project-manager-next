@@ -1,3 +1,5 @@
+import type { Id } from '@/types/API';
+
 export default interface ITasksResponse {
-  tasks: string[];
+  tasks: Id[];
 }

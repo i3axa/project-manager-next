@@ -1,6 +1,6 @@
 import { DefaultAPIInstance, AuthAPIInstance } from '@/http';
 import type IAuthResponse from '@/models/response/IAuthResponse';
-import type { Role } from '@/types/Authorization';
+import type { Role } from '@/types/API';
 
 export interface ILoginParameters {
   email: string;
@@ -14,7 +14,6 @@ export interface IRegistrationParameters {
   name: string;
   surname: string;
   skills: string;
-  inviteCode: string;
 }
 
 export default class AuthService {

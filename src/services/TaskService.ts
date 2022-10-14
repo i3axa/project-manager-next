@@ -2,21 +2,16 @@ import { AuthAPIInstance, FormAuthAPIInstance } from '@/http';
 import type ITasksIdResponse from '@/models/response/ITasksIdResponse';
 import type ITask from '@/models/ITask';
 import type ITaskResponse from '@/models/response/ITaskResponse';
+import type { Id, TasksQuery } from '@/types/API';
 
 export default class TaskService {
-  static async fetchTasks() {
+  static async fetchTasks(query?: TasksQuery) {
     const url = '/tasks';
 
-    return AuthAPIInstance.get<ITasksIdResponse>(url);
+    return AuthAPIInstance.get<ITasksIdResponse>(url, { params: query });
   }
 
-  static async fetchFreeTasks() {
-    const url = '/free-tasks';
-
-    return AuthAPIInstance.get<ITasksIdResponse>(url);
-  }
-
-  static async fetchTaskById(id: string) {
+  static async fetchTaskById(id: Id) {
     const url = `tasks/${id}`;
 
     return AuthAPIInstance.get<ITaskResponse>(url);
@@ -28,19 +23,19 @@ export default class TaskService {
     return FormAuthAPIInstance.post<ITaskResponse>(url, newTask);
   }
 
-  static async patchTask(taskId: string, data: Partial<ITask>) {
+  static async patchTask(taskId: Id, data: Partial<ITask>) {
     const url = `/tasks/${taskId}`;
 
     return AuthAPIInstance.patch<ITaskResponse>(url, data);
   }
 
-  static async putTask(taskId: string, data: FormData) {
+  static async putTask(taskId: Id, data: FormData) {
     const url = `/tasks/${taskId}`;
 
     return FormAuthAPIInstance.put<ITaskResponse>(url, data);
   }
 
-  static async deleteTask(taskId: string) {
+  static async deleteTask(taskId: Id) {
     const url = `/tasks/${taskId}`;
 
     return AuthAPIInstance.delete(url);

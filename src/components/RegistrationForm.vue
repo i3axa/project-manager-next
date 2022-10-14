@@ -2,7 +2,6 @@
 import { useI18n } from 'vue-i18n';
 import useI18nValidators from '@/hooks/useI18nValidators';
 import useVuelidate, { type ServerErrors } from '@vuelidate/core';
-import { Role } from '@/types/Authorization';
 import { reactive, computed, ref } from 'vue';
 import RadioButton from '@/components/UI/RadioButton.vue';
 import ValidationInput from '@/components/UI/ValidationInput.vue';
@@ -12,6 +11,7 @@ import InfoModal from '@/components/UI/InfoModal.vue';
 import { useRouter } from 'vue-router';
 import type IValidationErrorResponse from '@/models/response/IValidationErrorResponse';
 import { AxiosError } from 'axios';
+import { Role } from '@/types/API';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -27,7 +27,6 @@ const newUser = reactive({
   surname: '',
   skills: '',
   role: Role.USER,
-  inviteCode: '',
 });
 
 const rules = computed(() => {
@@ -55,10 +54,7 @@ const rules = computed(() => {
       required: validators.required,
     },
     skills: {
-      requiredIf: validators.requiredIf(newUser.role === Role.USER),
-    },
-    inviteCode: {
-      requiredIf: validators.requiredIf(newUser.role === Role.USER),
+      requiredIf: validators.required,
     },
   };
 });
@@ -95,8 +91,7 @@ const submit = async () => {
 
     $externalResults.value = errors;
   } else {
-    const to = '/' + authStore.credentials.user?.roles[0].toLowerCase();
-    router.push(to);
+    isModalOpen.value = true;
   }
 
   styleStore.setIsGlobalSpinnerShown(false);
@@ -104,7 +99,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <form class="flex flex-col gap-5" @submit.prevent="submit">
     <ValidationInput
       :validation="v$.email"
       type="email"
@@ -130,32 +125,10 @@ const submit = async () => {
     />
     <ValidationInput
       :validation="v$.skills"
-      v-show="newUser.role === Role.USER"
       placeholder-locale-key="auth.skills"
     />
 
-    <div class="separator"></div>
-
-    <ValidationInput
-      :validation="v$.inviteCode"
-      v-show="newUser.role === Role.USER"
-      placeholder-locale-key="auth.inviteCode"
-    />
-
-    <div class="flex flex-col gap-1">
-      <RadioButton :id="'role-user'" :value="Role.USER" v-model="newUser.role">
-        {{ $t('auth.user') }}
-      </RadioButton>
-      <RadioButton
-        :id="'role-admin'"
-        :value="Role.ADMIN"
-        v-model="newUser.role"
-      >
-        {{ $t('auth.admin') }}
-      </RadioButton>
-    </div>
-
-    <button class="btn-flat-secondary" @click="submit">
+    <button class="btn-flat-secondary" type="submit">
       {{ $t('auth.signUp') }}
     </button>
 
@@ -164,7 +137,7 @@ const submit = async () => {
       <template #content>{{ $t('auth.activationModal.content') }}</template>
       <template #close-button>{{ $t('modal.closeInfo') }}</template>
     </InfoModal>
-  </div>
+  </form>
 </template>
 
 <style scoped lang="scss">

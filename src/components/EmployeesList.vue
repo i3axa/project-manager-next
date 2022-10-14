@@ -2,10 +2,11 @@
 import type ITask from '@/models/ITask';
 import type IEmployee from '@/models/IEmployee';
 import EmployeesTaskEditDropdown from '@/components/EmployeesTaskEditDropdown.vue';
+import EmployeeCard from '@/components/EmployeeCard.vue';
+import type { Id } from '@/types/API';
 
 interface IEmits {
-  (eventName: 'taskRelease', task: ITask, employee: IEmployee): void;
-  (eventName: 'taskDelete', taskIndex: number, employeeIndex: number): void;
+  (eventName: 'taskRelease', taskId: Id): void;
 }
 
 interface IProps {
@@ -15,84 +16,19 @@ interface IProps {
 defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
-const getTotalDifficulty = (tasks: ITask[]) => {
-  const difficulties = tasks.map((task) => task.difficulty);
-
-  return difficulties.reduce((previous, current) => previous + current, 0);
-};
-
-const releaseTask = (taskIndex: number, employee: IEmployee) => {
-  const deletedTask = employee.takenTasks.splice(taskIndex, 1)[0];
-
-  emit('taskRelease', deletedTask, employee);
+const releaseTask = (taskId: Id) => {
+  emit('taskRelease', taskId);
 };
 </script>
 
 <template>
   <div class="employees-list">
-    <div
-      class="card"
-      v-for="(employee, employeeIndex) in employees"
-      :key="employee.id"
-    >
-      <div class="mb-4 w-max flex flex-col gap-2">
-        <div class="min-w-max flex flex-row gap-5">
-          <h4>{{ employee.name }} {{ employee.surname }}</h4>
-          <router-link
-            class="btn-outline-secondary text-sm !opacity-100"
-            :to="`/employee/${employee.id}`"
-          >
-            <b-icon-box-arrow-up-right />
-          </router-link>
-        </div>
-        <h6>{{ employee.skills }}</h6>
-      </div>
-      <base-draggable
-        class="task-list"
-        :list="employee.takenTasks"
-        animation="150"
-        group="tasks"
-        itemKey="id"
-        filter=".ignore"
-      >
-        <template
-          #item="{
-            element,
-            index: taskIndex,
-          }: {
-            element: ITask,
-            index: number,
-          }"
-        >
-          <div
-            class="task rounded-2xl shadow !border-none"
-            :style="{
-              backgroundColor: `var(--difficulty-${element.difficulty})`,
-            }"
-          >
-            <h5 class="unselectable w-max !text-dark">
-              {{ element.title }} ({{ element.difficulty }})
-            </h5>
-            <EmployeesTaskEditDropdown
-              class="ignore"
-              :task-id="element._id"
-              @taskDelete="$emit('taskDelete', taskIndex, employeeIndex)"
-              @taskRemove="releaseTask(taskIndex, employee)"
-            />
-          </div>
-        </template>
-      </base-draggable>
-      <div
-        class="difficulty-badge text-gray-600 dark:text-gray-800 bg-gray-300 dark:bg-gray-400 italic"
-      >
-        <span class="font-semibold"
-          >{{ $t('dashboard.totalDifficulty') }}:
-        </span>
-        <span class="font-normal">{{
-          getTotalDifficulty(employee.takenTasks)
-        }}</span>
-      </div>
-    </div>
+    <EmployeeCard
+      v-for="employee in employees"
+      :key="employee._id"
+      :employee="employee"
+      @task-release="releaseTask"
+    />
   </div>
 </template>
 
