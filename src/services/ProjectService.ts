@@ -10,7 +10,7 @@ export default class ProjectService {
     return AuthAPIInstance.get<IProjectResponse>(url);
   }
 
-  static async fetchProjects(query: ProjectsQuery) {
+  static async fetchProjects(query?: ProjectsQuery) {
     const url = `/projects`;
 
     return AuthAPIInstance.get<IProjectsIdResponse>(url, { params: query });

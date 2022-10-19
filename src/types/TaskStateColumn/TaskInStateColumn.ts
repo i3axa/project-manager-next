@@ -5,15 +5,24 @@ import UserService from '@/services/UserService';
 import type { ITaskInStateColumn } from './ITaskInStateColumn';
 import { useStyleStore } from '@/store/style';
 import IntervalValueChanger from './IntervalValueChanger';
+import EmployeesService from '@/services/EmployeesService';
+import { EmployeesConverter, type Id } from '../API';
 
 const styleStore = useStyleStore();
+
+const getDirectorUser = async (employeeId: Id) => {
+  const response = await EmployeesService.fetchEmployeeById(employeeId);
+  const employee = await EmployeesConverter.getEmployee(response);
+
+  return employee.user;
+};
 
 export class TaskInStateColumn implements ITaskInStateColumn {
   constructor(task: ITask) {
     this.task = task;
 
-    UserService.getUser(task.director).then(
-      (response) => (this._taskDirector = response.data.user)
+    getDirectorUser(task.director).then(
+      (result) => (this._taskDirector = result)
     );
 
     const progressValue = {

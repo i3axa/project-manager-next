@@ -11,6 +11,7 @@ interface IEmits {
 
 interface IProps {
   employees: IEmployee[];
+  director?: Id;
 }
 
 defineProps<IProps>();
@@ -26,6 +27,7 @@ const releaseTask = (taskId: Id) => {
     <EmployeeCard
       v-for="employee in employees"
       :key="employee._id"
+      :director="director"
       :employee="employee"
       @task-release="releaseTask"
     />
@@ -33,43 +35,6 @@ const releaseTask = (taskId: Id) => {
 </template>
 
 <style scoped lang="scss">
-.difficulty-badge {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-size: small;
-  border-radius: 10px;
-  padding: 2px 5px 2px 5px;
-  width: fit-content;
-  align-self: end;
-}
-
-.task-list {
-  height: 100%;
-}
-
-.close {
-  stroke-width: 2px;
-  stroke: currentColor;
-}
-
-.card {
-  padding: 20px 20px 0px 20px;
-  display: flex;
-  flex-direction: column;
-  flex: none;
-  min-height: 250px;
-}
-
-.task {
-  padding: 10px;
-  border-width: 1px;
-  margin-top: 0.5rem;
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  cursor: move;
-}
-
 .employees-list {
   display: flex;
   flex-direction: row;

@@ -1,3 +1,4 @@
+import type IEmployeeDto from '@/models/dto/IEmployeeDto';
 import type IEmployee from '@/models/IEmployee';
 import type IProject from '@/models/IProject';
 import type ITask from '@/models/ITask';
@@ -28,21 +29,18 @@ interface IQueryParams {
   _page: number;
 }
 
-interface IEmployeesQueryParams extends IQueryParams {
-  projects: Id[];
-}
+type StringifiedBoolean = '1' | '0';
 
 interface ITasksQueryParams extends IQueryParams {
-  projects: Id[];
-  isFree: '1' | '0';
+  isFree: StringifiedBoolean;
 }
 
 interface IProjectsQueryParams extends IQueryParams {
-  isPrivate: '1' | '0';
+  isPrivate: StringifiedBoolean;
 }
 
 export type TasksQuery = Partial<ITasksQueryParams | ITask>;
-export type EmployeesQuery = Partial<IEmployeesQueryParams | IEmployee>;
+export type EmployeesQuery = Partial<IQueryParams | IEmployeeDto>;
 export type ProjectsQuery = Partial<
   IProjectsQueryParams | Omit<IProject, 'isPrivate'>
 >;

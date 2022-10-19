@@ -2,29 +2,41 @@
 import EmployeesList from '@/components/EmployeesList.vue';
 import FreeTasksList from '@/components/FreeTasksList.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
-import useEmployees from '@/hooks/useEmployees';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import { useI18n } from 'vue-i18n';
 import InfoModal from '@/components/UI/InfoModal.vue';
-import { ref, watch } from 'vue';
-import useTasks from '@/hooks/useTasks';
+import { ref } from 'vue';
 import type { Id } from '@/types/API';
+import ListBox from '@/components/UI/ListBox.vue';
+import { useAuthStore } from '@/store/auth';
+import useManager from '@/hooks/useManager';
+import useFreeTasks from '@/hooks/useFreeTasks';
 
 const i18n = useI18n();
 const styleStore = useStyleStore();
+const authStore = useAuthStore();
 
-const project = '632f28765e28ff847f1f7d9d';
+if (!authStore.credentials.user) {
+  throw 'Unauthorized error';
+}
 
-const { employees, isLoading: areEmployeesLoading } = useEmployees({ project });
+const currentProject = ref<Id>();
 
-const { tasks: freeTasks, isLoading: areFreeTasksLoading } = useTasks({
-  project,
-  isFree: '1',
-});
+const {
+  executors,
+  projects,
+  manager,
+  isLoading: areExecutorsLoading,
+} = useManager(authStore.credentials.user.id, currentProject);
+
+const { freeTasks, isLoading: areFreeTasksLoading } =
+  useFreeTasks(currentProject);
 
 const onFreeTaskAdd = async (newIndex: number) => {
-  const newTask = freeTasks.value[newIndex];
+  const newTask = freeTasks.value.filter(
+    (t) => t.project === currentProject.value
+  )[newIndex];
 
   if (newTask.employee === null) {
     return;
@@ -70,17 +82,24 @@ const openInviteModal = () => {
 <template>
   <div class="admin-panel bg-white dark:bg-slate-800 dark:bg-opacity-50">
     <div class="header">
-      <h2 style="line-height: 2.15rem">{{ $t('dashboard.employees') }}</h2>
-      <button
-        class="btn-outline-primary px-2 py-2 text-xs"
-        @click="openInviteModal"
+      <h2 style="line-height: 2.15rem">{{ $t('dashboard.employees') }}:</h2>
+      <ListBox
+        :items="projects.map((p) => p._id)"
+        v-model="currentProject"
+        class="w-40"
       >
-        <b-icon-plus-lg />
-      </button>
+        <template #title="{ modelValue }">
+          {{ projects.find((p) => p._id === modelValue)?.title }}
+        </template>
+        <template #item="{ item }">
+          {{ projects.find((p) => p._id === item)?.title }}
+        </template>
+      </ListBox>
     </div>
-    <LoadingSpinner v-if="areEmployeesLoading" />
+    <LoadingSpinner v-if="areExecutorsLoading" />
     <EmployeesList
-      :employees="employees"
+      :director="manager?._id"
+      :employees="executors.filter((e) => e.project === currentProject)"
       @task-release="onTaskRelease"
       v-else
     ></EmployeesList>
@@ -92,7 +111,7 @@ const openInviteModal = () => {
         @click="
           $router.push({
             path: 'taskCreation',
-            query: { project },
+            query: { project: currentProject },
           })
         "
       >

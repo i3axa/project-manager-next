@@ -8,7 +8,7 @@ import {
 
 interface IProps {
   items: Array<any>;
-  modelValue: string;
+  modelValue?: string;
 }
 
 interface IEmits {

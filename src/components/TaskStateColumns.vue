@@ -13,8 +13,6 @@ interface IProps {
   isInteractive: boolean;
 }
 
-const project = '632f28765e28ff847f1f7d9d';
-
 const props = defineProps<IProps>();
 
 const { taskStateColumns } = useTaskStateColumns(props.tasks);
@@ -23,7 +21,7 @@ const styleStore = useStyleStore();
 
 const getRouteQuery = (state: TaskState) => {
   return {
-    project,
+    project: props.employee?.project,
     state,
     employee: props.employee?._id,
   };

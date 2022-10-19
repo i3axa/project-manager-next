@@ -62,7 +62,7 @@ const submit = async () => {
 
     $externalResults.value = errors;
   } else {
-    const to = '/' + authStore.credentials.user?.roles[0].toLowerCase();
+    const to = '/';
     router.push(to);
   }
 

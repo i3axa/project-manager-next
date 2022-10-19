@@ -13,6 +13,7 @@ const i18n = useI18n();
 
 interface IProps {
   employee: IEmployee;
+  director?: Id;
 }
 
 interface IEmits {
@@ -25,6 +26,7 @@ const emit = defineEmits<IEmits>();
 const { tasks, isLoading } = useTasks({
   employee: props.employee._id,
   project: props.employee.project,
+  director: props.director,
 });
 
 const totalDifficulty = computed(() => {
@@ -74,8 +76,8 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
 
 <template>
   <div class="card">
-    <div class="mb-4 w-max flex flex-col gap-2">
-      <div class="min-w-max flex flex-row gap-5">
+    <div class="mb-4 w-full flex flex-col gap-2">
+      <div class="w-full flex flex-row justify-between gap-5">
         <h4>{{ employee.user.name }} {{ employee.user.surname }}</h4>
         <router-link
           class="btn-outline-secondary text-sm !opacity-100"
@@ -85,6 +87,20 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
         </router-link>
       </div>
       <h6>{{ employee.user.skills }}</h6>
+    </div>
+    <div
+      class="add-task border-gray-300 text-slate-400 unselectable"
+      @click="
+        $router.push({
+          path: 'taskCreation',
+          query: {
+            project: employee.project,
+            employee: employee._id,
+          },
+        })
+      "
+    >
+      + {{ $t('dashboard.addTask') }}
     </div>
     <b-icon-arrow-clockwise
       class="animate-spin text-gray-400 self-center h-full text-3xl"
@@ -156,6 +172,7 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
   flex-direction: column;
   flex: none;
   min-height: 250px;
+  min-width: 250px;
 }
 
 .task {
@@ -166,5 +183,31 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
   align-items: center;
   display: flex;
   cursor: move;
+}
+
+.add-task {
+  margin-bottom: 10px;
+  border-width: 2px;
+  border-radius: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 500;
+  font-style: oblique;
+  transition: opacity 0.3s ease-in-out;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.dark .add-task {
+  filter: brightness(0.6);
+}
+
+.add-task:hover {
+  opacity: 0.7;
+}
+
+.add-task:active {
+  opacity: 0.5;
 }
 </style>
