@@ -1,13 +1,18 @@
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { useAuthStore } from '@/store/auth';
+import { cacheAdapterEnhancer } from 'axios-extensions';
 
 const defaultConfig = {
   baseURL: import.meta.env.VITE_API_URL + '/api',
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
   },
   withCredentials: true,
+  adapter: axios.defaults.adapter
+    ? cacheAdapterEnhancer(axios.defaults.adapter)
+    : undefined,
 };
 
 const formConfig = {

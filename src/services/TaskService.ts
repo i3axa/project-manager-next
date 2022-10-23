@@ -8,7 +8,10 @@ export default class TaskService {
   static async fetchTasks(query?: TasksQuery) {
     const url = '/tasks';
 
-    return AuthAPIInstance.get<ITasksIdResponse>(url, { params: query });
+    return AuthAPIInstance.get<ITasksIdResponse>(url, {
+      params: query,
+      cache: false,
+    });
   }
 
   static async fetchTaskById(id: Id) {

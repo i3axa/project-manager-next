@@ -72,6 +72,14 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
+
+const hideDropDowns = () => {
+  const elements = document.getElementsByClassName('dropdown');
+
+  for (const dropdown of Array.from(elements)) {
+    (dropdown as HTMLElement).click();
+  }
+};
 </script>
 
 <template>
@@ -115,6 +123,7 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
       itemKey="id"
       filter=".ignore"
       @add="onTaskAdd"
+      @start="hideDropDowns"
     >
       <template
         #item="{ element, index: taskIndex }: { element: ITask, index: number }"
@@ -124,12 +133,13 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
           :style="{
             backgroundColor: `var(--difficulty-${element.difficulty})`,
           }"
+          @click="hideDropDowns"
         >
           <h5 class="unselectable w-max !text-dark">
             {{ element.title }} ({{ element.difficulty }})
           </h5>
           <EmployeesTaskEditDropdown
-            class="ignore"
+            class="ignore dropdown"
             :task-id="element._id"
             @task-remove="releaseTask(taskIndex)"
             @task-delete="deleteTask(taskIndex)"
