@@ -3,28 +3,30 @@ import TaskEditForm from '@/components/TaskEditForm.vue';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import type { Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const styleStore = useStyleStore();
 
 interface IProps {
-  task?: Partial<ITask>;
+  task: Partial<ITask>;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
-const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
+const files = ref<File[]>([]);
+
+const onSubmit = async () => {
   const formData = new FormData();
 
-  for (const key in task.value) {
+  for (const key in props.task) {
     const safeKey = key as keyof ITask;
 
-    formData.append(key, task.value[safeKey] as string);
+    formData.append(key, props.task[safeKey] as string);
   }
 
-  files?.forEach((file) => {
+  files.value.forEach((file) => {
     formData.append('files', file);
   });
 
@@ -34,13 +36,19 @@ const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
 
   router.back();
 
+  files.value = [];
+
   styleStore.setIsGlobalSpinnerShown(false);
 };
 </script>
 
 <template>
   <div class="outer">
-    <TaskEditForm :task="task" @submit="onSubmit" />
+    <TaskEditForm
+      v-model:files="files"
+      v-model:task="task"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 

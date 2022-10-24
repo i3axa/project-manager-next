@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DateTimePicker from '@/components/UI/DateTimePicker.vue';
 import RichText from '@/components/UI/RichText.vue';
-import { reactive, ref, type Ref } from 'vue';
+import { reactive, ref, watch, type Ref } from 'vue';
 import type ITask from '@/models/ITask';
 import FileCard from '@/components/FileCard.vue';
 import { useAuthStore } from '@/store/auth';
@@ -11,21 +11,27 @@ const authStore = useAuthStore();
 const { isTouchDevice } = useTouchDeviceDetection();
 
 interface IProps {
-  task?: Partial<ITask>;
+  task: Partial<ITask>;
+  files: File[];
 }
 
 interface IEmits {
-  (eventName: 'submit', task: Ref<Partial<ITask>>, files?: File[]): void;
+  (eventName: 'submit'): void;
+  (eventName: 'update:task', task: Partial<ITask>): void;
+  (eventName: 'update:files', files: File[]): void;
 }
 
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
-const task = ref<Partial<ITask>>(props.task || {});
-task.value.attachments = task.value.attachments ?? [];
+if (!props.task?.attachments) {
+  emit('update:task', { ...props.task, attachments: [] });
+}
+
+const deadline = ref(props.task.deadline || '');
+watch(deadline, (deadline) => emit('update:task', { ...props.task, deadline }));
 
 const fileInput = ref<HTMLInputElement>();
-const fileList = ref<File[]>([]);
 
 const triggerFilesInput = () => {
   fileInput.value?.click();
@@ -36,24 +42,30 @@ const onFileInputChange = () => {
     return;
   }
 
-  fileList.value = Array.from(fileInput.value.files || []);
+  emit('update:files', Array.from(fileInput.value.files || []));
+
   fileInput.value.value = '';
 };
 
 const onFileDelete = (index: number) => {
-  fileList.value?.splice(index, 1);
+  const files = [...props.files];
+  files.splice(index, 1);
+
+  emit('update:files', files);
 };
 
 const onAttachmentDelete = (index: number) => {
-  task.value.attachments?.splice(index, 1);
+  const task = { ...props.task };
+  task.attachments?.splice(index, 1);
+
+  emit('update:task', task);
 };
 
 const submit = () => {
-  emit('submit', task, fileList.value);
+  emit('submit');
 
   if (fileInput.value) {
     fileInput.value.value = '';
-    fileList.value = [];
   }
 };
 
@@ -67,19 +79,19 @@ const fileLink = import.meta.env.VITE_STORAGE_URL + `${userId}/`;
 const onFileDrop = (event: DragEvent) => {
   const newFiles = Array.from(event.dataTransfer?.files || []);
 
-  fileList.value = [...fileList.value, ...newFiles];
+  emit('update:files', [...props.files, ...newFiles]);
 
   const filesRow = document.getElementById('files-row');
 
   filesRow?.classList.remove('drag-enter');
 };
 
-const onFileEnter = (event: DragEvent) => {
+const onFileEnter = () => {
   const filesRow = document.getElementById('files-row');
   filesRow?.classList.add('drag-enter');
 };
 
-const onFileLeave = (event: DragEvent) => {
+const onFileLeave = () => {
   const filesRow = document.getElementById('files-row');
   filesRow?.classList.remove('drag-enter');
 };
@@ -126,7 +138,7 @@ const onFileLeave = (event: DragEvent) => {
       <b-icon-calendar-check class="text-xl dark:text-light" />
       <DateTimePicker
         :placeholder="$t('task.deadline')"
-        v-model="task.deadline"
+        v-model="deadline"
         required
       />
     </div>
@@ -141,19 +153,19 @@ const onFileLeave = (event: DragEvent) => {
       <div
         class="drag-tip text-lg text-gray-500 dark:text-gray-300 unselectable"
         v-if="!isTouchDevice()"
-        v-show="task?.attachments?.length === 0 && fileList.length === 0"
+        v-show="task.attachments?.length === 0 && files.length === 0"
       >
-        <b-icon-paperclip /> Drop files here
+        <b-icon-paperclip /> {{ $t('createTask.dropFiles') }}
       </div>
 
       <FileCard
-        v-for="(attachment, index) in task?.attachments"
+        v-for="(attachment, index) in task.attachments"
         :file-name="attachment.split('-', 2)[1]"
         :link="fileLink + attachment"
         @delete="onAttachmentDelete(index)"
       />
       <FileCard
-        v-for="(file, index) in fileList"
+        v-for="(file, index) in files"
         :fileName="file.name"
         @delete="onFileDelete(index)"
       />

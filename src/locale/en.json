@@ -86,6 +86,7 @@
   },
   "createTask": {
     "attach": "Attach",
-    "submit": "Submit"
+    "submit": "Submit",
+    "dropFiles": "Drop files here"
   }
 }

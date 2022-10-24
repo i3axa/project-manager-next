@@ -3,7 +3,7 @@ import type ITask from '@/models/ITask';
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import { useRoute } from 'vue-router';
 import useTasks from '@/hooks/useTasks';
-import type { Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
@@ -16,9 +16,14 @@ if (route.params.id === undefined) {
   throw new Error('Unknown id');
 }
 
-const { task: selectedTask, isLoading } = useTask(route.params.id as string);
+const { task, isLoading } = useTask(route.params.id as string);
+const files = ref<File[]>([]);
 
-const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
+const onSubmit = async () => {
+  if (!task.value) {
+    return;
+  }
+
   const formData = new FormData();
 
   for (const key in task.value) {
@@ -27,7 +32,7 @@ const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
     formData.append(key, task.value[safeKey] as string);
   }
 
-  files?.forEach((file) => {
+  files.value.forEach((file) => {
     formData.append('files', file);
   });
 
@@ -37,14 +42,21 @@ const onSubmit = async (task: Ref<Partial<ITask>>, files?: File[]) => {
 
   task.value = response.data.task;
 
+  files.value = [];
+
   styleStore.setIsGlobalSpinnerShown(false);
 };
 </script>
 
 <template>
   <div class="outer">
-    <LoadingSpinner v-if="isLoading" />
-    <TaskEditForm :task="selectedTask" @submit="onSubmit" v-else />
+    <LoadingSpinner v-if="isLoading || task === undefined" />
+    <TaskEditForm
+      v-else
+      v-model:files="files"
+      v-model:task="task"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 
