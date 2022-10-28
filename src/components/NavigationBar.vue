@@ -59,18 +59,18 @@ const expand = () => {
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="btn-primary nav-link" to="/admin">
+        <router-link class="btn-primary nav-link" to="/manager">
           <b-icon-grid class="mr-1" />
           <div class="nav-link-title">
-            {{ $t('navigationBar.dashboard') }} Admin
+            {{ $t('navigationBar.managerDashboard') }}
           </div>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="btn-primary nav-link" to="/user">
-          <b-icon-grid class="mr-1" />
+        <router-link class="btn-primary nav-link" to="/executor">
+          <b-icon-columns-gap class="mr-1" />
           <div class="nav-link-title">
-            {{ $t('navigationBar.dashboard') }} User
+            {{ $t('navigationBar.executorDashboard') }}
           </div>
         </router-link>
       </li>

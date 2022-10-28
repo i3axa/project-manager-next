@@ -102,31 +102,28 @@ const submit = async () => {
   <form class="flex flex-col gap-5" @submit.prevent="submit">
     <ValidationInput
       :validation="v$.email"
+      :placeholder="$t('auth.email')"
       type="email"
-      placeholder-locale-key="auth.email"
     />
     <ValidationInput
       :validation="v$.password"
+      :placeholder="$t('auth.password')"
       type="password"
-      placeholder-locale-key="auth.password"
     />
     <ValidationInput
       :validation="v$.confirmPassword"
+      :placeholder="$t('auth.confirmPassword')"
       type="password"
-      placeholder-locale-key="auth.confirmPassword"
     />
 
     <div class="separator"></div>
 
-    <ValidationInput :validation="v$.name" placeholder-locale-key="auth.name" />
+    <ValidationInput :validation="v$.name" :placeholder="$t('auth.name')" />
     <ValidationInput
       :validation="v$.surname"
-      placeholder-locale-key="auth.surname"
+      :placeholder="$t('auth.surname')"
     />
-    <ValidationInput
-      :validation="v$.skills"
-      placeholder-locale-key="auth.skills"
-    />
+    <ValidationInput :validation="v$.skills" :placeholder="$t('auth.skills')" />
 
     <button class="btn-flat-secondary" type="submit">
       {{ $t('auth.signUp') }}

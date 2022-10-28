@@ -19,7 +19,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     });
 
     if (userEmployeesResponse.data.employees.length === 0) {
-      throw new Error('User is not a manager');
+      return [];
     }
 
     const userEmployees = await EmployeesConverter.getEmployeesFromIds(
@@ -75,7 +75,11 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
 
   onMounted(async () => {
     await fetch();
-    currentProject.value = projects.value[0]._id;
+
+    if (projects.value.length > 0) {
+      currentProject.value = projects.value[0]._id;
+    }
+
     isLoading.value = false;
   });
 

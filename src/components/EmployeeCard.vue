@@ -3,13 +3,12 @@ import useTasks from '@/hooks/useTasks';
 import type IEmployee from '@/models/IEmployee';
 import type ITask from '@/models/ITask';
 import EmployeesTaskEditDropdown from '@/components/EmployeesTaskEditDropdown.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import type { Id } from '@/types/API';
-import { useI18n } from 'vue-i18n';
-
-const i18n = useI18n();
+import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
+import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 
 interface IProps {
   employee: IEmployee;
@@ -44,10 +43,6 @@ const releaseTask = (taskIndex: number) => {
 const styleStore = useStyleStore();
 
 const deleteTask = async (taskIndex: number) => {
-  if (!confirm(i18n.t('modal.confirm'))) {
-    return;
-  }
-
   const task = tasks.value[taskIndex];
 
   styleStore.setIsSyncIndicatorToggled(true);
@@ -56,6 +51,19 @@ const deleteTask = async (taskIndex: number) => {
   tasks.value.splice(taskIndex, 1);
 
   styleStore.setIsSyncIndicatorToggled(false);
+};
+
+const isConfirmModalOpen = ref(false);
+
+let onContinue = ref(() => {});
+
+const onTaskDelete = (taskIndex: number) => {
+  isConfirmModalOpen.value = true;
+
+  onContinue.value = () => {
+    deleteTask(taskIndex);
+    isConfirmModalOpen.value = false;
+  };
 };
 
 const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
@@ -86,7 +94,9 @@ const hideDropDowns = () => {
   <div class="card">
     <div class="mb-4 w-full flex flex-col gap-2">
       <div class="w-full flex flex-row justify-between gap-5">
-        <h4>{{ employee.user.name }} {{ employee.user.surname }}</h4>
+        <div class="text-lg font-semibold">
+          {{ employee.user.name }} {{ employee.user.surname }}
+        </div>
         <router-link
           class="btn-outline-secondary text-sm !opacity-100"
           :to="`/employee/${employee._id}`"
@@ -94,7 +104,7 @@ const hideDropDowns = () => {
           <b-icon-box-arrow-up-right />
         </router-link>
       </div>
-      <h6>{{ employee.user.skills }}</h6>
+      <div>{{ employee.user.skills }}</div>
     </div>
     <div
       class="add-task border-gray-300 text-slate-400 unselectable"
@@ -108,12 +118,9 @@ const hideDropDowns = () => {
         })
       "
     >
-      + {{ $t('dashboard.addTask') }}
+      {{ $t('dashboard.addTask') }}
     </div>
-    <b-icon-arrow-clockwise
-      class="animate-spin text-gray-400 self-center h-full text-3xl"
-      v-if="isLoading"
-    />
+    <MiniLoadingSpinner v-if="isLoading" />
     <base-draggable
       v-else
       class="task-list"
@@ -135,14 +142,14 @@ const hideDropDowns = () => {
           }"
           @click="hideDropDowns"
         >
-          <h5 class="unselectable w-max !text-dark">
+          <div class="text-base font-semibold unselectable w-max !text-dark">
             {{ element.title }} ({{ element.difficulty }})
-          </h5>
+          </div>
           <EmployeesTaskEditDropdown
             class="ignore dropdown"
             :task-id="element._id"
             @task-remove="releaseTask(taskIndex)"
-            @task-delete="deleteTask(taskIndex)"
+            @task-delete="onTaskDelete(taskIndex)"
           />
         </div>
       </template>
@@ -153,6 +160,12 @@ const hideDropDowns = () => {
       <span class="font-semibold">{{ $t('dashboard.totalDifficulty') }}: </span>
       <span class="font-normal">{{ totalDifficulty }}</span>
     </div>
+
+    <ConfirmModal
+      :is-open="isConfirmModalOpen"
+      @continue="onContinue"
+      @cancel="isConfirmModalOpen = false"
+    ></ConfirmModal>
   </div>
 </template>
 

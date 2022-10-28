@@ -22,8 +22,11 @@ const { tasks, projects, currentEmployee, isLoading } = useExecutor(
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center">
+  <LoadingSpinner v-if="isLoading" class="w-full" />
+  <div v-else-if="projects.length === 0">No projects</div>
+  <div v-else class="w-full flex flex-col gap-2 items-center">
     <ListBox
+      v-if="!isLoading"
       :items="projects.map((p) => p._id)"
       v-model="currentProject"
       class="w-40"
@@ -35,9 +38,7 @@ const { tasks, projects, currentEmployee, isLoading } = useExecutor(
         {{ projects.find((p) => p._id === item)?.title }}
       </template>
     </ListBox>
-    <LoadingSpinner class="w-full" v-if="isLoading" />
     <TaskStateColumns
-      v-else
       :employee="currentEmployee"
       :tasks="tasks"
       :isInteractive="true"

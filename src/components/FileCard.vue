@@ -32,9 +32,9 @@ const openLink = () => {
           :extension="fileName.substring(fileName.lastIndexOf('.') + 1)"
           class="text-5xl self-center"
         />
-        <h6 class="file-name text-gray-400 dark:text-gray-500">
+        <div class="file-name text-gray-400 dark:text-gray-500">
           {{ fileName }}
-        </h6>
+        </div>
       </div>
     </TooltipPopper>
   </div>

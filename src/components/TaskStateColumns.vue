@@ -90,7 +90,7 @@ const onTaskAdd = async (
             />
 
             <div class="task" v-show="!element.infoToggled">
-              <h4>{{ element.task.title }}</h4>
+              <div class="text-lg font-semibold">{{ element.task.title }}</div>
               <p class="dark:text-light" v-html="element.task.description"></p>
               <div class="progress-bar bg-blue-100">
                 <div
@@ -112,21 +112,21 @@ const onTaskAdd = async (
             </div>
 
             <div class="task" v-show="element.infoToggled">
-              <h5 class="text-ellipsis overflow-hidden">
+              <div class="text-ellipsis overflow-hidden">
                 <strong>{{ $t('dashboard.director') }}: </strong>
                 {{
                   `${element.taskDirector?.name} ${
                     element.taskDirector?.surname || ''
                   }`
                 }}
-              </h5>
+              </div>
 
-              <h5>
+              <div>
                 <strong>{{ $t('dashboard.standard') }}: </strong
                 >{{ Math.round(element.hours) }}{{ $t('dashboard.h') }}
-              </h5>
+              </div>
 
-              <h5 class="w-full flex gap-1 items-center">
+              <div class="w-full flex gap-1 items-center">
                 <strong>{{ $t('dashboard.used') }}: </strong>
                 {{ element.task.usedHours }}{{ $t('dashboard.h') }}
                 <span class="ml-auto ignore" v-if="isInteractive">
@@ -148,14 +148,14 @@ const onTaskAdd = async (
                     <b-icon-dash />
                   </button>
                 </span>
-              </h5>
+              </div>
 
-              <h5>
+              <div>
                 <strong>{{ $t('dashboard.difficulty') }}:</strong>
                 {{ element.task.difficulty }}
-              </h5>
+              </div>
 
-              <h5 class="w-full flex gap-1 items-center">
+              <div class="w-full flex gap-1 items-center">
                 <strong>{{ $t('dashboard.progress') }}: </strong
                 >{{ Math.trunc(element.task.progress * 100) }}%
                 <span class="ml-auto ignore" v-if="isInteractive">
@@ -178,7 +178,7 @@ const onTaskAdd = async (
                     <b-icon-dash />
                   </button>
                 </span>
-              </h5>
+              </div>
 
               <div class="progress-bar bg-blue-100">
                 <div

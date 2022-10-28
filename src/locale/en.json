@@ -8,7 +8,8 @@
   "navigationBar": {
     "home": "Home",
     "me": "Me",
-    "dashboard": "Dashboard",
+    "managerDashboard": "Manager dashboard",
+    "executorDashboard": "Executor dashboard",
     "settings": "Settings",
     "logOut": "Log out"
   },
@@ -21,7 +22,10 @@
   },
   "modal": {
     "closeInfo": "Got it, thanks!",
-    "confirm": "Are you sure?"
+    "confirmDefaultHeader": "Confirm your action",
+    "confirmDefaultBody": "Are you sure?",
+    "continue": "Continue",
+    "cancel": "Cancel"
   },
   "auth": {
     "authorization": "Authorization",
@@ -42,6 +46,8 @@
       "email": "Value is not a valid email.",
       "minLength": "Value must have a min length of {min}.",
       "maxLength": "Value must have a min length of {max}.",
+      "minValue": "Value must be greater than or equal to {min}.",
+      "maxValue": "Value must be less than or equal to {max}.",
       "sameAs": "Value must be same as {otherName}.",
       "uniqueEmailError": "User with given email has already registered",
       "existingInviteCodeError": "Given invite code doesn't exist",

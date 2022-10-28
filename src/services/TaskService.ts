@@ -17,7 +17,9 @@ export default class TaskService {
   static async fetchTaskById(id: Id) {
     const url = `tasks/${id}`;
 
-    return AuthAPIInstance.get<ITaskResponse>(url);
+    return AuthAPIInstance.get<ITaskResponse>(url, {
+      cache: false,
+    });
   }
 
   static async createTask(newTask: FormData) {

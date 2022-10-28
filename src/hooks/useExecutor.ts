@@ -26,7 +26,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     });
 
     if (employeesResponse.data.employees.length === 0) {
-      throw new Error('There is no projects');
+      employees.value = [];
     }
 
     employees.value = await EmployeesConverter.getEmployeesFromIds(
@@ -60,19 +60,24 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     });
 
     tasks.value = await TasksConverter.getTasksFromIds(tasksResponse);
-
-    isLoading.value = false;
   };
 
   onMounted(async () => {
     await fetchEmployees();
+
+    if (employees.value.length === 0) {
+      isLoading.value = false;
+      return;
+    }
+
     currentEmployee.value = employees.value[0];
 
     await fetchProjects(employees.value.map((e) => e.project));
-
     currentProject.value = projects.value[0]._id;
 
     await fetchTasks();
+
+    isLoading.value = false;
   });
 
   watch(currentProject, async () => {
@@ -83,6 +88,8 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     );
 
     await fetchTasks();
+
+    isLoading.value = false;
   });
 
   return { tasks, projects, currentEmployee, isLoading };

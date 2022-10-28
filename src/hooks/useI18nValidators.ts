@@ -34,6 +34,16 @@ export default function () {
     messagePath: () => 'auth.validator.maxLength',
   });
 
+  const minValue = withI18nMessage(validators.minValue, {
+    withArguments: true,
+    messagePath: () => 'auth.validator.minValue',
+  });
+
+  const maxValue = withI18nMessage(validators.maxValue, {
+    withArguments: true,
+    messagePath: () => 'auth.validator.maxValue',
+  });
+
   return {
     required,
     requiredIf,
@@ -41,5 +51,7 @@ export default function () {
     sameAs,
     minLength,
     maxLength,
+    minValue,
+    maxValue,
   };
 }

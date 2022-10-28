@@ -67,6 +67,7 @@
   .btn-primary,
   .btn-secondary,
   .btn-info,
+  .btn-error,
   .btn-dark,
   .btn-light,
   .btn-outline-primary,
@@ -75,11 +76,11 @@
   .btn-outline-light {
     @apply btn;
   }
-
   
   .btn-primary:hover,
   .btn-secondary:hover,
   .btn-info:hover,
+  .btn-error:hover,
   .btn-dark:hover,
   .btn-light:hover {
     filter: brightness(0.8);
@@ -88,6 +89,7 @@
   .btn-primary:active,
   .btn-secondary:active,
   .btn-info:active,
+  .btn-error:active,
   .btn-dark:active,
   .btn-light:active {
     filter: brightness(0.6);
@@ -96,6 +98,7 @@
   .btn-primary > svg,
   .btn-secondary > svg,
   .btn-info > svg,
+  .btn-error > svg,
   .btn-dark > svg,
   .btn-light > svg {
     @apply stroke-white dark:stroke-gray-300;
@@ -111,6 +114,10 @@
 
   .btn-info {
     @apply bg-info text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-info;
+  }
+
+  .btn-error {
+    @apply bg-error text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-info;
   }
 
   .btn-dark {

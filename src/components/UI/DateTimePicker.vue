@@ -24,8 +24,6 @@ const inputValue = computed(() => {
     return '';
   }
 
-  console.log(props.modelValue, input.value.type);
-
   const date = new Date(props.modelValue);
 
   if (input.value.type === 'text') {

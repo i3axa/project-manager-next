@@ -74,14 +74,14 @@ const submit = async () => {
   <form class="flex flex-col gap-5" @submit.prevent="submit">
     <ValidationInput
       :validation="v$.email"
+      :placeholder="$t('auth.email')"
       type="email"
-      placeholder-locale-key="auth.email"
     />
 
     <ValidationInput
       :validation="v$.password"
+      :placeholder="$t('auth.password')"
       type="password"
-      placeholder-locale-key="auth.password"
     />
 
     <button class="btn-flat-secondary" type="submit">

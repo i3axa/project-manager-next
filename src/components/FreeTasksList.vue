@@ -39,9 +39,9 @@ defineEmits<IEmits>();
             backgroundColor: `var(--difficulty-${element.difficulty})`,
           }"
         >
-          <h4 class="unselectable w-max !text-dark">
+          <div class="text-lg font-semibold unselectable w-max !text-dark">
             {{ element.title }} ({{ element.difficulty }})
-          </h4>
+          </div>
           <FreeTaskEditDropdown
             class="ignore"
             :task-id="element._id"

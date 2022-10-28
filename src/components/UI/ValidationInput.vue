@@ -4,18 +4,18 @@ import type { BaseValidation } from '@vuelidate/core';
 interface IProps {
   type?: string;
   validation: BaseValidation;
-  placeholderLocaleKey: string;
+  placeholder?: string;
 }
 
 defineProps<IProps>();
 </script>
 
 <template>
-  <div class="form-group">
+  <div class="outer">
     <input
-      class="form-control"
+      class="form-control w-full"
       :type="type || 'text'"
-      :placeholder="$t(placeholderLocaleKey)"
+      :placeholder="placeholder"
       v-model="validation.$model"
       :class="{
         'is-invalid': validation.$error,
@@ -30,13 +30,9 @@ defineProps<IProps>();
 </template>
 
 <style scoped lang="scss">
-.form-group {
+.outer {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.form-control {
-  width: 100%;
 }
 </style>

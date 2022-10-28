@@ -1,14 +1,36 @@
 <script setup lang="ts">
 import DateTimePicker from '@/components/UI/DateTimePicker.vue';
 import RichText from '@/components/UI/RichText.vue';
-import { reactive, ref, watch, type Ref } from 'vue';
+import { computed, reactive, ref, watch, type Ref } from 'vue';
 import type ITask from '@/models/ITask';
 import FileCard from '@/components/FileCard.vue';
 import { useAuthStore } from '@/store/auth';
 import useTouchDeviceDetection from '@/hooks/useTouchDeviceDetection';
+import useVuelidate, { type ServerErrors } from '@vuelidate/core';
+import ValidationWrapper from '@/components/UI/ValidationWrapper.vue';
+import useI18nValidators from '@/hooks/useI18nValidators';
 
 const authStore = useAuthStore();
 const { isTouchDevice } = useTouchDeviceDetection();
+
+const validators = useI18nValidators();
+
+const rules = computed(() => {
+  return {
+    title: {
+      required: validators.required,
+      maxLength: validators.maxLength(50),
+    },
+    difficulty: {
+      required: validators.required,
+      minValue: validators.minValue(1),
+      maxValue: validators.maxValue(10),
+    },
+    deadline: {
+      required: validators.required,
+    },
+  };
+});
 
 interface IProps {
   task: Partial<ITask>;
@@ -24,14 +46,25 @@ interface IEmits {
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
+const validatedData = reactive({
+  title: props.task.title || '',
+  description: props.task.description || '',
+  difficulty: props.task.difficulty,
+  deadline: props.task.deadline || '',
+});
+
+const v$ = useVuelidate(rules, validatedData, { $autoDirty: true });
+
+watch(validatedData, () => {
+  emit('update:task', { ...props.task, ...validatedData });
+});
+
 if (!props.task?.attachments) {
   emit('update:task', { ...props.task, attachments: [] });
 }
 
-const deadline = ref(props.task.deadline || '');
-watch(deadline, (deadline) => emit('update:task', { ...props.task, deadline }));
-
 const fileInput = ref<HTMLInputElement>();
+const filesRow = ref<HTMLElement>();
 
 const triggerFilesInput = () => {
   fileInput.value?.click();
@@ -61,7 +94,13 @@ const onAttachmentDelete = (index: number) => {
   emit('update:task', task);
 };
 
-const submit = () => {
+const submit = async () => {
+  const validationResult = await v$.value.$validate();
+
+  if (!validationResult) {
+    return;
+  }
+
   emit('submit');
 
   if (fileInput.value) {
@@ -87,13 +126,11 @@ const onFileDrop = (event: DragEvent) => {
 };
 
 const onFileEnter = () => {
-  const filesRow = document.getElementById('files-row');
-  filesRow?.classList.add('drag-enter');
+  filesRow.value?.classList.add('drag-enter');
 };
 
 const onFileLeave = () => {
-  const filesRow = document.getElementById('files-row');
-  filesRow?.classList.remove('drag-enter');
+  filesRow.value?.classList.remove('drag-enter');
 };
 </script>
 
@@ -106,13 +143,14 @@ const onFileLeave = () => {
   >
     <div class="form-group">
       <b-icon-card-heading class="text-xl dark:text-light" />
-      <input
-        class="form-control"
-        v-model="task.title"
-        :placeholder="$t('task.title')"
-        type="text"
-        required
-      />
+      <ValidationWrapper :errors="v$.title.$errors">
+        <input
+          class="form-control"
+          v-model="v$.title.$model"
+          :placeholder="$t('task.title')"
+          type="text"
+        />
+      </ValidationWrapper>
     </div>
     <div class="form-group">
       <b-icon-card-text class="text-xl dark:text-light min-w-max" />
@@ -124,28 +162,30 @@ const onFileLeave = () => {
     </div>
     <div class="form-group">
       <b-icon-123 class="text-xl dark:text-light" />
-      <input
-        class="form-control"
-        v-model="task.difficulty"
-        :placeholder="$t('task.difficulty') + ' (1 - 10)'"
-        type="number"
-        min="1"
-        max="10"
-        required
-      />
+      <ValidationWrapper :errors="v$.difficulty.$errors">
+        <input
+          class="form-control"
+          v-model="v$.difficulty.$model"
+          :placeholder="$t('task.difficulty') + ' (1 - 10)'"
+          type="number"
+          min="1"
+          max="10"
+        />
+      </ValidationWrapper>
     </div>
     <div class="form-group">
       <b-icon-calendar-check class="text-xl dark:text-light" />
-      <DateTimePicker
-        :placeholder="$t('task.deadline')"
-        v-model="deadline"
-        required
-      />
+      <ValidationWrapper :errors="v$.deadline.$errors">
+        <DateTimePicker
+          :placeholder="$t('task.deadline')"
+          v-model="v$.deadline.$model"
+        />
+      </ValidationWrapper>
     </div>
     <div
       class="files-row border-gray-300 dark:border-gray-400"
       :class="isTouchDevice() ? '!border-none !min-h-0' : ''"
-      id="files-row"
+      ref="filesRow"
       @drop="onFileDrop"
       @dragenter="onFileEnter"
       @dragleave="onFileLeave"

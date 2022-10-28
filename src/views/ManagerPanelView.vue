@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import EmployeesList from '@/components/EmployeesList.vue';
 import FreeTasksList from '@/components/FreeTasksList.vue';
-import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import { useI18n } from 'vue-i18n';
-import InfoModal from '@/components/UI/InfoModal.vue';
 import { ref } from 'vue';
 import type { Id } from '@/types/API';
 import ListBox from '@/components/UI/ListBox.vue';
 import { useAuthStore } from '@/store/auth';
 import useManager from '@/hooks/useManager';
 import useFreeTasks from '@/hooks/useFreeTasks';
+import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
+import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 
-const i18n = useI18n();
 const styleStore = useStyleStore();
 const authStore = useAuthStore();
 
@@ -59,11 +57,11 @@ const onTaskRelease = async (taskId: Id) => {
   styleStore.setIsSyncIndicatorToggled(false);
 };
 
-const onFreeTaskDelete = async (taskIndex: number) => {
-  if (!confirm(i18n.t('modal.confirm'))) {
-    return;
-  }
+const isConfirmModalOpen = ref(false);
 
+let onContinue = ref(() => {});
+
+const deleteTask = async (taskIndex: number) => {
   styleStore.setIsSyncIndicatorToggled(true);
 
   const deleted = freeTasks.value.splice(taskIndex, 1);
@@ -73,16 +71,23 @@ const onFreeTaskDelete = async (taskIndex: number) => {
   styleStore.setIsSyncIndicatorToggled(false);
 };
 
-const isInviteModalOpen = ref(false);
-const openInviteModal = () => {
-  isInviteModalOpen.value = true;
+const onFreeTaskDelete = async (taskIndex: number) => {
+  isConfirmModalOpen.value = true;
+
+  onContinue.value = () => {
+    deleteTask(taskIndex);
+    isConfirmModalOpen.value = false;
+  };
 };
 </script>
 
 <template>
-  <div class="admin-panel bg-white dark:bg-slate-800 dark:bg-opacity-50">
+  <div v-if="!areExecutorsLoading && !manager">No projects</div>
+  <div v-else class="panel">
     <div class="header">
-      <h2 style="line-height: 2.15rem">{{ $t('dashboard.employees') }}:</h2>
+      <h2 class="hidden sm:block" style="line-height: 2.15rem">
+        {{ $t('dashboard.employees') }}:
+      </h2>
       <ListBox
         :items="projects.map((p) => p._id)"
         v-model="currentProject"
@@ -96,7 +101,7 @@ const openInviteModal = () => {
         </template>
       </ListBox>
     </div>
-    <LoadingSpinner v-if="areExecutorsLoading" />
+    <MiniLoadingSpinner v-if="areExecutorsLoading" />
     <EmployeesList
       :director="manager?._id"
       :employees="executors.filter((e) => e.project === currentProject)"
@@ -118,23 +123,18 @@ const openInviteModal = () => {
         <b-icon-plus-lg />
       </button>
     </div>
-    <LoadingSpinner v-if="areFreeTasksLoading" />
+    <MiniLoadingSpinner v-if="areFreeTasksLoading" />
     <FreeTasksList
       :tasks="freeTasks"
       @task-delete="onFreeTaskDelete"
       @task-add="onFreeTaskAdd"
-      v-else
     ></FreeTasksList>
 
-    <InfoModal :isOpen="isInviteModalOpen" @close="isInviteModalOpen = false">
-      <template #header> {{ $t('dashboard.inviteModal.header') }} </template>
-      <template #content>
-        {{ $t('dashboard.inviteModal.content') }}
-      </template>
-      <template #close-button>
-        {{ $t('modal.closeInfo') }}
-      </template>
-    </InfoModal>
+    <ConfirmModal
+      :is-open="isConfirmModalOpen"
+      @continue="onContinue"
+      @cancel="isConfirmModalOpen = false"
+    ></ConfirmModal>
   </div>
 </template>
 
@@ -152,12 +152,11 @@ h2 {
   margin-bottom: 2rem;
 }
 
-.admin-panel {
+.panel {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 30px;
-  border-radius: 65px;
+  margin-top: 20px;
   width: 100%;
 }
 </style>

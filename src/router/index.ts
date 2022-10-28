@@ -24,19 +24,19 @@ const router = createRouter({
       component: AuthorizationView,
     },
     {
-      path: '/admin',
-      name: 'AdminPanel',
+      path: '/manager',
+      name: 'ManagerPanel',
       component: ManagerPanelView,
+    },
+    {
+      path: '/executor',
+      name: 'ExecutorPanel',
+      component: ExecutorPanelView,
     },
     {
       path: '/employee/:id',
       name: 'Employee',
       component: EmployeeView,
-    },
-    {
-      path: '/user',
-      name: 'UserPanel',
-      component: ExecutorPanelView,
     },
     {
       path: '/taskCreation',

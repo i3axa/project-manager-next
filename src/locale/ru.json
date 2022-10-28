@@ -8,7 +8,8 @@
   "navigationBar": {
     "home": "Главная",
     "me": "Я",
-    "dashboard": "Панель",
+    "managerDashboard": "Панель менеджера",
+    "executorDashboard": "Панель исполнителя",
     "settings": "Настройки",
     "logOut": "Выйти"
   },
@@ -21,7 +22,10 @@
   },
   "modal": {
     "closeInfo": "Ясно, спасибо!",
-    "confirm": "Вы уверены?"
+    "confirmDefaultHeader": "Подтвердите действие",
+    "confirmDefaultBody": "Вы уверены?",
+    "continue": "Продолжить",
+    "cancel": "Отменить"
   },
   "auth": {
     "authorization": "Авторизация",
@@ -42,6 +46,8 @@
       "email": "Значение не является допустимой эл. почтой.",
       "minLength": "Минимальная длина - {min} символов.",
       "maxLength": "Максимальная длина - {max} символов.",
+      "minValue": "Значение должно быть больше либо равно {min}.",
+      "maxValue": "Значение должно быть меньше либо равно {max}",
       "sameAs": "Поле должно быть таким же как и {otherName}.",
       "uniqueEmailError": "Пользователь с такой эл. почтой уже зарегистрирован",
       "existingInviteCodeError": "Такой код приглашения не существует",
