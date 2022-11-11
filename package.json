@@ -1,6 +1,9 @@
 {
   "name": "project-manager-next",
   "version": "0.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "run-p type-check build-only",
