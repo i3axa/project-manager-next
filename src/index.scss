@@ -65,27 +65,67 @@
   }
 
   .btn-primary,
+  .btn-secondary,
+  .btn-info,
+  .btn-error,
+  .btn-dark,
+  .btn-light,
   .btn-outline-primary,
   .btn-outline-secondary,
   .btn-outline-dark,
   .btn-outline-light {
     @apply btn;
   }
+  
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-info:hover,
+  .btn-error:hover,
+  .btn-dark:hover,
+  .btn-light:hover {
+    filter: brightness(0.8);
+  }
+  
+  .btn-primary:active,
+  .btn-secondary:active,
+  .btn-info:active,
+  .btn-error:active,
+  .btn-dark:active,
+  .btn-light:active {
+    filter: brightness(0.6);
+  }
+  
+  .btn-primary > svg,
+  .btn-secondary > svg,
+  .btn-info > svg,
+  .btn-error > svg,
+  .btn-dark > svg,
+  .btn-light > svg {
+    @apply stroke-white dark:stroke-gray-300;
+  }
 
   .btn-primary {
     @apply bg-primary text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-primary;
   }
 
-  .btn-primary:hover {
-    filter: brightness(0.8);
+  .btn-secondary {
+    @apply bg-secondary text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-secondary;
   }
 
-  .btn-primary:active {
-    filter: brightness(0.6);
+  .btn-info {
+    @apply bg-info text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-info;
   }
 
-  .btn-primary > svg {
-    @apply stroke-white dark:stroke-gray-300;
+  .btn-error {
+    @apply bg-error text-white dark:text-gray-300 focus:ring-4 focus:ring-opacity-50 focus:ring-info;
+  }
+
+  .btn-dark {
+    @apply bg-dark text-light focus:ring-4 focus:ring-opacity-50 focus:ring-dark;
+  }
+
+  .btn-light {
+    @apply bg-light text-dark focus:ring-4 focus:ring-opacity-50 focus:ring-light;
   }
 
   .btn-outline-primary {
@@ -141,7 +181,7 @@
   }
 
   .btn-flat {
-    @apply btn border border-gray-200 dark:border-gray-800;
+    @apply btn border-0 border-gray-200 dark:border-gray-800;
   }
 
   .btn-flat-primary {
@@ -152,21 +192,40 @@
     @apply btn-flat  dark:border-gray-800  justify-center text-secondary hover:bg-secondary hover:text-light focus:ring-4 focus:ring-opacity-50 focus:ring-secondary;
   }
 
-  input::placeholder {
-    @apply dark:text-gray-300/60;
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-gray-400 dark:text-gray-300/60;
   }
 
-  input::-webkit-input-placeholder {
-    @apply dark:text-gray-300/60;
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder {
+    @apply text-gray-400 dark:text-gray-300/60;
   }
 
-  input::-moz-placeholder {
-    @apply dark:text-gray-300/60;
+  input::-moz-placeholder,
+  textarea::-moz-placeholder {
+    @apply text-gray-400 dark:text-gray-300/60;
   }
 
-  .form-control {
+  .form-control.is-valid {
+    @apply focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-success;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  }
+
+  .form-control.is-invalid {
+    @apply focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-error;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  }
+
+  .form-control, .ProseMirror {
     @apply border-gray-300 dark:border-gray-700 #{!important};
-    @apply rounded-xl shadow-sm border bg-light dark:bg-dark text-gray-600 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-opacity-30 focus:ring-primary;
-    transition: all 0.3s ease-in-out;
+    @apply rounded-3xl shadow-sm border bg-light dark:bg-dark text-gray-600 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-opacity-30 focus:ring-primary;
+    transition: box-shadow 0.3s ease-in-out;
   }
 }

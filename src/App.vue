@@ -2,41 +2,47 @@
 import NavigationBar from '@/components/NavigationBar.vue';
 import HeaderBar from '@/components/HeaderBar.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
-import store from '@/store';
-import { StyleActions } from '@/store/modules/style';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
 </script>
 
 <template>
-  <HeaderBar></HeaderBar>
   <NavigationBar></NavigationBar>
+  <HeaderBar></HeaderBar>
 
-  <div id="content">
-    <RouterView class="mt-16 mb-2 mx-5"></RouterView>
-  </div>
+  <main id="content">
+    <RouterView class="mt-3 mx-5"></RouterView>
+  </main>
 
   <div
+    v-show="styleStore.isGlobalSpinnerShown"
     id="global-overlay"
     class="bg-dark/70"
     @click="
-      store.state.style.isNavbarHidden
-        ? undefined
-        : store.dispatch(StyleActions.toggleNavigationBar)
+      styleStore.isNavbarHidden ? undefined : styleStore.toggleNavigationBar()
     "
   ></div>
 
-  <LoadingSpinner id="global-spinner" />
+  <LoadingSpinner
+    id="global-spinner"
+    v-show="styleStore.isGlobalSpinnerShown"
+  />
 </template>
 
 <style lang="scss">
 @import '@/assets/base.scss';
 
+#app {
+  position: relative;
+}
+
 #content {
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
 }
 
 #global-spinner {
-  display: none;
   position: fixed;
   left: 50%;
   top: 50%;
@@ -44,7 +50,7 @@ import { StyleActions } from '@/store/modules/style';
 }
 
 #global-overlay {
-  display: none;
+  display: block;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -52,6 +58,6 @@ import { StyleActions } from '@/store/modules/style';
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 2;
 }
 </style>

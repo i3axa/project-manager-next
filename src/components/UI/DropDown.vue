@@ -1,25 +1,73 @@
 <script setup lang="ts">
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { Menu, MenuButton, MenuItems } from '@headlessui/vue';
+import { onMounted, ref, watch } from 'vue';
+
+type Position = 'upLeft' | 'upRight' | 'downLeft' | 'downRight';
 
 interface IProps {
-  items: Array<unknown>;
+  position: Position;
 }
 
-interface IEmits {
-  (eventName: 'action', element: unknown): void;
-}
-
-defineEmits<IEmits>();
 defineProps<IProps>();
+
+const getClassFromPosition = (position: Position) => {
+  if (position === 'downLeft') {
+    return '';
+  }
+
+  if (position === 'downRight') {
+    return 'translate-x-full';
+  }
+
+  if (position === 'upLeft') {
+    return '-translate-y-full -top-2';
+  }
+
+  if (position === 'upRight') {
+    return '-translate-y-full translate-x-full -top-2';
+  }
+
+  return '';
+};
+
+// const position = ref<Position>(
+//   props.forceUpPosition ? Position.upLeft : Position.downLeft
+// );
+
+// const isPositionUp = () => {
+//   return props.forceUpPosition || position.value < 2;
+// };
+
+const onOpen = (event: Event, isOpened: boolean) => {
+  // if (isOpened) {
+  //   return;
+  // }
+  // const rect = (event.target as Element).getBoundingClientRect();
+  // const isUp = isPositionUp();
+  // if (rect.x < 160) {
+  //   if (isUp) {
+  //     position.value = Position.upRight;
+  //   } else {
+  //     position.value = Position.downRight;
+  //   }
+  // } else {
+  //   if (isUp) {
+  //     position.value = Position.upLeft;
+  //   } else {
+  //     position.value = Position.downLeft;
+  //   }
+  // }
+  // console.log((event.target as Element).getBoundingClientRect());
+};
 </script>
 
 <template>
-  <Menu as="div" class="relative inline-block text-left">
-    <div>
-      <MenuButton
-        class="menu-btn inline-flex justify-center w-full rounded-xl border border-gray-400 border-opacity-60 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50 focus:ring-offset-gray-100 focus:ring-primary"
-      >
-        <slot name="title"></slot>
+  <Menu v-slot="{ open }" as="div" class="menu">
+    <div class="flex content-center">
+      <MenuButton @click="onOpen($event, open)">
+        <slot name="title">
+          <b-icon-chevron-down />
+        </slot>
       </MenuButton>
     </div>
 
@@ -32,39 +80,30 @@ defineProps<IProps>();
       leave-to-class="transition-transform opacity-0 scale-95"
     >
       <MenuItems
-        class="z-20 rounded-2xl origin-top-right absolute mt-2 w-40 shadow-lg bg-white dark:bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
+        class="menu-items shadow-lg bg-white dark:bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
+        :class="getClassFromPosition(position)"
+        ref="menuItems"
       >
-        <MenuItem
-          v-for="(element, index) in items"
-          v-slot="{ active }"
-          @click="$emit('action', element)"
-        >
-          <div
-            class="unselectable cursor-pointer block px-4 py-2 text-sm"
-            :class="[
-              active
-                ? 'bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-200 '
-                : 'text-gray-700 dark:text-gray-400',
-              index === 0 ? 'rounded-t-2xl' : '',
-              index === items.length - 1 ? 'rounded-b-2xl' : '',
-            ]"
-          >
-            <slot
-              name="item"
-              v-bind="{ element, index, active, length: items.length }"
-            >
-              {{ element }}
-            </slot>
-          </div>
-        </MenuItem>
+        <slot name="items"></slot>
       </MenuItems>
     </transition>
   </Menu>
 </template>
 
 <style scoped lang="scss">
-.menu-btn {
-  line-height: 1.2;
-  transition: background-color 0.3s ease-in-out;
+.menu {
+  position: relative;
+  display: inline-block;
+  text-align: left;
+}
+
+.menu-items {
+  right: 0px;
+  border-radius: 1rem;
+  transform-origin: top right;
+  position: absolute;
+  width: 10rem;
+  margin-top: 0.5rem;
+  z-index: 1;
 }
 </style>

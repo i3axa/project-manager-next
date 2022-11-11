@@ -1,21 +1,32 @@
 <script setup lang="ts">
-import useFreeTasks from '@/hooks/useFreeTasks';
+import type ITask from '@/models/ITask';
+import FreeTaskEditDropdown from '@/components/FreeTaskEditDropdown.vue';
 
-const { tasks } = useFreeTasks();
+interface IProps {
+  tasks: ITask[];
+}
+
+interface IEmits {
+  (eventName: 'taskDelete', taskIndex: number): void;
+  (eventName: 'taskAdd', newIndex: number): void;
+}
+
+defineProps<IProps>();
+defineEmits<IEmits>();
 </script>
 
 <template>
   <base-draggable
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     :list="tasks"
     itemKey="id"
     group="tasks"
     animation="150"
-    force-fallback="true"
     filter=".ignore"
     handle=".handle"
+    @add="$emit('taskAdd', $event.newIndex)"
   >
-    <template #item="{ element }">
+    <template #item="{ element, index }: { element: ITask, index: number }">
       <div
         class="task border-4 rounded-3xl shadow-md"
         :style="{
@@ -28,18 +39,20 @@ const { tasks } = useFreeTasks();
             backgroundColor: `var(--difficulty-${element.difficulty})`,
           }"
         >
-          <button class="btn-outline-dark ignore text-sm !p-2">
-            <b-icon-pencil />
-          </button>
-          <h4 class="unselectable w-max !text-dark">
+          <div class="text-lg font-semibold unselectable w-max !text-dark">
             {{ element.title }} ({{ element.difficulty }})
-          </h4>
-          <b-icon-arrows-move class="text-2xl" />
+          </div>
+          <FreeTaskEditDropdown
+            class="ignore"
+            :task-id="element._id"
+            @taskDelete="$emit('taskDelete', index)"
+          />
         </div>
         <div class="task-body">
-          <p class="text-dark dark:text-light text-center">
-            {{ element.description }}
-          </p>
+          <p
+            class="text-dark dark:text-light text-center"
+            v-html="element.description"
+          ></p>
         </div>
       </div>
     </template>
@@ -47,6 +60,10 @@ const { tasks } = useFreeTasks();
 </template>
 
 <style scoped lang="scss">
+.sortable-chosen > .task-body {
+  font-size: 0;
+}
+
 .task {
   margin-top: 0.5rem;
 }
@@ -62,9 +79,5 @@ const { tasks } = useFreeTasks();
   align-items: center;
   display: flex;
   cursor: move;
-}
-
-.dark .task {
-  filter: brightness(0.8);
 }
 </style>

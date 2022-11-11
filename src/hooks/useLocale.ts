@@ -5,6 +5,8 @@ export default function () {
   const i18n = useI18n();
   const locale = i18n.locale;
 
+  locale.value = new Intl.Locale(locale.value).language;
+
   watch(locale, () => {
     localStorage.setItem('locale', locale.value);
   });

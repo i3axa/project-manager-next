@@ -1,54 +1,41 @@
 import type ITask from '@/models/ITask';
-import { ref } from 'vue';
+import TaskService from '@/services/TaskService';
+import type { Id } from '@/types/API';
+import { TasksConverter } from '@/types/API/ResponseToModelConverter';
+import { onMounted, ref, watch, type Ref } from 'vue';
 
-export default function () {
-  const tasks = ref<ITask[]>([
-    {
-      id: '14',
-      title: 'JS 0',
-      description: 'Vue',
-      difficulty: 9,
-      attachments: [],
-      donePercents: 0.5,
-      deadline: new Date(),
-    },
-    {
-      id: '13',
-      title: 'JS 0',
-      description: 'Vue',
-      difficulty: 2,
-      attachments: [],
-      donePercents: 0.5,
-      deadline: new Date(),
-    },
-    {
-      id: '12',
-      title: 'JS 0',
-      description: 'Vue',
-      difficulty: 1,
-      attachments: [],
-      donePercents: 0.5,
-      deadline: new Date(),
-    },
-    {
-      id: '11',
-      title: 'JS 0',
-      description: 'Vue',
-      difficulty: 5,
-      attachments: [],
-      donePercents: 0.5,
-      deadline: new Date(),
-    },
-    {
-      id: '10',
-      title: 'JS 0',
-      description: 'Vue',
-      difficulty: 7,
-      attachments: [],
-      donePercents: 0.5,
-      deadline: new Date(),
-    },
-  ]);
+export default function (currentProject: Ref<Id | undefined>) {
+  const isLoading = ref(true);
+  const freeTasks = ref<ITask[]>([]);
 
-  return { tasks };
+  const fetch = async () => {
+    if (currentProject.value === undefined) {
+      return;
+    }
+
+    const response = await TaskService.fetchTasks({
+      project: currentProject.value,
+      isFree: '1',
+    });
+
+    freeTasks.value = await TasksConverter.getTasksFromIds(response);
+
+    isLoading.value = false;
+  };
+
+  onMounted(async () => {
+    if (currentProject.value) {
+      isLoading.value = true;
+
+      await fetch();
+    }
+  });
+
+  watch(currentProject, async () => {
+    isLoading.value = true;
+
+    await fetch();
+  });
+
+  return { freeTasks, isLoading };
 }

@@ -6,6 +6,7 @@ export default createI18n({
   locale: localStorage.getItem('locale') || navigator.language,
   // silentFallbackWarn: true,
   // silentTranslationWarn: true,
+  legacy: false,
   fallbackLocale: {
     'ru-RU': ['ru'],
     default: ['en'],

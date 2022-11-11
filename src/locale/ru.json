@@ -8,7 +8,8 @@
   "navigationBar": {
     "home": "Главная",
     "me": "Я",
-    "dashboard": "Панель",
+    "managerDashboard": "Панель менеджера",
+    "executorDashboard": "Панель исполнителя",
     "settings": "Настройки",
     "logOut": "Выйти"
   },
@@ -20,7 +21,11 @@
     "language": "Язык"
   },
   "modal": {
-    "closeInfo": "Ясно, спасибо!"
+    "closeInfo": "Ясно, спасибо!",
+    "confirmDefaultHeader": "Подтвердите действие",
+    "confirmDefaultBody": "Вы уверены?",
+    "continue": "Продолжить",
+    "cancel": "Отменить"
   },
   "auth": {
     "authorization": "Авторизация",
@@ -31,11 +36,64 @@
     "password": "Пароль",
     "confirmPassword": "Подтвердите пароль",
     "name": "Имя",
-    "surname": "Фамилия"
+    "surname": "Фамилия",
+    "skills": "Умения",
+    "admin": "Админ",
+    "user": "Пользователь",
+    "inviteCode": "Код приглашения",
+    "validator": {
+      "required": "Поле является обязательным.",
+      "email": "Значение не является допустимой эл. почтой.",
+      "minLength": "Минимальная длина - {min} символов.",
+      "maxLength": "Максимальная длина - {max} символов.",
+      "minValue": "Значение должно быть больше либо равно {min}.",
+      "maxValue": "Значение должно быть меньше либо равно {max}",
+      "sameAs": "Поле должно быть таким же как и {otherName}.",
+      "uniqueEmailError": "Пользователь с такой эл. почтой уже зарегистрирован",
+      "existingInviteCodeError": "Такой код приглашения не существует",
+      "existingEmailError": "Пользователь с такой почтой не существует",
+      "correctPasswordError": "Неверный пароль"
+    },
+    "activationModal": {
+      "header": "Активация аккаунта",
+      "content": "Проследуйте инструкциям на вашей эл. почте."
+    }
   },
   "dashboard": {
     "totalDifficulty": "Общая сложность",
     "employees": "Рабочие",
-    "tasks": "Задания"
+    "project": "Проект",
+    "tasks": "Задания",
+    "WAITING": "Очередь",
+    "IN_PROGRESS": "В процессе",
+    "STOPED": "Ревью",
+    "CLOSED": "Сделано",
+    "addTask": "Добавить задание",
+    "director": "Постановщик",
+    "standard": "Срок",
+    "used": "Использовано",
+    "h": "ч",
+    "difficulty": "Сложность",
+    "progress": "Прогресс",
+    "daysLeft": "дней осталось",
+    "expired": "Просрочено",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "remove": "Убрать",
+    "inviteModal": {
+      "header": "Добавление нового работника",
+      "content": "Тест"
+    }
+  },
+  "task": {
+    "title": "Заголовок",
+    "description": "Описание",
+    "difficulty": "Сложность",
+    "deadline": "Крайний срок"
+  },
+  "createTask": {
+    "attach": "Прикрепить",
+    "submit": "Подтвердить",
+    "dropFiles": "Перетащите файлы сюда"
   }
 }

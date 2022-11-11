@@ -1,18 +1,31 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-
 interface IProps {
-  value: unknown;
-  model: unknown;
+  value: number | string;
+  modelValue: unknown;
   id: string;
 }
 
 interface IEmits {
-  (eventName: 'input', value: unknown): void;
+  (eventName: 'update:modelValue', value: number | string): void;
 }
 
 defineProps<IProps>();
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
+
+const updateInput = (event: Event) => {
+  const element = event.target as HTMLInputElement;
+  const parsedNumber = Number.parseInt(element.value);
+
+  let result: number | string;
+
+  if (Number.isNaN(parsedNumber)) {
+    result = element.value;
+  } else {
+    result = parsedNumber;
+  }
+
+  emit('update:modelValue', result);
+};
 </script>
 
 <template>
@@ -22,8 +35,8 @@ defineEmits<IEmits>();
       type="radio"
       class="focus:ring-secondary dark:bg-gray-700 h-4 w-4 text-primary border-gray-300"
       :value="value"
-      v-model="model"
-      @input="$emit('input', value)"
+      v-model="modelValue"
+      @input="updateInput"
     />
     <label
       :for="id"

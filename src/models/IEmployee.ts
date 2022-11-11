@@ -1,10 +1,10 @@
-import type ITask from './ITask';
+import type IUserDto from './dto/IUserDto';
+import type IProject from './IProject';
+import type { EmployeeSpeciality, Id } from '@/types/API';
 
 export default interface IEmployee {
-  id: string;
-  name: string;
-  surname: string;
-  email: string;
-  skills: string;
-  takenTasks: ITask[];
+  _id: Id;
+  user: IUserDto;
+  project: Id;
+  speciality: EmployeeSpeciality;
 }

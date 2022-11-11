@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import store from '@/store';
+import { useAuthStore } from '@/store/auth';
+import { useStyleStore } from '@/store/style';
+
+const styleStore = useStyleStore();
+const authStore = useAuthStore();
 
 let isNavBarExpanded = true;
 
@@ -25,7 +29,7 @@ const expand = () => {
     <div class="flex flex-row items-center mb-5">
       <button
         class="btn btn-outline-dark dark:btn-outline-light max-w-min !border-none !shadow-none self-center"
-        @click="store.dispatch('style/toggleNavigationBar')"
+        @click="styleStore.toggleNavigationBar()"
       >
         <b-icon-list class="text-2xl" />
       </button>
@@ -43,31 +47,41 @@ const expand = () => {
     </button>
     <ul class="nav-buttons mt-5">
       <li class="nav-item home-nav">
-        <button class="btn-primary nav-link" @click="$router.push('/')">
+        <router-link class="btn-primary nav-link" to="/">
           <b-icon-house class="mr-1" />
           <div class="nav-link-title">{{ $t('navigationBar.home') }}</div>
-        </button>
+        </router-link>
       </li>
       <li class="nav-item">
-        <button class="btn-primary nav-link" @click="$router.push('/me')">
+        <router-link class="btn-primary nav-link" to="/me">
           <b-icon-person-circle class="mr-1" />
           <div class="nav-link-title">{{ $t('navigationBar.me') }}</div>
-        </button>
+        </router-link>
       </li>
       <li class="nav-item">
-        <button class="btn-primary nav-link" @click="$router.push('/admin')">
+        <router-link class="btn-primary nav-link" to="/manager">
           <b-icon-grid class="mr-1" />
-          <div class="nav-link-title">{{ $t('navigationBar.dashboard') }}</div>
-        </button>
+          <div class="nav-link-title">
+            {{ $t('navigationBar.managerDashboard') }}
+          </div>
+        </router-link>
       </li>
       <li class="nav-item">
-        <button class="btn-primary nav-link" @click="$router.push('/settings')">
+        <router-link class="btn-primary nav-link" to="/executor">
+          <b-icon-columns-gap class="mr-1" />
+          <div class="nav-link-title">
+            {{ $t('navigationBar.executorDashboard') }}
+          </div>
+        </router-link>
+      </li>
+      <li class="nav-item">
+        <router-link class="btn-primary nav-link" to="/settings">
           <b-icon-gear class="mr-1" />
           <div class="nav-link-title">{{ $t('navigationBar.settings') }}</div>
-        </button>
+        </router-link>
       </li>
       <li class="nav-item">
-        <button class="btn-primary nav-link">
+        <button class="btn-primary nav-link" @click="authStore.logout()">
           <b-icon-arrow-right-circle class="mr-1" />
           <div class="nav-link-title">{{ $t('navigationBar.logOut') }}</div>
         </button>
@@ -86,6 +100,10 @@ const expand = () => {
 </template>
 
 <style scoped lang="scss">
+a {
+  opacity: 1 !important;
+}
+
 .about {
   margin-top: auto;
   display: flex;
@@ -110,7 +128,7 @@ const expand = () => {
   flex-direction: column;
 }
 
-button {
+.nav-link {
   width: 100%;
 }
 
@@ -128,7 +146,7 @@ button {
   margin-bottom: 20px;
 }
 
-.home-nav > button > svg {
+.home-nav > .nav-link > svg {
   animation: none !important;
 }
 
@@ -156,9 +174,6 @@ button {
   .navbar.no-text .nav-link > svg {
     margin-left: 20%;
     margin-right: 0;
-  }
-  .navbar {
-    width: min-content;
   }
 
   .expand-btn {

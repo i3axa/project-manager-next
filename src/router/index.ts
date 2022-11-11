@@ -1,7 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MainPage from '@/views/MainPage.vue';
-import AuthorizationView from '@/views/AuthorizationView.vue';
-import AdminPanelView from '@/views/AdminPanelView.vue';
+
+const MainPage = () => import('@/views/MainPage.vue');
+const AuthorizationView = () => import('@/views/AuthorizationView.vue');
+const ManagerPanelView = () => import('@/views/ManagerPanelView.vue');
+const ExecutorPanelView = () => import('@/views/ExecutorPanelView.vue');
+const SettingsView = () => import('@/views/SettingsView.vue');
+const EmployeeView = () => import('@/views/EmployeeView.vue');
+const CreateTaskView = () => import('@/views/CreateTaskView.vue');
+const UpdateTaskView = () => import('@/views/UpdateTaskView.vue');
+const MeView = () => import('@/views/MeView.vue');
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,9 +24,42 @@ const router = createRouter({
       component: AuthorizationView,
     },
     {
-      path: '/admin',
-      name: 'AdminPanel',
-      component: AdminPanelView,
+      path: '/manager',
+      name: 'ManagerPanel',
+      component: ManagerPanelView,
+    },
+    {
+      path: '/executor',
+      name: 'ExecutorPanel',
+      component: ExecutorPanelView,
+    },
+    {
+      path: '/employee/:id',
+      name: 'Employee',
+      component: EmployeeView,
+    },
+    {
+      path: '/taskCreation',
+      name: 'TaskCreation',
+      component: CreateTaskView,
+      props: (route) => ({
+        task: route.query,
+      }),
+    },
+    {
+      path: '/taskUpdate/:id',
+      name: 'TaskUpdate',
+      component: UpdateTaskView,
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: SettingsView,
+    },
+    {
+      path: '/me',
+      name: 'Me',
+      component: MeView,
     },
   ],
 });
