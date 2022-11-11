@@ -11,9 +11,9 @@ const styleStore = useStyleStore();
   <NavigationBar></NavigationBar>
   <HeaderBar></HeaderBar>
 
-  <div id="content">
+  <main id="content">
     <RouterView class="mt-3 mx-5"></RouterView>
-  </div>
+  </main>
 
   <div
     v-show="styleStore.isGlobalSpinnerShown"

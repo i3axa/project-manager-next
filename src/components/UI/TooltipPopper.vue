@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, toRefs, watch, onMounted } from 'vue';
 import { createPopper, type Placement } from '@popperjs/core';
 
 interface IProps {
-  placement?: string;
   text: string;
+  placement?: Placement;
+  forceHide?: boolean;
+  delay?: number;
 }
 
 const props = defineProps<IProps>();
+const { forceHide } = toRefs(props);
 
 const button = ref<HTMLElement>();
 const tooltip = ref<HTMLElement>();
+let timeout: number;
 
 const popperInstance = computed(() => {
   return createPopper(button.value!, tooltip.value!, {
-    placement: (props.placement || 'bottom') as Placement,
+    placement: props.placement || ('bottom' as Placement),
     modifiers: [
       {
         name: 'offset',
@@ -28,13 +32,31 @@ const popperInstance = computed(() => {
 });
 
 const handleShow = () => {
-  tooltip.value!.setAttribute('data-show', '');
-  popperInstance.value.update();
+  if (forceHide?.value) {
+    return;
+  }
+
+  timeout = setTimeout(() => {
+    tooltip.value?.setAttribute('data-show', '');
+
+    popperInstance.value.update();
+  }, props.delay);
 };
 
 const handleHide = () => {
-  tooltip.value!.removeAttribute('data-show');
+  clearTimeout(timeout);
+  tooltip.value?.removeAttribute('data-show');
 };
+
+onMounted(() => {
+  if (forceHide) {
+    watch(forceHide, (value) => {
+      if ((value = true)) {
+        handleHide();
+      }
+    });
+  }
+});
 </script>
 
 <template>

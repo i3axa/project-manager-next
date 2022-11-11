@@ -27,22 +27,22 @@ export default function (tasks: ITask[]) {
 
   const taskStateColumns = ref<IStateColumn[]>([
     new StateColumn({
-      titleLocaleKey: 'dashboard.toDos',
+      titleLocaleKey: 'dashboard.WAITING',
       state: TaskState.WAITING,
       tasks: waitingTasks,
     }),
     new StateColumn({
-      titleLocaleKey: 'dashboard.inProgress',
+      titleLocaleKey: 'dashboard.IN_PROGRESS',
       state: TaskState.IN_PROGRESS,
       tasks: inProgressTasks,
     }),
     new StateColumn({
-      titleLocaleKey: 'dashboard.review',
+      titleLocaleKey: 'dashboard.STOPED',
       state: TaskState.STOPED,
       tasks: stopedTasks,
     }),
     new StateColumn({
-      titleLocaleKey: 'dashboard.done',
+      titleLocaleKey: 'dashboard.CLOSED',
       state: TaskState.CLOSED,
       tasks: closedTasks,
     }),

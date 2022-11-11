@@ -4,7 +4,7 @@ import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import useExecutor from '@/hooks/useExecutor';
 import { useAuthStore } from '@/store/auth';
 import type { Id } from '@/types/API';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ListBox from '@/components/UI/ListBox.vue';
 
 const authStore = useAuthStore();
@@ -13,7 +13,15 @@ if (!authStore.credentials.user) {
   throw 'Unauthorized error';
 }
 
-const currentProject = ref<Id>();
+const currentProject = ref<Id | undefined>(
+  localStorage.getItem('currentProject') || undefined
+);
+
+watch(currentProject, () => {
+  if (currentProject.value) {
+    localStorage.setItem('currentProject', currentProject.value);
+  }
+});
 
 const { tasks, projects, currentEmployee, isLoading } = useExecutor(
   authStore.credentials.user.id,

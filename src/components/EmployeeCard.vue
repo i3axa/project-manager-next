@@ -9,6 +9,8 @@ import { useStyleStore } from '@/store/style';
 import type { Id } from '@/types/API';
 import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
+import { TaskState } from '@/types/API';
+import TooltipPopper from '@/components/UI/TooltipPopper.vue';
 
 interface IProps {
   employee: IEmployee;
@@ -66,6 +68,8 @@ const onTaskDelete = (taskIndex: number) => {
   };
 };
 
+const forceHideTooltips = ref<boolean>(false);
+
 const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
   const newTask = tasks.value[newIndex];
 
@@ -81,12 +85,23 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
   styleStore.setIsSyncIndicatorToggled(false);
 };
 
-const hideDropDowns = () => {
-  const elements = document.getElementsByClassName('dropdown');
+const hidePopups = () => {
+  forceHideTooltips.value = true;
+  const elements = Array.from(document.getElementsByClassName('dropdown'));
 
-  for (const dropdown of Array.from(elements)) {
-    (dropdown as HTMLElement).click();
-  }
+  elements.forEach((dropdown) => {
+    const isOpened = dropdown.getAttribute('data-headlessui-state') === 'open';
+
+    if (isOpened) {
+      setTimeout(() => {
+        (dropdown as HTMLButtonElement).dispatchEvent(new Event('click'));
+      }, 0);
+    }
+  });
+};
+
+const isTaskExpired = ({ deadline }: ITask) => {
+  return new Date() > new Date(deadline);
 };
 </script>
 
@@ -94,7 +109,7 @@ const hideDropDowns = () => {
   <div class="card">
     <div class="mb-4 w-full flex flex-col gap-2">
       <div class="w-full flex flex-row justify-between gap-5">
-        <div class="text-lg font-semibold">
+        <div class="text-lg font-semibold dark:text-light">
           {{ employee.user.name }} {{ employee.user.surname }}
         </div>
         <router-link
@@ -104,7 +119,7 @@ const hideDropDowns = () => {
           <b-icon-box-arrow-up-right />
         </router-link>
       </div>
-      <div>{{ employee.user.skills }}</div>
+      <div class="dark:text-light">{{ employee.user.skills }}</div>
     </div>
     <div
       class="add-task border-gray-300 text-slate-400 unselectable"
@@ -130,28 +145,51 @@ const hideDropDowns = () => {
       itemKey="id"
       filter=".ignore"
       @add="onTaskAdd"
-      @start="hideDropDowns"
+      @end="forceHideTooltips = false"
     >
       <template
         #item="{ element, index: taskIndex }: { element: ITask, index: number }"
       >
-        <div
-          class="task rounded-2xl shadow !border-none"
-          :style="{
-            backgroundColor: `var(--difficulty-${element.difficulty})`,
-          }"
-          @click="hideDropDowns"
+        <TooltipPopper
+          :text="$t('dashboard.' + element.state)"
+          :force-hide="forceHideTooltips"
+          :delay="700"
         >
-          <div class="text-base font-semibold unselectable w-max !text-dark">
-            {{ element.title }} ({{ element.difficulty }})
+          <div
+            class="task rounded-2xl shadow !border-none"
+            :style="{
+              backgroundColor: `var(--difficulty-${element.difficulty})`,
+            }"
+            @mousedown="hidePopups"
+            @mouseup="forceHideTooltips = false"
+          >
+            <div class="flex flex-row gap-1 items-center overflow-hidden">
+              <b-icon-check2-circle
+                class="min-w-max"
+                v-if="element.state === TaskState.STOPED"
+              />
+              <b-icon-slash-circle
+                class="min-w-max"
+                v-else-if="element.state === TaskState.CLOSED"
+              />
+              <b-icon-exclamation-circle
+                class="min-w-max"
+                v-else-if="isTaskExpired(element)"
+              />
+              <div
+                class="task-title text-base font-semibold unselectable !text-dark"
+              >
+                {{ element.title }} ({{ element.difficulty }})
+              </div>
+            </div>
+            <EmployeesTaskEditDropdown
+              class="ignore dropdown"
+              :task-id="element._id"
+              @task-remove="releaseTask(taskIndex)"
+              @task-delete="onTaskDelete(taskIndex)"
+            />
           </div>
-          <EmployeesTaskEditDropdown
-            class="ignore dropdown"
-            :task-id="element._id"
-            @task-remove="releaseTask(taskIndex)"
-            @task-delete="onTaskDelete(taskIndex)"
-          />
-        </div>
+        </TooltipPopper>
       </template>
     </base-draggable>
     <div
@@ -206,6 +244,13 @@ const hideDropDowns = () => {
   align-items: center;
   display: flex;
   cursor: move;
+  max-width: 250px;
+}
+
+.task-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .add-task {

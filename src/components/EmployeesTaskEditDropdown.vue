@@ -16,17 +16,29 @@ defineEmits<IEmits>();
 </script>
 
 <template>
-  <DropDown>
+  <DropDown :position="'upLeft'">
     <template #title>
       <b-icon-three-dots class="text-2xl" />
     </template>
     <template #items>
+      <MenuItem v-slot="{ active }" @click="$emit('taskDelete')">
+        <div
+          class="drop-down-item unselectable rounded-t-2xl"
+          :class="[
+            active
+              ? 'bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-200 '
+              : 'text-gray-900 dark:text-gray-400',
+          ]"
+        >
+          <b-icon-info-lg /> Info
+        </div>
+      </MenuItem>
       <MenuItem
         v-slot="{ active }"
         @click="$router.push(`taskUpdate/${taskId}`)"
       >
         <div
-          class="drop-down-item unselectable rounded-t-2xl"
+          class="drop-down-item unselectable"
           :class="[
             active
               ? 'bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-200 '

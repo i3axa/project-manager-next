@@ -60,6 +60,8 @@ export const useAuthStore = defineStore('auth', () => {
       setUser(response.data.user);
       isAuth.value = true;
 
+      localStorage.removeItem('currentProject');
+
       return response;
     } catch (error: unknown) {
       console.log(error);
@@ -104,6 +106,8 @@ export const useAuthStore = defineStore('auth', () => {
       isAuth.value = false;
       deleteToken();
       deleteUser();
+
+      localStorage.removeItem('currentProject');
 
       return response;
     } catch (error: unknown) {

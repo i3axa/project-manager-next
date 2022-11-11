@@ -50,7 +50,7 @@ defineProps<IProps>();
       extension === 'png' || extension === 'jpg' || extension === 'svg'
     "
   />
-  <b-icon-file-earmark-binary v-else />
+  <b-icon-file-earmark-binary class="dark:text-light" v-else />
 </template>
 
 <style scoped lang="scss"></style>

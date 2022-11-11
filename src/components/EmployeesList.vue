@@ -41,7 +41,8 @@ const releaseTask = (taskId: Id) => {
   gap: 1.25rem;
   overflow-x: auto;
   overflow-y: clip;
-  padding-bottom: 90px;
+  padding-bottom: 2rem;
+  position: relative;
 }
 
 .employees-list::before,

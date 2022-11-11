@@ -3,7 +3,7 @@ import EmployeesList from '@/components/EmployeesList.vue';
 import FreeTasksList from '@/components/FreeTasksList.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type { Id } from '@/types/API';
 import ListBox from '@/components/UI/ListBox.vue';
 import { useAuthStore } from '@/store/auth';
@@ -19,7 +19,15 @@ if (!authStore.credentials.user) {
   throw 'Unauthorized error';
 }
 
-const currentProject = ref<Id>();
+const currentProject = ref<Id | undefined>(
+  localStorage.getItem('currentProject') || undefined
+);
+
+watch(currentProject, () => {
+  if (currentProject.value) {
+    localStorage.setItem('currentProject', currentProject.value);
+  }
+});
 
 const {
   executors,
@@ -83,52 +91,56 @@ const onFreeTaskDelete = async (taskIndex: number) => {
 
 <template>
   <div v-if="!areExecutorsLoading && !manager">No projects</div>
-  <div v-else class="panel">
-    <div class="header">
-      <h2 class="hidden sm:block" style="line-height: 2.15rem">
-        {{ $t('dashboard.employees') }}:
-      </h2>
-      <ListBox
-        :items="projects.map((p) => p._id)"
-        v-model="currentProject"
-        class="w-40"
-      >
-        <template #title="{ modelValue }">
-          {{ projects.find((p) => p._id === modelValue)?.title }}
-        </template>
-        <template #item="{ item }">
-          {{ projects.find((p) => p._id === item)?.title }}
-        </template>
-      </ListBox>
-    </div>
-    <MiniLoadingSpinner v-if="areExecutorsLoading" />
-    <EmployeesList
-      :director="manager?._id"
-      :employees="executors.filter((e) => e.project === currentProject)"
-      @task-release="onTaskRelease"
-      v-else
-    ></EmployeesList>
+  <div v-else class="outer">
+    <section class="flex flex-col relative">
+      <div class="header">
+        <h2 class="hidden sm:block" style="line-height: 2.15rem">
+          {{ $t('dashboard.project') }}
+        </h2>
+        <ListBox
+          :items="projects.map((p) => p._id)"
+          v-model="currentProject"
+          class="w-40"
+        >
+          <template #title="{ modelValue }">
+            {{ projects.find((p) => p._id === modelValue)?.title }}
+          </template>
+          <template #item="{ item }">
+            {{ projects.find((p) => p._id === item)?.title }}
+          </template>
+        </ListBox>
+      </div>
+      <MiniLoadingSpinner v-if="areExecutorsLoading" />
+      <EmployeesList
+        :director="manager?._id"
+        :employees="executors.filter((e) => e.project === currentProject)"
+        @task-release="onTaskRelease"
+        v-else
+      ></EmployeesList>
+    </section>
 
-    <div class="header">
-      <h2 style="line-height: 2.15rem">{{ $t('dashboard.tasks') }}</h2>
-      <button
-        class="btn-outline-secondary px-2 py-2 text-xs"
-        @click="
-          $router.push({
-            path: 'taskCreation',
-            query: { project: currentProject },
-          })
-        "
-      >
-        <b-icon-plus-lg />
-      </button>
-    </div>
-    <MiniLoadingSpinner v-if="areFreeTasksLoading" />
-    <FreeTasksList
-      :tasks="freeTasks"
-      @task-delete="onFreeTaskDelete"
-      @task-add="onFreeTaskAdd"
-    ></FreeTasksList>
+    <section class="flex flex-col relative">
+      <div class="header">
+        <h2 style="line-height: 2.15rem">{{ $t('dashboard.tasks') }}</h2>
+        <button
+          class="btn-outline-secondary px-2 py-2 text-xs"
+          @click="
+            $router.push({
+              path: 'taskCreation',
+              query: { project: currentProject },
+            })
+          "
+        >
+          <b-icon-plus-lg />
+        </button>
+      </div>
+      <MiniLoadingSpinner v-if="areFreeTasksLoading" />
+      <FreeTasksList
+        :tasks="freeTasks"
+        @task-delete="onFreeTaskDelete"
+        @task-add="onFreeTaskAdd"
+      ></FreeTasksList>
+    </section>
 
     <ConfirmModal
       :is-open="isConfirmModalOpen"
@@ -152,11 +164,13 @@ h2 {
   margin-bottom: 2rem;
 }
 
-.panel {
+.outer {
   overflow: hidden;
   display: flex;
   flex-direction: column;
   margin-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
+  position: relative;
 }
 </style>

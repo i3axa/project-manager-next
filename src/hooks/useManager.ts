@@ -77,7 +77,8 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     await fetch();
 
     if (projects.value.length > 0) {
-      currentProject.value = projects.value[0]._id;
+      currentProject.value = currentProject.value ?? projects.value[0]._id;
+      manager.value = await getManager(currentProject.value);
     }
 
     isLoading.value = false;

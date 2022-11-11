@@ -4,6 +4,7 @@ import { MenuItem } from '@headlessui/vue';
 
 interface IProps {
   taskId: string;
+  forceUpPosition?: boolean;
 }
 
 interface IEmits {
@@ -15,7 +16,7 @@ defineEmits<IEmits>();
 </script>
 
 <template>
-  <DropDown>
+  <DropDown :position="'upLeft'">
     <template #title>
       <b-icon-three-dots class="text-2xl" />
     </template>

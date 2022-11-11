@@ -2,7 +2,7 @@ import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import type { Id } from '@/types/API';
 import { TasksConverter } from '@/types/API/ResponseToModelConverter';
-import { ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 
 export default function (currentProject: Ref<Id | undefined>) {
   const isLoading = ref(true);
@@ -23,8 +23,17 @@ export default function (currentProject: Ref<Id | undefined>) {
     isLoading.value = false;
   };
 
+  onMounted(async () => {
+    if (currentProject.value) {
+      isLoading.value = true;
+
+      await fetch();
+    }
+  });
+
   watch(currentProject, async () => {
     isLoading.value = true;
+
     await fetch();
   });
 

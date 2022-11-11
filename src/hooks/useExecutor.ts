@@ -70,10 +70,16 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
       return;
     }
 
-    currentEmployee.value = employees.value[0];
+    if (currentProject.value) {
+      currentEmployee.value = employees.value.find(
+        (e) => e.project === currentProject.value
+      );
+    } else {
+      currentEmployee.value = employees.value[0];
+    }
 
     await fetchProjects(employees.value.map((e) => e.project));
-    currentProject.value = projects.value[0]._id;
+    currentProject.value = currentProject.value ?? projects.value[0]._id;
 
     await fetchTasks();
 

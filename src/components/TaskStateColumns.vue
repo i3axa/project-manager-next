@@ -89,9 +89,11 @@ const onTaskAdd = async (
               @click="element.toggleInfo()"
             />
 
-            <div class="task" v-show="!element.infoToggled">
-              <div class="text-lg font-semibold">{{ element.task.title }}</div>
-              <p class="dark:text-light" v-html="element.task.description"></p>
+            <div class="task dark:text-light" v-show="!element.infoToggled">
+              <div class="text-lg font-semibold">
+                {{ element.task.title }}
+              </div>
+              <p v-html="element.task.description"></p>
               <div class="progress-bar bg-blue-100">
                 <div
                   class="progress-bar-value bg-secondary"
@@ -111,7 +113,7 @@ const onTaskAdd = async (
               </div>
             </div>
 
-            <div class="task" v-show="element.infoToggled">
+            <div class="task dark:text-light" v-show="element.infoToggled">
               <div class="text-ellipsis overflow-hidden">
                 <strong>{{ $t('dashboard.director') }}: </strong>
                 {{
