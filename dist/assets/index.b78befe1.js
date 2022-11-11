@@ -1,1 +1,0 @@
-import"./index.7ffa0279.js";var r=(E=>(E.USER="USER",E.ADMIN="ADMIN",E))(r||{}),R=(E=>(E.MANAGER="MANAGER",E.EXECUTOR="EXECUTOR",E))(R||{}),A=(E=>(E.WAITING="WAITING",E.IN_PROGRESS="IN_PROGRESS",E.STOPED="STOPED",E.CLOSED="CLOSED",E))(A||{});export{R as E,r as R,A as T};

@@ -1,0 +1,1 @@
+import{T as t}from"./TaskService.7d7b11a1.js";import{T as n}from"./index.70c83123.js";import{r as e,e as i}from"./index.234d245d.js";function m(o){const s=e(!0),a=e([]);return i(async()=>{const r=await t.fetchTasks(o);a.value=await n.getTasksFromIds(r),s.value=!1}),{tasks:a,isLoading:s}}export{m as u};
