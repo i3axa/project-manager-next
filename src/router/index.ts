@@ -42,9 +42,6 @@ const router = createRouter({
       path: '/taskCreation',
       name: 'TaskCreation',
       component: CreateTaskView,
-      props: (route) => ({
-        task: route.query,
-      }),
     },
     {
       path: '/taskUpdate/:id',
