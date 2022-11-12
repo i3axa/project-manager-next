@@ -3,27 +3,24 @@ import TaskEditForm from '@/components/TaskEditForm.vue';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import { ref, type Ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { reactive, ref, type Ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
 const router = useRouter();
 const styleStore = useStyleStore();
 
-interface IProps {
-  task: Partial<ITask>;
-}
-
-const props = defineProps<IProps>();
+const task = ref<Partial<ITask>>(route.query);
 
 const files = ref<File[]>([]);
 
 const onSubmit = async () => {
   const formData = new FormData();
 
-  for (const key in props.task) {
+  for (const key in task.value) {
     const safeKey = key as keyof ITask;
 
-    formData.append(key, props.task[safeKey] as string);
+    formData.append(key, task.value[safeKey] as string);
   }
 
   files.value.forEach((file) => {
