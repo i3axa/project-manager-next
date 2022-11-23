@@ -2,6 +2,7 @@
 import {
   BIconFileEarmarkPdf,
   BIconFileEarmarkPpt,
+  BIconFileEarmarkWord,
   BIconFileEarmarkExcel,
   BIconFileEarmarkMusic,
   BIconFileEarmarkText,
