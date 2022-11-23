@@ -21,7 +21,7 @@ defineEmits<IEmits>();
 
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="$emit('close')" class="relative z-10">
+    <Dialog as="div" @close="$emit('close')" class="relative z-30">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -68,7 +68,7 @@ defineEmits<IEmits>();
                   class="btn-info text-sm focus:ring-0"
                   @click="$emit('close')"
                 >
-                  <slot name="close-button">Close</slot>
+                  <slot name="close-button">{{ $t('modal.close') }}</slot>
                 </button>
               </div>
             </DialogPanel>

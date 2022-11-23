@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import TooltipPopper from '@/components/UI/TooltipPopper.vue';
 import FileExtensionIcon from '@/components/FileExtensionIcon.vue';
+import { BIconXLg } from 'bootstrap-icons-vue';
 
 interface IProps {
   fileName: string;
   link?: string;
+  notInteractive?: boolean;
 }
 
 interface IEmits {
@@ -23,7 +25,12 @@ const openLink = () => {
 
 <template>
   <div class="relative">
-    <button type="button" class="close-btn bg-white" @click="$emit('delete')">
+    <button
+      v-if="notInteractive !== true"
+      type="button"
+      class="close-btn bg-white"
+      @click="$emit('delete')"
+    >
       <b-icon-x-lg class="text-sm" />
     </button>
     <TooltipPopper :text="fileName">

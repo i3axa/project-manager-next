@@ -11,6 +11,12 @@ import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 import { TaskState } from '@/types/API';
 import TooltipPopper from '@/components/UI/TooltipPopper.vue';
+import {
+  BIconBoxArrowUpRight,
+  BIconCheck2Circle,
+  BIconSlashCircle,
+  BIconExclamationCircle,
+} from 'bootstrap-icons-vue';
 
 interface IProps {
   employee: IEmployee;
@@ -153,7 +159,7 @@ const isTaskExpired = ({ deadline }: ITask) => {
         <TooltipPopper
           :text="$t('dashboard.' + element.state)"
           :force-hide="forceHideTooltips"
-          :delay="700"
+          :delay="600"
         >
           <div
             class="task rounded-2xl shadow !border-none"
@@ -184,7 +190,7 @@ const isTaskExpired = ({ deadline }: ITask) => {
             </div>
             <EmployeesTaskEditDropdown
               class="ignore dropdown"
-              :task-id="element._id"
+              :task="element"
               @task-remove="releaseTask(taskIndex)"
               @task-delete="onTaskDelete(taskIndex)"
             />

@@ -6,6 +6,7 @@ import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import type { TaskState } from '@/types/API';
 import type { ITaskInStateColumn, IStateColumn } from '@/types/TaskStateColumn';
+import { BIconThreeDots, BIconPlus, BIconDash } from 'bootstrap-icons-vue';
 
 interface IProps {
   employee?: IEmployee;

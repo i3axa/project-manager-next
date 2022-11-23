@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/store/auth';
 import { useStyleStore } from '@/store/style';
+import {
+  BIconList,
+  BIconArrowBarLeft,
+  BIconHouse,
+  BIconPersonCircle,
+  BIconGrid,
+  BIconColumnsGap,
+  BIconGear,
+  BIconArrowRightCircle,
+} from 'bootstrap-icons-vue';
 
 const styleStore = useStyleStore();
 const authStore = useAuthStore();

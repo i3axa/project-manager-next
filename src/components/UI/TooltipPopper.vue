@@ -14,6 +14,8 @@ const { forceHide } = toRefs(props);
 
 const button = ref<HTMLElement>();
 const tooltip = ref<HTMLElement>();
+const show = ref(false);
+
 let timeout: number;
 
 const popperInstance = computed(() => {
@@ -37,15 +39,14 @@ const handleShow = () => {
   }
 
   timeout = setTimeout(() => {
-    tooltip.value?.setAttribute('data-show', '');
-
+    show.value = true;
     popperInstance.value.update();
   }, props.delay);
 };
 
 const handleHide = () => {
   clearTimeout(timeout);
-  tooltip.value?.removeAttribute('data-show');
+  show.value = false;
 };
 
 onMounted(() => {
@@ -71,14 +72,24 @@ onMounted(() => {
     >
       <slot></slot>
     </div>
-    <div
-      class="tooltip-text z-20 bg-dark text-light dark:bg-light dark:text-dark"
-      role="tooltip"
-      ref="tooltip"
+    <transition
+      enter-from-class="opacity-0"
+      enter-active-class="transition-opacity"
+      enter-to-class="opacity-100"
+      leave-from-class="transition-opacity opacity-100"
+      leave-active-class="transition-opacity"
+      leave-to-class="opacity-0"
     >
-      {{ text }}
-      <div class="tooltip-arrow" data-popper-arrow></div>
-    </div>
+      <div
+        class="tooltip-text z-20 bg-dark text-light dark:bg-light dark:text-dark"
+        role="tooltip"
+        ref="tooltip"
+        v-show="show"
+      >
+        {{ text }}
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -87,11 +98,6 @@ onMounted(() => {
   padding: 7px 10px;
   border-radius: 4px;
   font-size: 13px;
-  display: none;
-}
-
-.tooltip-text[data-show] {
-  display: block;
 }
 
 .tooltip-arrow,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DropDown from '@/components/UI/DropDown.vue';
 import { MenuItem } from '@headlessui/vue';
+import { BIconThreeDots, BIconPencil, BIconTrash2 } from 'bootstrap-icons-vue';
 
 interface IProps {
   taskId: string;

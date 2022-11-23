@@ -5,6 +5,7 @@ import {
   ListboxOptions,
   ListboxOption,
 } from '@headlessui/vue';
+import { BIconChevronExpand, BIconCheckLg } from 'bootstrap-icons-vue';
 
 interface IProps {
   items: Array<any>;

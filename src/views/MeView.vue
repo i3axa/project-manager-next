@@ -2,6 +2,7 @@
 import useProjects from '@/hooks/useProjects';
 import useUser from '@/hooks/useUser';
 import { useAuthStore } from '@/store/auth';
+import { BIconPerson } from 'bootstrap-icons-vue';
 
 const authStore = useAuthStore();
 

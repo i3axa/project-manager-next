@@ -25,7 +25,8 @@
     "confirmDefaultHeader": "Confirm your action",
     "confirmDefaultBody": "Are you sure?",
     "continue": "Continue",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "auth": {
     "authorization": "Authorization",
@@ -83,7 +84,8 @@
     "inviteModal": {
       "header": "Adding new employee",
       "content": "Test"
-    }
+    },
+    "info": "Info"
   },
   "task": {
     "title": "Title",

@@ -25,7 +25,8 @@
     "confirmDefaultHeader": "Подтвердите действие",
     "confirmDefaultBody": "Вы уверены?",
     "continue": "Продолжить",
-    "cancel": "Отменить"
+    "cancel": "Отменить",
+    "close": "Закрыть"
   },
   "auth": {
     "authorization": "Авторизация",
@@ -83,7 +84,8 @@
     "inviteModal": {
       "header": "Добавление нового работника",
       "content": "Тест"
-    }
+    },
+    "info": "Информация"
   },
   "task": {
     "title": "Заголовок",

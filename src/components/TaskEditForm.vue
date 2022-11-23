@@ -9,6 +9,14 @@ import useTouchDeviceDetection from '@/hooks/useTouchDeviceDetection';
 import useVuelidate, { type ServerErrors } from '@vuelidate/core';
 import ValidationWrapper from '@/components/UI/ValidationWrapper.vue';
 import useI18nValidators from '@/hooks/useI18nValidators';
+import {
+  BIconCardHeading,
+  BIconCardText,
+  BIcon123,
+  BIconCalendarCheck,
+  BIconPaperclip,
+  BIconCheckLg,
+} from 'bootstrap-icons-vue';
 
 const authStore = useAuthStore();
 const { isTouchDevice } = useTouchDeviceDetection();

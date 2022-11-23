@@ -3,6 +3,7 @@ import useTouchDeviceDetection from '@/hooks/useTouchDeviceDetection';
 import { ref } from 'vue';
 import { useAuthStore } from '@/store/auth';
 import FileCard from '@/components/FileCard.vue';
+import { BIconPaperclip } from 'bootstrap-icons-vue';
 
 type ModelValue = { name: string; link?: string };
 

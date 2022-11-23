@@ -11,6 +11,7 @@ import useManager from '@/hooks/useManager';
 import useFreeTasks from '@/hooks/useFreeTasks';
 import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
+import { BIconPlusLg } from 'bootstrap-icons-vue';
 
 const styleStore = useStyleStore();
 const authStore = useAuthStore();

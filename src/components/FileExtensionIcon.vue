@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import {
+  BIconFileEarmarkPdf,
+  BIconFileEarmarkPpt,
+  BIconFileEarmarkExcel,
+  BIconFileEarmarkMusic,
+  BIconFileEarmarkText,
+  BIconFileEarmarkZip,
+  BIconFileEarmarkImage,
+  BIconFileEarmarkBinary,
+} from 'bootstrap-icons-vue';
+
 interface IProps {
   extension: string;
 }

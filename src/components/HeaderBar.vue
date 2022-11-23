@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStyleStore } from '@/store/style';
+import { BIconList, BIconArrowClockwise, BIconBell } from 'bootstrap-icons-vue';
 
 const styleStore = useStyleStore();
 </script>
