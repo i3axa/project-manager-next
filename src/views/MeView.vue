@@ -11,7 +11,7 @@ if (!authStore.credentials.user) {
 }
 
 const { user } = useUser(authStore.credentials.user.id);
-const { projects, isLoading } = useProjects();
+const { projects } = useProjects();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { projects, isLoading } = useProjects();
     <div>{{ user?.name }}</div>
     <div>{{ user?.surname }}</div>
     <div>{{ user?.skills }}</div>
-    <div v-for="project in projects">{{ project }}</div>
+    <div v-for="project in projects" :key="project._id">{{ project }}</div>
   </div>
 </template>
 

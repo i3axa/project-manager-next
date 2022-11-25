@@ -101,6 +101,7 @@ const isModalOpen = ref(false);
         <FileCard
           class="max-w-max w-28"
           v-for="attachment in task.attachments"
+          :key="attachment"
           :file-name="attachment.split('-', 2)[1]"
           :link="attachment"
           :not-interactive="true"

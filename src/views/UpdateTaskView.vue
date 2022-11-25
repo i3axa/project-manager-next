@@ -2,8 +2,7 @@
 import type ITask from '@/models/ITask';
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import { useRoute } from 'vue-router';
-import useTasks from '@/hooks/useTasks';
-import { ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
@@ -38,7 +37,7 @@ const onSubmit = async () => {
 
   styleStore.setIsGlobalSpinnerShown(true);
 
-  const response = await TaskService.putTask(task.value._id!, formData);
+  const response = await TaskService.putTask(task.value._id, formData);
 
   task.value = response.data.task;
 

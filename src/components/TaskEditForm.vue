@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import DateTimePicker from '@/components/UI/DateTimePicker.vue';
 import RichText from '@/components/UI/RichText.vue';
-import { computed, reactive, ref, watch, type Ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import type ITask from '@/models/ITask';
 import FileCard from '@/components/FileCard.vue';
 import { useAuthStore } from '@/store/auth';
 import useTouchDeviceDetection from '@/hooks/useTouchDeviceDetection';
-import useVuelidate, { type ServerErrors } from '@vuelidate/core';
+import useVuelidate from '@vuelidate/core';
 import ValidationWrapper from '@/components/UI/ValidationWrapper.vue';
 import useI18nValidators from '@/hooks/useI18nValidators';
 import {
@@ -165,7 +165,10 @@ const onFileLeave = () => {
       <RichText
         class="grow"
         :placeholder="$t('task.description')"
-        v-model="task.description"
+        :model-value="task.description"
+        @update:model-value="
+          (value) => emit('update:task', { ...task, description: value })
+        "
       />
     </div>
     <div class="form-group">
@@ -210,11 +213,13 @@ const onFileLeave = () => {
         v-for="(attachment, index) in task.attachments"
         :file-name="attachment.split('-', 2)[1]"
         :link="fileLink + attachment"
+        :key="attachment"
         @delete="onAttachmentDelete(index)"
       />
       <FileCard
         v-for="(file, index) in files"
         :fileName="file.name"
+        :key="file.name"
         @delete="onFileDelete(index)"
       />
     </div>

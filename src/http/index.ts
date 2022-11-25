@@ -39,12 +39,16 @@ const errorInterceptor = async (error: AxiosError) => {
   const authStore = useAuthStore();
   const originalRequest = error.config;
 
+  if (!originalRequest.url) {
+    throw error;
+  }
+
   if (
     error.response?.status == 401 &&
     error.config &&
-    !requests.get(originalRequest.url!)
+    !requests.get(originalRequest.url)
   ) {
-    requests.set(originalRequest.url!, true);
+    requests.set(originalRequest.url, true);
 
     await authStore.refreshToken();
 

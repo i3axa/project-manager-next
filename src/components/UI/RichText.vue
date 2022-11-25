@@ -43,7 +43,7 @@ const editor = useEditor({
     <EditorContent
       class="editor-content"
       :editor="editor"
-      v-model="modelValue"
+      :value="modelValue"
     />
 
     <BubbleMenu

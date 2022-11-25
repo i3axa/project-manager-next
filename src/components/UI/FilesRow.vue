@@ -76,6 +76,7 @@ const onFileLeave = () => {
       v-for="(file, index) in modelValue"
       :fileName="file.name"
       :link="file.link ? fileLink + file.link : undefined"
+      :key="file.link ? file.link : file.name"
       @delete="onFileDelete(index)"
     />
   </div>

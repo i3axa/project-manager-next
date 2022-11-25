@@ -13,7 +13,11 @@ defineProps<IProps>();
 <template>
   <div class="outer">
     <slot></slot>
-    <div class="ml-1 text-sm text-error" v-for="error in errors">
+    <div
+      class="ml-1 text-sm text-error"
+      v-for="error in errors"
+      :key="error.$uid"
+    >
       {{ error.$message }}
     </div>
   </div>

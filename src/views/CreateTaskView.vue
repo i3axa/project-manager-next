@@ -3,7 +3,7 @@ import TaskEditForm from '@/components/TaskEditForm.vue';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import { reactive, ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();

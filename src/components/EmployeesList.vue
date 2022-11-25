@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type ITask from '@/models/ITask';
 import type IEmployee from '@/models/IEmployee';
-import EmployeesTaskEditDropdown from '@/components/EmployeesTaskEditDropdown.vue';
 import EmployeeCard from '@/components/EmployeeCard.vue';
 import type { Id } from '@/types/API';
 

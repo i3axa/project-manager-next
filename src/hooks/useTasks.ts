@@ -1,6 +1,6 @@
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
-import type { Id, TasksQuery } from '@/types/API';
+import type { TasksQuery } from '@/types/API';
 import { TasksConverter } from '@/types/API/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 

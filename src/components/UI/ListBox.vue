@@ -6,9 +6,10 @@ import {
   ListboxOption,
 } from '@headlessui/vue';
 import { BIconChevronExpand, BIconCheckLg } from 'bootstrap-icons-vue';
+import { ref } from 'vue';
 
 interface IProps {
-  items: Array<any>;
+  items: Array<string>;
   modelValue?: string;
 }
 
@@ -16,12 +17,13 @@ interface IEmits {
   (eventName: 'update:modelValue', value: string): void;
 }
 
-defineProps<IProps>();
-
+const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
-const update = (item: any) => {
-  emit('update:modelValue', item as string);
+const modelValue = ref(props.modelValue);
+
+const update = (item: string) => {
+  emit('update:modelValue', item);
 };
 </script>
 

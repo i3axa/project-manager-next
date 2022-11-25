@@ -20,12 +20,12 @@ interface ICredentials {
 }
 
 export const useAuthStore = defineStore('auth', () => {
+  const userData = localStorage.getItem('user');
+
   const isAuth = ref(localStorage.getItem('token') !== null);
   const credentials = ref<ICredentials>({
     token: localStorage.getItem('token') || undefined,
-    user: localStorage.getItem('user')
-      ? JSON.parse(localStorage.getItem('user')!)
-      : undefined,
+    user: userData ? JSON.parse(userData) : undefined,
   });
 
   const setToken = (token: string) => {

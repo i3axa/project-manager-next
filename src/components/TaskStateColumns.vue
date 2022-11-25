@@ -5,6 +5,7 @@ import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import type { TaskState } from '@/types/API';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ITaskInStateColumn, IStateColumn } from '@/types/TaskStateColumn';
 import { BIconThreeDots, BIconPlus, BIconDash } from 'bootstrap-icons-vue';
 
@@ -47,6 +48,7 @@ const onTaskAdd = async (
     <div
       class="card state-column bg-white dark:bg-slate-800"
       v-for="taskStateColumn in taskStateColumns"
+      :key="taskStateColumn.state"
     >
       <div class="column-header">
         <span class="text-gray-400 font-semibold text-lg">{{

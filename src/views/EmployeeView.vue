@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import useEmployee from '@/hooks/useEmployee';
 import TaskStateColumns from '@/components/TaskStateColumns.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import useTasks from '@/hooks/useTasks';

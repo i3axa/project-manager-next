@@ -63,7 +63,9 @@ const deleteTask = async (taskIndex: number) => {
 
 const isConfirmModalOpen = ref(false);
 
-let onContinue = ref(() => {});
+const onContinue = ref(() => {
+  return;
+});
 
 const onTaskDelete = (taskIndex: number) => {
   isConfirmModalOpen.value = true;

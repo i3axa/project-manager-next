@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStyleStore } from '@/store/style';
-import { BIconList, BIconArrowClockwise, BIconBell } from 'bootstrap-icons-vue';
+import { BIconList, BIconArrowClockwise } from 'bootstrap-icons-vue';
 
 const styleStore = useStyleStore();
 </script>
@@ -21,10 +21,6 @@ const styleStore = useStyleStore();
     >
       <b-icon-arrow-clockwise class="animate-spin" />
     </span>
-
-    <!-- <button class="btn text-2xl text-dark dark:text-light shadow-none">
-      <b-icon-bell />
-    </button> -->
 
     <router-link
       class="link flex-none hover:opacity-50 text-black dark:text-light"

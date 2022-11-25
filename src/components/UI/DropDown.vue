@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItems } from '@headlessui/vue';
-import { onMounted, ref, watch } from 'vue';
 import { BIconChevronDown } from 'bootstrap-icons-vue';
 
 type Position = 'upLeft' | 'upRight' | 'downLeft' | 'downRight';
@@ -30,42 +29,12 @@ const getClassFromPosition = (position: Position) => {
 
   return '';
 };
-
-// const position = ref<Position>(
-//   props.forceUpPosition ? Position.upLeft : Position.downLeft
-// );
-
-// const isPositionUp = () => {
-//   return props.forceUpPosition || position.value < 2;
-// };
-
-const onOpen = (event: Event, isOpened: boolean) => {
-  // if (isOpened) {
-  //   return;
-  // }
-  // const rect = (event.target as Element).getBoundingClientRect();
-  // const isUp = isPositionUp();
-  // if (rect.x < 160) {
-  //   if (isUp) {
-  //     position.value = Position.upRight;
-  //   } else {
-  //     position.value = Position.downRight;
-  //   }
-  // } else {
-  //   if (isUp) {
-  //     position.value = Position.upLeft;
-  //   } else {
-  //     position.value = Position.downLeft;
-  //   }
-  // }
-  // console.log((event.target as Element).getBoundingClientRect());
-};
 </script>
 
 <template>
-  <Menu v-slot="{ open }" as="div" class="menu">
+  <Menu as="div" class="menu">
     <div class="flex content-center">
-      <MenuButton @click="onOpen($event, open)">
+      <MenuButton>
         <slot name="title">
           <b-icon-chevron-down />
         </slot>

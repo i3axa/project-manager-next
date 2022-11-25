@@ -19,7 +19,11 @@ const show = ref(false);
 let timeout: number;
 
 const popperInstance = computed(() => {
-  return createPopper(button.value!, tooltip.value!, {
+  if (!button.value || !tooltip.value) {
+    return undefined;
+  }
+
+  return createPopper(button.value, tooltip.value, {
     placement: props.placement || ('bottom' as Placement),
     modifiers: [
       {
@@ -40,7 +44,7 @@ const handleShow = () => {
 
   timeout = setTimeout(() => {
     show.value = true;
-    popperInstance.value.update();
+    popperInstance.value?.update();
   }, props.delay);
 };
 
@@ -50,9 +54,9 @@ const handleHide = () => {
 };
 
 onMounted(() => {
-  if (forceHide) {
+  if (forceHide?.value) {
     watch(forceHide, (value) => {
-      if ((value = true)) {
+      if (value === true) {
         handleHide();
       }
     });

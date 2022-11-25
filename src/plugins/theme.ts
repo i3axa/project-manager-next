@@ -42,7 +42,14 @@ export function createTheme(): ThemeProvider {
       return themeValue;
     },
     set theme(newValue: ThemeValue) {
-      handleThemeChange.get(newValue)!();
+      const onThemeChange = handleThemeChange.get(newValue);
+
+      if (!onThemeChange) {
+        console.warn('Can not change theme');
+        return;
+      }
+
+      onThemeChange();
       localStorage.theme = newValue;
       themeValue = newValue;
     },

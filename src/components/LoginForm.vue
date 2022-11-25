@@ -52,8 +52,8 @@ const submit = async () => {
     const errors = (loginResult.response?.data as IValidationErrorResponse)
       .fields;
 
-    for (const key in errors as any) {
-      if (errors.hasOwnProperty(key)) {
+    for (const key in errors) {
+      if (Object.prototype.hasOwnProperty.call(errors, key)) {
         const safeKey = key as keyof typeof errors;
 
         errors[safeKey] = i18n.t('auth.validator.' + errors[safeKey]);
@@ -76,12 +76,14 @@ const submit = async () => {
       :validation="v$.email"
       :placeholder="$t('auth.email')"
       type="email"
+      @update:validation-model="(value) => (v$.email.$model = value)"
     />
 
     <ValidationInput
       :validation="v$.password"
       :placeholder="$t('auth.password')"
       type="password"
+      @update:validation-model="(value) => (v$.password.$model = value)"
     />
 
     <button class="btn-flat-secondary" type="submit">

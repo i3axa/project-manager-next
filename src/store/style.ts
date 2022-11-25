@@ -23,12 +23,16 @@ export const useStyleStore = defineStore('style', () => {
     const navbar = document.getElementById('navbar');
     const globalOverlay = document.getElementById('global-overlay');
 
+    if (!navbar || !globalOverlay) {
+      return;
+    }
+
     if (isNavbarHidden.value) {
-      navbar!.style.left = '0';
-      globalOverlay!.style.display = 'block';
+      navbar.style.left = '0';
+      globalOverlay.style.display = 'block';
     } else {
-      navbar!.style.left = '-100%';
-      globalOverlay!.style.display = 'none';
+      navbar.style.left = '-100%';
+      globalOverlay.style.display = 'none';
     }
 
     isNavbarHidden.value = !isNavbarHidden.value;

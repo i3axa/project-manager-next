@@ -1,5 +1,4 @@
 import type IEmployeeDto from '@/models/dto/IEmployeeDto';
-import type IEmployee from '@/models/IEmployee';
 import type IProject from '@/models/IProject';
 import type ITask from '@/models/ITask';
 

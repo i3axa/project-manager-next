@@ -1,5 +1,4 @@
 import type { Id, TaskState } from '@/types/API';
-import type IEmployee from './IEmployee';
 
 export default interface ITask {
   _id: Id;

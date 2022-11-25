@@ -1,7 +1,6 @@
 import type IUserDto from '@/models/dto/IUserDto';
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
-import UserService from '@/services/UserService';
 import type { ITaskInStateColumn } from './ITaskInStateColumn';
 import { useStyleStore } from '@/store/style';
 import IntervalValueChanger from './IntervalValueChanger';

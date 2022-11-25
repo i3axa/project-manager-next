@@ -68,7 +68,9 @@ const onTaskRelease = async (taskId: Id) => {
 
 const isConfirmModalOpen = ref(false);
 
-let onContinue = ref(() => {});
+const onContinue = ref(() => {
+  return;
+});
 
 const deleteTask = async (taskIndex: number) => {
   styleStore.setIsSyncIndicatorToggled(true);
