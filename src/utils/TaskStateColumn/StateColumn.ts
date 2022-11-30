@@ -1,4 +1,4 @@
-import type { TaskState } from '../API';
+import type { TaskState } from '../../types/API';
 import type { ITaskInStateColumn } from './ITaskInStateColumn';
 import type { IStateColumn } from './IStateColumn';
 

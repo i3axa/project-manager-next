@@ -1,5 +1,5 @@
 import type { Id } from '@/types/API';
 
-export default interface IEmployeeResponse {
+export default interface IProjectsIdResponse {
   projects: Id[];
 }

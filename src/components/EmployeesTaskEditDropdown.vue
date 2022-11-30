@@ -29,7 +29,7 @@ const isModalOpen = ref(false);
 </script>
 
 <template>
-  <DropDown v-if="!isModalOpen" :position="'upLeft'">
+  <DropDown v-bind="$attrs" :position="'upLeft'">
     <template #title>
       <b-icon-three-dots class="text-2xl" />
     </template>
@@ -89,7 +89,6 @@ const isModalOpen = ref(false);
   </DropDown>
   <InfoModal
     class="position-relative"
-    v-else
     :is-open="isModalOpen"
     @close="isModalOpen = false"
   >

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useVModel } from '@vueuse/core';
+
 interface IProps {
   value: number | string;
   modelValue: unknown;
@@ -9,23 +11,10 @@ interface IEmits {
   (eventName: 'update:modelValue', value: number | string): void;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
 
-const updateInput = (event: Event) => {
-  const element = event.target as HTMLInputElement;
-  const parsedNumber = Number.parseInt(element.value);
-
-  let result: number | string;
-
-  if (Number.isNaN(parsedNumber)) {
-    result = element.value;
-  } else {
-    result = parsedNumber;
-  }
-
-  emit('update:modelValue', result);
-};
+const vModel = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>
@@ -35,8 +24,7 @@ const updateInput = (event: Event) => {
       type="radio"
       class="focus:ring-secondary dark:bg-gray-700 h-4 w-4 text-primary border-gray-300"
       :value="value"
-      v-model="modelValue"
-      @input="updateInput"
+      v-model="vModel"
     />
     <label
       :for="id"

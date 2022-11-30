@@ -111,6 +111,8 @@ const hidePopups = () => {
 const isTaskExpired = ({ deadline }: ITask) => {
   return new Date() > new Date(deadline);
 };
+
+const log = () => console.log('click');
 </script>
 
 <template>
@@ -154,6 +156,7 @@ const isTaskExpired = ({ deadline }: ITask) => {
       filter=".ignore"
       @add="onTaskAdd"
       @end="forceHideTooltips = false"
+      @start="forceHideTooltips = true"
     >
       <template
         #item="{ element, index: taskIndex }: { element: ITask, index: number }"
@@ -168,8 +171,6 @@ const isTaskExpired = ({ deadline }: ITask) => {
             :style="{
               backgroundColor: `var(--difficulty-${element.difficulty})`,
             }"
-            @mousedown="hidePopups"
-            @mouseup="forceHideTooltips = false"
           >
             <div class="flex flex-row gap-1 items-center overflow-hidden">
               <b-icon-check2-circle
@@ -195,6 +196,7 @@ const isTaskExpired = ({ deadline }: ITask) => {
               :task="element"
               @task-remove="releaseTask(taskIndex)"
               @task-delete="onTaskDelete(taskIndex)"
+              @click="forceHideTooltips = true"
             />
           </div>
         </TooltipPopper>

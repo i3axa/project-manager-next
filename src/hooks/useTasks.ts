@@ -1,7 +1,7 @@
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import type { TasksQuery } from '@/types/API';
-import { TasksConverter } from '@/types/API/ResponseToModelConverter';
+import { TasksConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function (tasksQuery?: TasksQuery) {

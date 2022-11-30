@@ -3,7 +3,7 @@ import EmployeesService from '@/services/EmployeesService';
 import {
   EmployeesConverter,
   TasksConverter,
-} from '@/types/API/ResponseToModelConverter';
+} from '@/utils/ResponseToModelConverter';
 import { EmployeeSpeciality, type Id } from '@/types/API';
 import type IProject from '@/models/IProject';
 import type IEmployee from '@/models/IEmployee';

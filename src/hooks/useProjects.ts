@@ -1,6 +1,7 @@
 import type IProject from '@/models/IProject';
 import ProjectService from '@/services/ProjectService';
-import { ProjectsConverter, type ProjectsQuery } from '@/types/API';
+import type { ProjectsQuery } from '@/types/API';
+import { ProjectsConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function useProjects(query?: ProjectsQuery) {

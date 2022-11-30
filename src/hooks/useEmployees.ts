@@ -1,7 +1,7 @@
 import type IEmployee from '@/models/IEmployee';
 import EmployeesService from '@/services/EmployeesService';
 import type { EmployeesQuery } from '@/types/API';
-import { EmployeesConverter } from '@/types/API/ResponseToModelConverter';
+import { EmployeesConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function (query?: EmployeesQuery) {

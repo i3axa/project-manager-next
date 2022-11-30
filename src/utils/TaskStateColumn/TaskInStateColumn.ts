@@ -5,7 +5,8 @@ import type { ITaskInStateColumn } from './ITaskInStateColumn';
 import { useStyleStore } from '@/store/style';
 import IntervalValueChanger from './IntervalValueChanger';
 import EmployeesService from '@/services/EmployeesService';
-import { EmployeesConverter, type Id } from '../API';
+import type { Id } from '@/types/API';
+import { EmployeesConverter } from '../ResponseToModelConverter';
 
 const styleStore = useStyleStore();
 

@@ -1,5 +1,5 @@
 import type { Id } from '@/types/API';
 
-export default interface ITasksResponse {
+export default interface ITasksIdResponse {
   tasks: Id[];
 }

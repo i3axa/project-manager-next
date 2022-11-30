@@ -6,7 +6,7 @@ import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import type { TaskState } from '@/types/API';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { ITaskInStateColumn, IStateColumn } from '@/types/TaskStateColumn';
+import type { ITaskInStateColumn, IStateColumn } from '@/utils/TaskStateColumn';
 import { BIconThreeDots, BIconPlus, BIconDash } from 'bootstrap-icons-vue';
 
 interface IProps {

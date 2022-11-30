@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import NavigationBar from '@/components/NavigationBar.vue';
-import HeaderBar from '@/components/HeaderBar.vue';
+import NavigationBar from '@/layouts/NavigationBar.vue';
+import HeaderBar from '@/layouts/HeaderBar.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 import { useStyleStore } from '@/store/style';
 

@@ -1,8 +1,7 @@
 import type IEmployeeDto from '@/models/dto/IEmployeeDto';
+import type IUserDto from '@/models/dto/IUserDto';
 import type IProject from '@/models/IProject';
 import type ITask from '@/models/ITask';
-
-export * from './ResponseToModelConverter';
 
 export enum Role {
   USER = 'USER',
@@ -43,3 +42,4 @@ export type EmployeesQuery = Partial<IQueryParams | IEmployeeDto>;
 export type ProjectsQuery = Partial<
   IProjectsQueryParams | Omit<IProject, 'isPrivate'>
 >;
+export type UsersQuery = Partial<IQueryParams | Partial<IUserDto>>;

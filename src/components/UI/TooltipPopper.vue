@@ -54,7 +54,7 @@ const handleHide = () => {
 };
 
 onMounted(() => {
-  if (forceHide?.value) {
+  if (forceHide?.value !== undefined) {
     watch(forceHide, (value) => {
       if (value === true) {
         handleHide();

@@ -3,7 +3,7 @@ import type IProject from '@/models/IProject';
 import EmployeesService from '@/services/EmployeesService';
 import ProjectService from '@/services/ProjectService';
 import { EmployeeSpeciality, type Id } from '@/types/API';
-import { EmployeesConverter } from '@/types/API/ResponseToModelConverter';
+import { EmployeesConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, readonly, ref, watch, type Ref } from 'vue';
 
 export default function (userId: Id, currentProject: Ref<Id | undefined>) {

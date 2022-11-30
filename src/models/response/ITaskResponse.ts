@@ -1,5 +1,5 @@
 import type ITask from '../ITask';
 
-export default interface ITasksResponse {
+export default interface ITaskResponse {
   task: ITask;
 }
