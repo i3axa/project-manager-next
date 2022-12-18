@@ -9,12 +9,12 @@ export default function () {
 
   watch(locale, () => {
     localStorage.setItem('locale', locale.value);
+    document.querySelector('html')?.setAttribute('lang', locale.value);
   });
 
   const getLanguageName = (localeCode: string): string => {
     const displayNames = new Intl.DisplayNames(localeCode, {
       type: 'language',
-      languageDisplay: 'dialect',
     });
 
     return displayNames.of(localeCode);
