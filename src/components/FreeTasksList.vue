@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type ITask from '@/models/ITask';
 import FreeTaskEditDropdown from '@/components/FreeTaskEditDropdown.vue';
+import Draggable from 'vuedraggable';
 
 interface IProps {
   tasks: ITask[];
@@ -16,7 +17,7 @@ defineEmits<IEmits>();
 </script>
 
 <template>
-  <base-draggable
+  <draggable
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     :list="tasks"
     itemKey="id"
@@ -56,7 +57,7 @@ defineEmits<IEmits>();
         </div>
       </div>
     </template>
-  </base-draggable>
+  </draggable>
 </template>
 
 <style scoped lang="scss">

@@ -17,6 +17,7 @@ import {
   BIconSlashCircle,
   BIconExclamationCircle,
 } from 'bootstrap-icons-vue';
+import Draggable from 'vuedraggable';
 
 interface IProps {
   employee: IEmployee;
@@ -112,7 +113,10 @@ const isTaskExpired = ({ deadline }: ITask) => {
   return new Date() > new Date(deadline);
 };
 
-const log = () => console.log('click');
+const onDropDownOpen = (event: Event) => {
+  event.stopPropagation();
+  forceHideTooltips.value = true;
+};
 </script>
 
 <template>
@@ -146,7 +150,7 @@ const log = () => console.log('click');
       {{ $t('dashboard.addTask') }}
     </div>
     <MiniLoadingSpinner v-if="isLoading" />
-    <base-draggable
+    <draggable
       v-else
       class="task-list"
       :list="tasks"
@@ -156,7 +160,6 @@ const log = () => console.log('click');
       filter=".ignore"
       @add="onTaskAdd"
       @end="forceHideTooltips = false"
-      @start="forceHideTooltips = true"
     >
       <template
         #item="{ element, index: taskIndex }: { element: ITask, index: number }"
@@ -171,6 +174,8 @@ const log = () => console.log('click');
             :style="{
               backgroundColor: `var(--difficulty-${element.difficulty})`,
             }"
+            @mousedown="hidePopups"
+            @mouseup="forceHideTooltips = false"
           >
             <div class="flex flex-row gap-1 items-center overflow-hidden">
               <b-icon-check2-circle
@@ -196,12 +201,12 @@ const log = () => console.log('click');
               :task="element"
               @task-remove="releaseTask(taskIndex)"
               @task-delete="onTaskDelete(taskIndex)"
-              @click="forceHideTooltips = true"
+              @click="onDropDownOpen"
             />
           </div>
         </TooltipPopper>
       </template>
-    </base-draggable>
+    </draggable>
     <div
       class="difficulty-badge text-gray-600 dark:text-gray-800 bg-gray-300 dark:bg-gray-400 italic"
     >

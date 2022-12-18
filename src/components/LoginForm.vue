@@ -86,7 +86,7 @@ const submit = async () => {
       @update:validation-model="(value) => (v$.password.$model = value)"
     />
 
-    <button class="btn-flat-secondary" type="submit">
+    <button class="btn-flat" type="submit">
       {{ $t('auth.logIn') }}
     </button>
   </form>

@@ -12,17 +12,17 @@ const styleStore = useStyleStore();
   <HeaderBar></HeaderBar>
 
   <main id="content">
-    <RouterView class="mt-3 mx-5"></RouterView>
+    <RouterView class="mt-3 mx-5" />
   </main>
 
   <div
-    v-show="styleStore.isGlobalSpinnerShown"
+    v-show="styleStore.isGlobalOverlayShown"
     id="global-overlay"
     class="bg-dark/70"
     @click="
       styleStore.isNavbarHidden ? undefined : styleStore.toggleNavigationBar()
     "
-  ></div>
+  />
 
   <LoadingSpinner
     id="global-spinner"
@@ -31,7 +31,7 @@ const styleStore = useStyleStore();
 </template>
 
 <style lang="scss">
-@import '@/assets/base.scss';
+@use '@/assets/base.scss';
 
 #app {
   position: relative;
@@ -50,7 +50,6 @@ const styleStore = useStyleStore();
 }
 
 #global-overlay {
-  display: block;
   position: fixed;
   width: 100%;
   height: 100%;

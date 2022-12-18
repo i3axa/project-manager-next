@@ -3,9 +3,9 @@ import { inject, ref, type App } from 'vue';
 const injectionKey = 'themeProvider';
 
 export enum ThemeValue {
-  light,
-  dark,
-  system,
+  light = 'light',
+  dark = 'dark',
+  system = 'system',
 }
 
 export function createTheme(): ThemeProvider {
@@ -13,8 +13,8 @@ export function createTheme(): ThemeProvider {
 
   const parsedTheme = localStorage.getItem('theme');
 
-  if (parsedTheme !== null) {
-    themeValue = Number.parseInt(parsedTheme);
+  if (parsedTheme !== null && Object.keys(ThemeValue).includes(parsedTheme)) {
+    themeValue = ThemeValue[parsedTheme as keyof typeof ThemeValue];
   } else {
     themeValue = ThemeValue.system;
   }

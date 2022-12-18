@@ -11,31 +11,23 @@ import {
   BIconGear,
   BIconArrowRightCircle,
 } from 'bootstrap-icons-vue';
+import { ref } from 'vue';
 
 const styleStore = useStyleStore();
 const authStore = useAuthStore();
 
-let isNavBarExpanded = true;
-
-const expand = () => {
-  const navBar = document.getElementById('navbar');
-
-  if (!navBar) {
-    return;
-  }
-
-  if (isNavBarExpanded) {
-    navBar.classList.add('no-text');
-    isNavBarExpanded = false;
-  } else {
-    navBar.classList.remove('no-text');
-    isNavBarExpanded = true;
-  }
-};
+const isNavBarExpanded = ref(true);
 </script>
 
 <template>
-  <nav class="bg-light dark:bg-dark navbar py-2 px-2" id="navbar">
+  <nav
+    class="bg-light dark:bg-dark navbar py-2 px-2"
+    id="navbar"
+    :class="[
+      isNavBarExpanded || 'no-text',
+      styleStore.isNavbarHidden ? '-left-full' : 'left-0',
+    ]"
+  >
     <div class="flex flex-row items-center mb-5">
       <button
         class="btn btn-outline-dark dark:btn-outline-light max-w-min !border-none !shadow-none self-center"
@@ -51,7 +43,7 @@ const expand = () => {
     </div>
     <button
       class="expand-btn btn-outline-dark dark:btn-outline-light"
-      @click="expand"
+      @click="isNavBarExpanded = !isNavBarExpanded"
     >
       <b-icon-arrow-bar-left class="text-2xl" />
     </button>
@@ -129,7 +121,6 @@ a {
 
 .navbar {
   position: fixed;
-  left: -100%;
   align-content: flex-start;
   transition: left 0.5s ease-in-out;
   height: -webkit-fill-available;

@@ -8,6 +8,7 @@ import type { TaskState } from '@/types/API';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ITaskInStateColumn, IStateColumn } from '@/utils/TaskStateColumn';
 import { BIconThreeDots, BIconPlus, BIconDash } from 'bootstrap-icons-vue';
+import Draggable from 'vuedraggable';
 
 interface IProps {
   employee?: IEmployee;
@@ -72,7 +73,7 @@ const onTaskAdd = async (
         + {{ $t('dashboard.addTask') }}
       </div>
 
-      <base-draggable
+      <draggable
         class="task-list"
         :list="taskStateColumn.tasks"
         :disabled="!isInteractive"
@@ -197,7 +198,7 @@ const onTaskAdd = async (
             </div>
           </div>
         </template>
-      </base-draggable>
+      </draggable>
     </div>
   </div>
 </template>

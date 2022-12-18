@@ -96,7 +96,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
   <div v-if="!areExecutorsLoading && !manager">No projects</div>
   <div v-else class="outer">
     <section class="flex flex-col relative">
-      <div class="header">
+      <header class="header">
         <h2 class="hidden sm:block" style="line-height: 2.15rem">
           {{ $t('dashboard.project') }}
         </h2>
@@ -112,7 +112,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
             {{ projects.find((p) => p._id === item)?.title }}
           </template>
         </ListBox>
-      </div>
+      </header>
       <MiniLoadingSpinner v-if="areExecutorsLoading" />
       <EmployeesList
         :director="manager?._id"
@@ -123,7 +123,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
     </section>
 
     <section class="flex flex-col relative">
-      <div class="header">
+      <header class="header">
         <h2 style="line-height: 2.15rem">{{ $t('dashboard.tasks') }}</h2>
         <button
           class="btn-outline-secondary px-2 py-2 text-xs"
@@ -136,7 +136,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
         >
           <b-icon-plus-lg />
         </button>
-      </div>
+      </header>
       <MiniLoadingSpinner v-if="areFreeTasksLoading" />
       <FreeTasksList
         :tasks="freeTasks"

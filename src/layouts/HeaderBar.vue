@@ -6,7 +6,7 @@ const styleStore = useStyleStore();
 </script>
 
 <template>
-  <div class="header bg-gray-100 dark:bg-gray-800">
+  <header class="header bg-gray-100 dark:bg-gray-800">
     <button
       class="btn text-4xl text-dark dark:text-light shadow-none"
       id="navbar-toggle-btn"
@@ -27,7 +27,7 @@ const styleStore = useStyleStore();
       to="/auth"
       >{{ $t('headerBar.logIn') }}</router-link
     >
-  </div>
+  </header>
 </template>
 
 <style scoped lang="scss">

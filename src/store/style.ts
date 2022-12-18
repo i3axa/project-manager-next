@@ -5,6 +5,7 @@ export const useStyleStore = defineStore('style', () => {
   const isNavbarHidden = ref(true);
   const isSyncIndicatorToggled = ref(false);
   const isGlobalSpinnerShown = ref(false);
+  const isGlobalOverlayShown = ref(false);
 
   const setIsSyncIndicatorToggled = (value: boolean) => {
     isSyncIndicatorToggled.value = value;
@@ -16,24 +17,13 @@ export const useStyleStore = defineStore('style', () => {
   };
 
   const setIsGlobalSpinnerShown = (value: boolean) => {
+    isNavbarHidden.value = true;
     isGlobalSpinnerShown.value = value;
+    isGlobalOverlayShown.value = value;
   };
 
   const toggleNavigationBar = () => {
-    const navbar = document.getElementById('navbar');
-    const globalOverlay = document.getElementById('global-overlay');
-
-    if (!navbar || !globalOverlay) {
-      return;
-    }
-
-    if (isNavbarHidden.value) {
-      navbar.style.left = '0';
-      globalOverlay.style.display = 'block';
-    } else {
-      navbar.style.left = '-100%';
-      globalOverlay.style.display = 'none';
-    }
+    isGlobalOverlayShown.value = isNavbarHidden.value;
 
     isNavbarHidden.value = !isNavbarHidden.value;
   };
@@ -42,6 +32,7 @@ export const useStyleStore = defineStore('style', () => {
     isNavbarHidden: readonly(isNavbarHidden),
     isSyncIndicatorToggled: readonly(isSyncIndicatorToggled),
     isGlobalSpinnerShown: readonly(isGlobalSpinnerShown),
+    isGlobalOverlayShown: readonly(isGlobalOverlayShown),
     setIsSyncIndicatorToggled,
     setIsGlobalSpinnerShown,
     toggleNavigationBar,
