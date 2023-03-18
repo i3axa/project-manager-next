@@ -1,5 +1,5 @@
 import type ITask from '@/models/ITask';
-import { isReactive, ref, watch } from 'vue';
+import { ref } from 'vue';
 import {
   StateColumn,
   TaskInStateColumn,
@@ -52,9 +52,7 @@ export default function (tasks: ITask[]) {
     ];
   };
 
-  if (isReactive(tasks)) {
-    watch(tasks, () => initialize(), { immediate: true });
-  }
+  initialize();
 
   return { taskStateColumns };
 }

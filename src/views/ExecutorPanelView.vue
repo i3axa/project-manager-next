@@ -32,7 +32,7 @@ const { tasks, projects, currentEmployee, isLoading } = useExecutor(
 <template>
   <LoadingSpinner v-if="isLoading" class="w-full" />
   <div v-else-if="projects.length === 0">No projects</div>
-  <section v-else class="w-full flex flex-col gap-2 items-center">
+  <section v-else class="w-full flex flex-col gap-2 items-center mx-0">
     <header>
       <ListBox
         v-if="!isLoading"
