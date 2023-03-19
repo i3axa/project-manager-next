@@ -1,22 +1,50 @@
 <script setup lang="ts">
-import ImageCropper from '@/components/UI/Cropper/ImageCropper.vue';
+import ProjectCard from '@/components/ProjectCard.vue';
+import InvitationCard from '@/components/InvitationCard.vue';
+import useInvitations from '@/hooks/useInvitations';
+import useProjects from '@/hooks/useProjects';
+import { useAuthStore } from '@/store/auth';
+import { BIconPlusLg } from 'bootstrap-icons-vue';
 
-const img =
-  'https://advanced-cropper.github.io/vue-advanced-cropper/assets/img/photo-1542571255-84471dc5581c.eeae35ce.jpg';
+const authStore = useAuthStore();
 
-const onImageCropped = (blob: Blob) => {
-  const file = new File([blob], 'image', {
-    type: blob.type,
-  });
+if (!authStore.credentials.user) {
+  throw new Error('User is not authorized');
+}
 
-  console.log(file);
-};
+const { projects } = useProjects();
+
+const { invitations } = useInvitations({
+  user: authStore.credentials.user.id,
+});
 </script>
 
 <template>
-  <div>
-    <h1>Nothing</h1>
-    <ImageCropper :image-url="img" @image-cropped="onImageCropped" />
+  <div class="flex flex-col">
+    <header class="flex flex-row gap-4 items-end">
+      <h2 style="line-height: 2.15rem">{{ $t('project.myProjects') }}</h2>
+      <button class="btn-outline-secondary px-2 py-2 text-xs">
+        <b-icon-plus-lg />
+      </button>
+    </header>
+    <div class="flex flex-row flex-wrap items-center justify-center gap-6 py-5">
+      <ProjectCard
+        v-for="project in projects"
+        :key="project._id"
+        :project="project"
+      />
+    </div>
+
+    <header>
+      <h2 style="line-height: 2.15rem">{{ $t('project.myInvitations') }}</h2>
+    </header>
+    <div class="flex flex-row flex-wrap items-center justify-center gap-6 py-5">
+      <InvitationCard
+        v-for="invitation in invitations"
+        :key="invitation._id"
+        :invitation="invitation"
+      />
+    </div>
   </div>
 </template>
 

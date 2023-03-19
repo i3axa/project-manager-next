@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import useProjects from '@/hooks/useProjects';
 import useUser from '@/hooks/useUser';
 import { useAuthStore } from '@/store/auth';
 import { BIconPerson } from 'bootstrap-icons-vue';
@@ -11,17 +10,16 @@ if (!authStore.credentials.user) {
 }
 
 const { user } = useUser(authStore.credentials.user.id);
-const { projects } = useProjects();
 </script>
 
 <template>
   <div>
     <b-icon-person class="text-8xl" />
+    <div>{{ user?._id }}</div>
     <div>{{ user?.email }}</div>
     <div>{{ user?.name }}</div>
     <div>{{ user?.surname }}</div>
     <div>{{ user?.skills }}</div>
-    <div v-for="project in projects" :key="project._id">{{ project }}</div>
   </div>
 </template>
 

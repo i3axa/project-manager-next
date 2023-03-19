@@ -8,7 +8,7 @@ export default function (query?: EmployeesQuery) {
   const isLoading = ref(true);
   const employees = ref<IEmployee[]>([]);
 
-  onMounted(async () => {
+  const fetch = async () => {
     const employeesResponse = await EmployeesService.fetchEmployees(query);
 
     employees.value = await EmployeesConverter.getEmployeesFromIds(
@@ -16,7 +16,15 @@ export default function (query?: EmployeesQuery) {
     );
 
     isLoading.value = false;
-  });
+  };
 
-  return { employees, isLoading };
+  onMounted(fetch);
+
+  const refetch = async () => {
+    isLoading.value = true;
+
+    await fetch();
+  };
+
+  return { employees, isLoading, refetch };
 }

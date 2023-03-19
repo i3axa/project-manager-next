@@ -22,4 +22,10 @@ export default class EmployeesService {
 
     return AuthAPIInstance.patch<IEmployeeResponse>(url, data);
   }
+
+  static async deleteEmployee(employeeId: Id) {
+    const url = `/employees/${employeeId}`;
+
+    return AuthAPIInstance.delete<IEmployeeResponse>(url);
+  }
 }

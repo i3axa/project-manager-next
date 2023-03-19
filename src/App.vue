@@ -57,6 +57,6 @@ const styleStore = useStyleStore();
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 200;
 }
 </style>

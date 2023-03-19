@@ -1,4 +1,5 @@
 import type IEmployeeDto from '@/models/dto/IEmployeeDto';
+import type { IInvitationDto } from '@/models/dto/IInvitationDto';
 import type IUserDto from '@/models/dto/IUserDto';
 import type IProject from '@/models/IProject';
 import type ITask from '@/models/ITask';
@@ -37,9 +38,14 @@ interface IProjectsQueryParams extends IQueryParams {
   isPrivate: StringifiedBoolean;
 }
 
+interface IUsersQueryParams extends IQueryParams {
+  searchEmail: string;
+}
+
 export type TasksQuery = Partial<ITasksQueryParams | ITask>;
 export type EmployeesQuery = Partial<IQueryParams | IEmployeeDto>;
 export type ProjectsQuery = Partial<
   IProjectsQueryParams | Omit<IProject, 'isPrivate'>
 >;
-export type UsersQuery = Partial<IQueryParams | Partial<IUserDto>>;
+export type UsersQuery = Partial<IUsersQueryParams | Partial<IUserDto>>;
+export type InvitationsQuery = Partial<IInvitationDto>;

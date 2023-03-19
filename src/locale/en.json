@@ -97,5 +97,18 @@
     "attach": "Attach",
     "submit": "Submit",
     "dropFiles": "Drop files here"
+  },
+  "project": {
+    "edit": "Project edit",
+    "invite": "Invite",
+    "myProjects": "My projects",
+    "submit": "Submit",
+    "noEmployees": "There is no employees yet",
+    "myInvitations": "Invitations",
+    "accept": "Accept"
+  },
+  "speciality": {
+    "MANAGER": "Manager",
+    "EXECUTOR": "Executor"
   }
 }

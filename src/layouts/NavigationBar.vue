@@ -124,7 +124,7 @@ a {
   align-content: flex-start;
   transition: left 0.5s ease-in-out;
   height: -webkit-fill-available;
-  z-index: 3;
+  z-index: 300;
   display: flex;
   flex-direction: column;
 }
