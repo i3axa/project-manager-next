@@ -105,7 +105,11 @@
     "submit": "Submit",
     "noEmployees": "There is no employees yet",
     "myInvitations": "Invitations",
-    "accept": "Accept"
+    "accept": "Accept",
+    "create": "Create new project",
+    "delete": "Delete project",
+    "title": "Title of project",
+    "description": "Description of project"
   },
   "speciality": {
     "MANAGER": "Manager",

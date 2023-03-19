@@ -79,5 +79,3 @@ const isInviteModalOpen = ref(false);
     <InviteModal :project="project" v-model:is-open="isInviteModalOpen" />
   </div>
 </template>
-
-<style scoped lang="scss"></style>

@@ -22,5 +22,3 @@ const { user } = useUser(authStore.credentials.user.id);
     <div>{{ user?.skills }}</div>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

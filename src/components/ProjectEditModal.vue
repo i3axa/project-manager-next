@@ -9,7 +9,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import { BIconPersonX } from 'bootstrap-icons-vue';
+import { BIconPersonX, BIconTrash } from 'bootstrap-icons-vue';
 import { reactive, watch, ref, computed } from 'vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 import { EmployeeSpeciality, type Id } from '@/types/API';
@@ -26,7 +26,7 @@ interface IEmits {
 }
 
 const props = defineProps<IProps>();
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const styleStore = useStyleStore();
 
@@ -56,6 +56,7 @@ const onSubmit = async () => {
 };
 
 const isDeleteEmployeeModalOpen = ref(false);
+const isDeleteProjectModalOpen = ref(false);
 const selectedEmployee = ref<Id | null>(null);
 
 const onDeleteEmployee = computed(() => async () => {
@@ -72,6 +73,17 @@ const onDeleteEmployee = computed(() => async () => {
 
   isDeleteEmployeeModalOpen.value = false;
 });
+
+const onProjectDelete = async () => {
+  styleStore.setIsGlobalSpinnerShown(true);
+
+  await ProjectService.deleteProject(props.projectId);
+
+  styleStore.setIsGlobalSpinnerShown(false);
+
+  isDeleteProjectModalOpen.value = false;
+  emit('update:isOpen', false);
+};
 </script>
 
 <template>
@@ -135,14 +147,16 @@ const onDeleteEmployee = computed(() => async () => {
                   {{ $t('project.submit') }}
                 </button>
 
-                <div class="flex flex-row w-full justify-between">
+                <div
+                  class="flex flex-row w-full justify-between max-[470px]:flex-col"
+                >
                   <p class="text-error mx-auto" v-if="employees.length === 0">
                     {{ $t('project.noEmployees') }}
                   </p>
 
                   <select
                     v-if="employees.length !== 0"
-                    class="form-control max-w-[345px]"
+                    class="form-control min-[470px]:max-w-[345px] max-[470px]:w-full"
                     v-model="selectedEmployee"
                   >
                     <option
@@ -158,7 +172,7 @@ const onDeleteEmployee = computed(() => async () => {
 
                   <button
                     v-if="employees.length !== 0"
-                    class="btn-error"
+                    class="btn-error max-[470px]:mt-3 max-[470px]:items-center max-[470px]:justify-center"
                     type="button"
                     @click="isDeleteEmployeeModalOpen = true"
                   >
@@ -172,6 +186,20 @@ const onDeleteEmployee = computed(() => async () => {
                     @cancel="isDeleteEmployeeModalOpen = false"
                   />
                 </div>
+
+                <button
+                  class="btn-error w-full mt-12 items-center justify-center"
+                  type="button"
+                  @click="isDeleteProjectModalOpen = true"
+                >
+                  <b-icon-trash /> {{ $t('project.delete') }}
+                </button>
+
+                <ConfirmModal
+                  :is-open="isDeleteProjectModalOpen"
+                  @continue="onProjectDelete"
+                  @cancel="isDeleteProjectModalOpen = false"
+                />
               </form>
             </DialogPanel>
           </TransitionChild>
@@ -180,5 +208,3 @@ const onDeleteEmployee = computed(() => async () => {
     </Dialog>
   </TransitionRoot>
 </template>
-
-<style scoped lang="scss"></style>

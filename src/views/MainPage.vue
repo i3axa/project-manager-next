@@ -5,6 +5,8 @@ import useInvitations from '@/hooks/useInvitations';
 import useProjects from '@/hooks/useProjects';
 import { useAuthStore } from '@/store/auth';
 import { BIconPlusLg } from 'bootstrap-icons-vue';
+import CreateProjectModal from '@/components/CreateProjectModal.vue';
+import { ref } from 'vue';
 
 const authStore = useAuthStore();
 
@@ -17,13 +19,18 @@ const { projects } = useProjects();
 const { invitations } = useInvitations({
   user: authStore.credentials.user.id,
 });
+
+const isCreateProjectModalOpen = ref(false);
 </script>
 
 <template>
   <div class="flex flex-col">
     <header class="flex flex-row gap-4 items-end">
       <h2 style="line-height: 2.15rem">{{ $t('project.myProjects') }}</h2>
-      <button class="btn-outline-secondary px-2 py-2 text-xs">
+      <button
+        class="btn-outline-secondary px-2 py-2 text-xs"
+        @click="isCreateProjectModalOpen = true"
+      >
         <b-icon-plus-lg />
       </button>
     </header>
@@ -45,7 +52,7 @@ const { invitations } = useInvitations({
         :invitation="invitation"
       />
     </div>
+
+    <CreateProjectModal v-model:is-open="isCreateProjectModalOpen" />
   </div>
 </template>
-
-<style scoped lang="scss"></style>

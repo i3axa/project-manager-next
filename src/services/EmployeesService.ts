@@ -23,6 +23,12 @@ export default class EmployeesService {
     return AuthAPIInstance.patch<IEmployeeResponse>(url, data);
   }
 
+  static async createEmployee(data: Partial<IEmployeeDto>) {
+    const url = `/employees`;
+
+    return AuthAPIInstance.post<IEmployeeResponse>(url, data);
+  }
+
   static async deleteEmployee(employeeId: Id) {
     const url = `/employees/${employeeId}`;
 

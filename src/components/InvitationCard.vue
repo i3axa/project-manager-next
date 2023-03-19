@@ -48,5 +48,3 @@ const onAccept = async () => {
     </footer>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

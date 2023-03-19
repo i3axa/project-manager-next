@@ -28,4 +28,10 @@ export default class ProjectService {
 
     return AuthAPIInstance.post<IProjectResponse>(url, data);
   }
+
+  static async deleteProject(id: Id) {
+    const url = `/projects/${id}`;
+
+    return AuthAPIInstance.delete<IProjectResponse>(url);
+  }
 }
