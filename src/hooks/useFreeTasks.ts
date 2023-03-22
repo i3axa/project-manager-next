@@ -1,7 +1,6 @@
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import type { Id } from '@/types/API';
-import { TasksConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref, watch, type Ref } from 'vue';
 
 export default function (currentProject: Ref<Id | undefined>) {
@@ -18,7 +17,7 @@ export default function (currentProject: Ref<Id | undefined>) {
       isFree: '1',
     });
 
-    freeTasks.value = await TasksConverter.getTasksFromIds(response);
+    freeTasks.value = response.data.tasks;
 
     isLoading.value = false;
   };

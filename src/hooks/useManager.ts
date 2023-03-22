@@ -1,9 +1,7 @@
 import type IEmployee from '@/models/IEmployee';
 import type IProject from '@/models/IProject';
 import EmployeesService from '@/services/EmployeesService';
-import ProjectService from '@/services/ProjectService';
 import { EmployeeSpeciality, type Id } from '@/types/API';
-import { EmployeesConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, readonly, ref, watch, type Ref } from 'vue';
 
 export default function (userId: Id, currentProject: Ref<Id | undefined>) {
@@ -12,7 +10,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
   const projects = ref<IProject[]>([]);
   const manager = ref<IEmployee>();
 
-  const getProjectsIds = async () => {
+  const getProjects = async () => {
     const userEmployeesResponse = await EmployeesService.fetchEmployees({
       user: userId,
       speciality: EmployeeSpeciality.MANAGER,
@@ -22,9 +20,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
       return [];
     }
 
-    const userEmployees = await EmployeesConverter.getEmployeesFromIds(
-      userEmployeesResponse
-    );
+    const userEmployees = userEmployeesResponse.data.employees;
 
     return userEmployees.map((e) => e.project);
   };
@@ -40,36 +36,23 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
       return undefined;
     }
 
-    const managerResponse = await EmployeesService.fetchEmployeeById(
-      employeesResponse.data.employees[0]
-    );
-
-    return await EmployeesConverter.getEmployee(managerResponse);
+    return employeesResponse.data.employees[0];
   };
 
   const fetch = async () => {
-    const projectIds = await getProjectsIds();
+    projects.value = await getProjects();
 
     executors.value = [];
 
-    for (const id of projectIds) {
+    for (const id of projects.value.map((p) => p._id)) {
       const employeesResponse = await EmployeesService.fetchEmployees({
         speciality: EmployeeSpeciality.EXECUTOR,
         project: id,
       });
 
-      const employees = await EmployeesConverter.getEmployeesFromIds(
-        employeesResponse
-      );
+      const employees = employeesResponse.data.employees;
 
       executors.value.push(...employees);
-    }
-
-    projects.value = [];
-
-    for (const id of projectIds) {
-      const response = await ProjectService.fetchProjectById(id);
-      projects.value.push(response.data.project);
     }
   };
 

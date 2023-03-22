@@ -1,5 +1,5 @@
 import { AuthAPIInstance, FormAuthAPIInstance } from '@/http';
-import type ITasksIdResponse from '@/models/response/ITasksIdResponse';
+import type ITasksManyResponse from '@/models/response/ITasksManyResponse';
 import type ITask from '@/models/ITask';
 import type ITaskResponse from '@/models/response/ITaskResponse';
 import type { Id, TasksQuery } from '@/types/API';
@@ -8,18 +8,15 @@ export default class TaskService {
   static async fetchTasks(query?: TasksQuery) {
     const url = '/tasks';
 
-    return AuthAPIInstance.get<ITasksIdResponse>(url, {
+    return AuthAPIInstance.get<ITasksManyResponse>(url, {
       params: query,
-      cache: false,
     });
   }
 
   static async fetchTaskById(id: Id) {
     const url = `tasks/${id}`;
 
-    return AuthAPIInstance.get<ITaskResponse>(url, {
-      cache: false,
-    });
+    return AuthAPIInstance.get<ITaskResponse>(url);
   }
 
   static async createTask(newTask: FormData) {

@@ -34,7 +34,7 @@ const isCreateProjectModalOpen = ref(false);
         <b-icon-plus-lg />
       </button>
     </header>
-    <div class="flex flex-row flex-wrap items-center justify-center gap-6 py-5">
+    <div class="flex flex-row flex-wrap items-center gap-6 py-5">
       <ProjectCard
         v-for="project in projects"
         :key="project._id"
@@ -45,7 +45,7 @@ const isCreateProjectModalOpen = ref(false);
     <header>
       <h2 style="line-height: 2.15rem">{{ $t('project.myInvitations') }}</h2>
     </header>
-    <div class="flex flex-row flex-wrap items-center justify-center gap-6 py-5">
+    <div class="flex flex-row flex-wrap items-center gap-6 py-5">
       <InvitationCard
         v-for="invitation in invitations"
         :key="invitation._id"

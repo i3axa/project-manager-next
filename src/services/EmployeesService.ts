@@ -1,14 +1,14 @@
 import { AuthAPIInstance } from '@/http';
-import type IEmployeeDto from '@/models/dto/IEmployeeDto';
+import type IEmployeeRequest from '@/models/requests/IEmployeeRequest';
 import type IEmployeeResponse from '@/models/response/IEmployeeResponse';
-import type IEmployeesIdResponse from '@/models/response/IEmployeesIdResponse';
+import type IEmployeesManyResponse from '@/models/response/IEmployeesManyResponse';
 import type { EmployeesQuery, Id } from '@/types/API';
 
 export default class EmployeesService {
   static async fetchEmployees(query?: EmployeesQuery) {
     const url = '/employees';
 
-    return AuthAPIInstance.get<IEmployeesIdResponse>(url, { params: query });
+    return AuthAPIInstance.get<IEmployeesManyResponse>(url, { params: query });
   }
 
   static async fetchEmployeeById(employeeId: Id) {
@@ -17,13 +17,13 @@ export default class EmployeesService {
     return AuthAPIInstance.get<IEmployeeResponse>(url);
   }
 
-  static async patchEmployee(employeeId: Id, data: Partial<IEmployeeDto>) {
+  static async patchEmployee(employeeId: Id, data: Partial<IEmployeeRequest>) {
     const url = `/employees/${employeeId}`;
 
     return AuthAPIInstance.patch<IEmployeeResponse>(url, data);
   }
 
-  static async createEmployee(data: Partial<IEmployeeDto>) {
+  static async createEmployee(data: Omit<IEmployeeRequest, 'user'>) {
     const url = `/employees`;
 
     return AuthAPIInstance.post<IEmployeeResponse>(url, data);

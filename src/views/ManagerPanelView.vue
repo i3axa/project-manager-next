@@ -116,7 +116,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
       <MiniLoadingSpinner v-if="areExecutorsLoading" />
       <EmployeesList
         :director="manager?._id"
-        :employees="executors.filter((e) => e.project === currentProject)"
+        :employees="executors.filter((e) => e.project._id === currentProject)"
         @task-release="onTaskRelease"
         v-else
       ></EmployeesList>

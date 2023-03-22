@@ -33,7 +33,7 @@ const emit = defineEmits<IEmits>();
 
 const { tasks, isLoading } = useTasks({
   employee: props.employee._id,
-  project: props.employee.project,
+  project: props.employee.project._id,
   director: props.director,
 });
 
@@ -141,7 +141,7 @@ const onDropDownOpen = (event: Event) => {
         $router.push({
           path: 'taskCreation',
           query: {
-            project: employee.project,
+            project: employee.project._id,
             employee: employee._id,
           },
         })

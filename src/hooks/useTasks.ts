@@ -1,7 +1,6 @@
 import type ITask from '@/models/ITask';
 import TaskService from '@/services/TaskService';
 import type { TasksQuery } from '@/types/API';
-import { TasksConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function (tasksQuery?: TasksQuery) {
@@ -11,7 +10,7 @@ export default function (tasksQuery?: TasksQuery) {
   onMounted(async () => {
     const response = await TaskService.fetchTasks(tasksQuery);
 
-    tasks.value = await TasksConverter.getTasksFromIds(response);
+    tasks.value = response.data.tasks;
 
     isLoading.value = false;
   });

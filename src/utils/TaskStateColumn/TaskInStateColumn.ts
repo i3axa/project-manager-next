@@ -6,15 +6,13 @@ import { useStyleStore } from '@/store/style';
 import IntervalValueChanger from './IntervalValueChanger';
 import EmployeesService from '@/services/EmployeesService';
 import type { Id } from '@/types/API';
-import { EmployeesConverter } from '../ResponseToModelConverter';
 
 const styleStore = useStyleStore();
 
 const getDirectorUser = async (employeeId: Id) => {
   const response = await EmployeesService.fetchEmployeeById(employeeId);
-  const employee = await EmployeesConverter.getEmployee(response);
 
-  return employee.user;
+  return response.data.employee.user;
 };
 
 export class TaskInStateColumn implements ITaskInStateColumn {

@@ -1,5 +1,5 @@
-import type { IInvitationDto } from '../dto/IInvitationDto';
+import type IInvitation from '../IInvitation';
 
 export default interface IInvitationResponse {
-  invitation: IInvitationDto;
+  invitation: IInvitation;
 }

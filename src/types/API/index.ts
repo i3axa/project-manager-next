@@ -1,8 +1,8 @@
-import type IEmployeeDto from '@/models/dto/IEmployeeDto';
-import type { IInvitationDto } from '@/models/dto/IInvitationDto';
 import type IUserDto from '@/models/dto/IUserDto';
 import type IProject from '@/models/IProject';
 import type ITask from '@/models/ITask';
+import type IEmployeeRequest from '@/models/requests/IEmployeeRequest';
+import type { IInvitationRequest } from '@/models/requests/IInvitationRequest';
 
 export enum Role {
   USER = 'USER',
@@ -43,9 +43,9 @@ interface IUsersQueryParams extends IQueryParams {
 }
 
 export type TasksQuery = Partial<ITasksQueryParams | ITask>;
-export type EmployeesQuery = Partial<IQueryParams | IEmployeeDto>;
+export type EmployeesQuery = Partial<IQueryParams | IEmployeeRequest>;
 export type ProjectsQuery = Partial<
   IProjectsQueryParams | Omit<IProject, 'isPrivate'>
 >;
 export type UsersQuery = Partial<IUsersQueryParams | Partial<IUserDto>>;
-export type InvitationsQuery = Partial<IInvitationDto>;
+export type InvitationsQuery = Partial<IInvitationRequest>;

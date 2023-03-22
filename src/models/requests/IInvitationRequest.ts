@@ -1,8 +1,8 @@
 import type { EmployeeSpeciality, Id } from '@/types/API';
 
-export default interface IEmployeeDto {
-  _id: Id;
+export interface IInvitationRequest {
   user: Id;
   project: Id;
+  isResolved: boolean;
   speciality: EmployeeSpeciality;
 }

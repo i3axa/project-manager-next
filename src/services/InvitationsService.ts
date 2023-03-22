@@ -1,5 +1,5 @@
 import { AuthAPIInstance } from '@/http';
-import type { IInvitationDto } from '@/models/dto/IInvitationDto';
+import type { IInvitationRequest } from '@/models/requests/IInvitationRequest';
 import type IInvitationResponse from '@/models/response/IInvitationResponse';
 import type IInvitationsManyResponse from '@/models/response/IInvitationsManyResponse';
 import type { Id, InvitationsQuery } from '@/types/API';
@@ -13,9 +13,7 @@ export default class InvitationsService {
     });
   }
 
-  static async createInvitation(
-    data: Omit<IInvitationDto, '_id' | 'isResolved'>
-  ) {
+  static async createInvitation(data: Omit<IInvitationRequest, 'isResolved'>) {
     const url = `/invitations`;
 
     return AuthAPIInstance.post<IInvitationResponse>(url, data);

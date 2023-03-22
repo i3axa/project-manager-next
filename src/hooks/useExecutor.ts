@@ -1,9 +1,5 @@
 import { onMounted, ref, watch, type Ref } from 'vue';
 import EmployeesService from '@/services/EmployeesService';
-import {
-  EmployeesConverter,
-  TasksConverter,
-} from '@/utils/ResponseToModelConverter';
 import { EmployeeSpeciality, type Id } from '@/types/API';
 import type IProject from '@/models/IProject';
 import type IEmployee from '@/models/IEmployee';
@@ -29,9 +25,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
       employees.value = [];
     }
 
-    employees.value = await EmployeesConverter.getEmployeesFromIds(
-      employeesResponse
-    );
+    employees.value = employeesResponse.data.employees;
   };
 
   const fetchProjects = async (ids: Id[]) => {
@@ -59,7 +53,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
       project: currentProject.value,
     });
 
-    tasks.value = await TasksConverter.getTasksFromIds(tasksResponse);
+    tasks.value = tasksResponse.data.tasks;
   };
 
   onMounted(async () => {
@@ -72,13 +66,13 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
 
     if (currentProject.value) {
       currentEmployee.value = employees.value.find(
-        (e) => e.project === currentProject.value
+        (e) => e.project._id === currentProject.value
       );
     } else {
       currentEmployee.value = employees.value[0];
     }
 
-    await fetchProjects(employees.value.map((e) => e.project));
+    await fetchProjects(employees.value.map((e) => e.project._id));
     currentProject.value = currentProject.value ?? projects.value[0]._id;
 
     await fetchTasks();
@@ -90,7 +84,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     isLoading.value = true;
 
     currentEmployee.value = employees.value.find(
-      (e) => e.project === currentProject.value
+      (e) => e.project._id === currentProject.value
     );
 
     await fetchTasks();

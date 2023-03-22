@@ -1,7 +1,6 @@
 import type IInvitation from '@/models/IInvitation';
 import InvitationsService from '@/services/InvitationsService';
 import type { InvitationsQuery } from '@/types/API';
-import { InvitationsConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function (query: InvitationsQuery) {
@@ -13,11 +12,7 @@ export default function (query: InvitationsQuery) {
       query
     );
 
-    for (const invitation of invitationsResponse.data.invitations) {
-      invitations.value.push(
-        await InvitationsConverter.getInvitation(invitation)
-      );
-    }
+    invitations.value = invitationsResponse.data.invitations;
 
     isLoading.value = false;
   });

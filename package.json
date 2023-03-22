@@ -10,10 +10,10 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@drawbotics/file-icons": "^0.1.3",
     "@headlessui/vue": "^1.6.7",
     "@popperjs/core": "^2.11.6",
     "@tailwindcss/forms": "^0.5.2",
+    "@tanstack/vue-query": "^4.27.0",
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
@@ -22,7 +22,6 @@
     "@vueup/vue-quill": "^1.0.0-beta.9",
     "@vueuse/core": "^9.4.0",
     "axios": "^0.27.2",
-    "axios-extensions": "^3.1.6",
     "bootstrap-icons-vue": "^1.10.3",
     "pinia": "^2.0.22",
     "postcss-scss": "^4.0.6",

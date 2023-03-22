@@ -1,7 +1,6 @@
 import { onMounted, ref } from 'vue';
 import EmployeesService from '@/services/EmployeesService';
 import type IEmployee from '@/models/IEmployee';
-import { EmployeesConverter } from '@/utils/ResponseToModelConverter';
 
 export default function useEmployee(employeeId: string) {
   const employee = ref<IEmployee>();
@@ -10,7 +9,7 @@ export default function useEmployee(employeeId: string) {
   onMounted(async () => {
     const response = await EmployeesService.fetchEmployeeById(employeeId);
 
-    employee.value = await EmployeesConverter.getEmployee(response);
+    employee.value = response.data.employee;
 
     isLoading.value = false;
   });

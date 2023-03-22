@@ -1,7 +1,6 @@
 import type IEmployee from '@/models/IEmployee';
 import EmployeesService from '@/services/EmployeesService';
 import type { EmployeesQuery } from '@/types/API';
-import { EmployeesConverter } from '@/utils/ResponseToModelConverter';
 import { onMounted, ref } from 'vue';
 
 export default function (query?: EmployeesQuery) {
@@ -11,9 +10,7 @@ export default function (query?: EmployeesQuery) {
   const fetch = async () => {
     const employeesResponse = await EmployeesService.fetchEmployees(query);
 
-    employees.value = await EmployeesConverter.getEmployeesFromIds(
-      employeesResponse
-    );
+    employees.value = employeesResponse.data.employees;
 
     isLoading.value = false;
   };
