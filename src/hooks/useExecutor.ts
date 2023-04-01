@@ -1,96 +1,50 @@
-import { onMounted, ref, watch, type Ref } from 'vue';
-import EmployeesService from '@/services/EmployeesService';
-import { EmployeeSpeciality, type Id } from '@/types/API';
-import type IProject from '@/models/IProject';
-import type IEmployee from '@/models/IEmployee';
-import type ITask from '@/models/ITask';
-import ProjectService from '@/services/ProjectService';
-import TaskService from '@/services/TaskService';
+import { computed, type Ref } from 'vue';
+import {
+  EmployeeSpeciality,
+  type EmployeesQuery,
+  type Id,
+  type TasksQuery,
+} from '@/types/API';
+import { useEmployees, useTasks } from '@/api';
+import { until } from '@vueuse/core';
 
 export default function (userId: Id, currentProject: Ref<Id | undefined>) {
-  const tasks = ref<ITask[]>([]);
-  const currentEmployee = ref<IEmployee>();
-  const projects = ref<IProject[]>([]);
-  const isLoading = ref(true);
+  const employeesQueryKey = computed<[string, EmployeesQuery]>(() => [
+    'employees',
+    { speciality: EmployeeSpeciality.EXECUTOR, user: userId },
+  ]);
+  const { data: employees, isLoading: isEmployeesLoading } =
+    useEmployees(employeesQueryKey);
 
-  const employees = ref<IEmployee[]>([]);
+  const currentEmployee = computed(() =>
+    currentProject.value
+      ? employees.value.find((e) => e.project._id === currentProject.value)
+      : employees.value[0]
+  );
+  const projects = computed(() => employees.value.map((e) => e.project));
 
-  const fetchEmployees = async () => {
-    const employeesResponse = await EmployeesService.fetchEmployees({
-      user: userId,
-      speciality: EmployeeSpeciality.EXECUTOR,
-    });
-
-    if (employeesResponse.data.employees.length === 0) {
-      employees.value = [];
-    }
-
-    employees.value = employeesResponse.data.employees;
-  };
-
-  const fetchProjects = async (ids: Id[]) => {
-    projects.value = [];
-
-    for (const id of ids) {
-      const response = await ProjectService.fetchProjectById(id);
-
-      projects.value.push(response.data.project);
-    }
-  };
-
-  const fetchTasks = async () => {
-    if (
-      currentProject.value === undefined ||
-      currentEmployee.value === undefined
-    ) {
-      return;
-    }
-
-    tasks.value = [];
-
-    const tasksResponse = await TaskService.fetchTasks({
-      employee: currentEmployee.value._id,
-      project: currentProject.value,
-    });
-
-    tasks.value = tasksResponse.data.tasks;
-  };
-
-  onMounted(async () => {
-    await fetchEmployees();
-
-    if (employees.value.length === 0) {
-      isLoading.value = false;
-      return;
-    }
-
-    if (currentProject.value) {
-      currentEmployee.value = employees.value.find(
-        (e) => e.project._id === currentProject.value
-      );
-    } else {
-      currentEmployee.value = employees.value[0];
-    }
-
-    await fetchProjects(employees.value.map((e) => e.project._id));
-    currentProject.value = currentProject.value ?? projects.value[0]._id;
-
-    await fetchTasks();
-
-    isLoading.value = false;
+  const tasksQueryKey = computed<[string, TasksQuery]>(() => [
+    'tasks',
+    { employee: currentEmployee.value?._id },
+  ]);
+  const enabled = computed(
+    () => !!(currentEmployee.value && currentProject.value)
+  );
+  const { data: tasks, isLoading: isTasksLoading } = useTasks(tasksQueryKey, {
+    enabled,
   });
 
-  watch(currentProject, async () => {
-    isLoading.value = true;
+  const isLoading = computed(
+    () => isEmployeesLoading.value && isTasksLoading.value
+  );
 
-    currentEmployee.value = employees.value.find(
-      (e) => e.project._id === currentProject.value
-    );
+  (async () => {
+    await until(projects).toMatch((v) => v.length > 0);
 
-    await fetchTasks();
-
-    isLoading.value = false;
-  });
+    if (!currentProject.value) {
+      currentProject.value = projects.value[0]._id;
+    }
+  })();
 
   return { tasks, projects, currentEmployee, isLoading };
 }

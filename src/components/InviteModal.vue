@@ -6,17 +6,15 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
+import { refDebounced } from '@vueuse/core';
 import type IProject from '@/models/IProject';
-import InvitationsService from '@/services/InvitationsService';
-import { EmployeeSpeciality } from '@/types/API';
-import { reactive, ref, computed } from 'vue';
+import { EmployeeSpeciality, type UsersQuery } from '@/types/API';
+import { reactive, computed, ref } from 'vue';
 import AutoComplete from './UI/AutoComplete.vue';
-import useUsers from '@/hooks/useUsers';
 import type IUserDto from '@/models/dto/IUserDto';
-import useEmployees from '@/hooks/useEmployees';
 import MiniLoadingSpinner from './UI/MiniLoadingSpinner.vue';
 import { useStyleStore } from '@/store/style';
+import { useUsers, useEmployees, useCreateInvitation } from '@/api/queries';
 
 interface IProps {
   project: IProject;
@@ -32,10 +30,26 @@ defineEmits<IEmits>();
 
 const styleStore = useStyleStore();
 
-const { users: usersData, refetch } = useUsers({ _limit: 10 });
-const { employees, isLoading: isEmployeesLoading } = useEmployees({
-  project: props.project._id,
-});
+const searchQuery = ref('');
+const searchQueryDebounced = refDebounced(searchQuery, 500);
+
+const usersQuery = computed<[string, UsersQuery]>(() => [
+  'users',
+  {
+    _limit: 10,
+    searchEmail: searchQueryDebounced.value,
+  },
+]);
+
+const { data: usersData } = useUsers(usersQuery);
+const { data: employees, isLoading: isEmployeesLoading } = useEmployees([
+  'employees',
+  {
+    project: props.project._id,
+  },
+]);
+
+const { mutateAsync: createInvitation } = useCreateInvitation();
 
 const users = computed(() =>
   usersData.value.filter(
@@ -48,16 +62,6 @@ const model = reactive({
   speciality: EmployeeSpeciality.EXECUTOR,
 });
 
-const searchQuery = ref('');
-
-watchDebounced(
-  searchQuery,
-  () => {
-    refetch({ _limit: 5, searchEmail: searchQuery.value });
-  },
-  { debounce: 1000, maxWait: 5000 }
-);
-
 const onSubmit = async () => {
   if (!model.user) {
     return;
@@ -65,7 +69,7 @@ const onSubmit = async () => {
 
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await InvitationsService.createInvitation({
+  await createInvitation({
     speciality: model.speciality,
     user: model.user._id,
     project: props.project._id,

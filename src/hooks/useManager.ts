@@ -1,83 +1,67 @@
-import type IEmployee from '@/models/IEmployee';
-import type IProject from '@/models/IProject';
+import { useEmployees } from '@/api';
 import EmployeesService from '@/services/EmployeesService';
-import { EmployeeSpeciality, type Id } from '@/types/API';
-import { onMounted, readonly, ref, watch, type Ref } from 'vue';
+import { EmployeeSpeciality, type EmployeesQuery, type Id } from '@/types/API';
+import { useQuery } from '@tanstack/vue-query';
+import { computed, readonly, type Ref } from 'vue';
 
 export default function (userId: Id, currentProject: Ref<Id | undefined>) {
-  const isLoading = ref(true);
-  const executors = ref<IEmployee[]>([]);
-  const projects = ref<IProject[]>([]);
-  const manager = ref<IEmployee>();
+  const executorsQueryKey = computed<[string, EmployeesQuery]>(() => [
+    'employees',
+    { speciality: EmployeeSpeciality.EXECUTOR, project: currentProject.value },
+  ]);
+  const { data: executors, isLoading: isExecutorsLoading } =
+    useEmployees(executorsQueryKey);
 
-  const getProjects = async () => {
-    const userEmployeesResponse = await EmployeesService.fetchEmployees({
-      user: userId,
-      speciality: EmployeeSpeciality.MANAGER,
-    });
-
-    if (userEmployeesResponse.data.employees.length === 0) {
-      return [];
-    }
-
-    const userEmployees = userEmployeesResponse.data.employees;
-
-    return userEmployees.map((e) => e.project);
-  };
-
-  const getManager = async (projectId: Id) => {
-    const employeesResponse = await EmployeesService.fetchEmployees({
-      user: userId,
-      project: projectId,
-      speciality: EmployeeSpeciality.MANAGER,
-    });
-
-    if (employeesResponse.data.employees.length === 0) {
-      return undefined;
-    }
-
-    return employeesResponse.data.employees[0];
-  };
-
-  const fetch = async () => {
-    projects.value = await getProjects();
-
-    executors.value = [];
-
-    for (const id of projects.value.map((p) => p._id)) {
-      const employeesResponse = await EmployeesService.fetchEmployees({
-        speciality: EmployeeSpeciality.EXECUTOR,
-        project: id,
+  const { data: projects, isLoading: isProjectsLoading } = useQuery({
+    queryKey: ['projects', { userId }],
+    queryFn: async () => {
+      const userEmployeesResponse = await EmployeesService.fetchEmployees({
+        user: userId,
+        speciality: EmployeeSpeciality.MANAGER,
       });
 
-      const employees = employeesResponse.data.employees;
+      if (userEmployeesResponse.data.employees.length === 0) {
+        return [];
+      }
 
-      executors.value.push(...employees);
-    }
-  };
+      const userEmployees = userEmployeesResponse.data.employees;
 
-  onMounted(async () => {
-    await fetch();
+      const result = userEmployees.map((e) => e.project);
 
-    if (projects.value.length > 0) {
-      currentProject.value = currentProject.value ?? projects.value[0]._id;
-      manager.value = await getManager(currentProject.value);
-    }
+      if (!currentProject.value) {
+        currentProject.value = result[0]._id;
+      }
 
-    isLoading.value = false;
+      return result;
+    },
   });
 
-  watch(currentProject, async () => {
-    isLoading.value = true;
+  const managerQueryKey = computed(() => ['manager', currentProject.value]);
+  const isEnabled = computed(() => !!currentProject.value);
+  const { data: manager, isLoading: isManagerLoading } = useQuery({
+    enabled: isEnabled,
+    queryKey: managerQueryKey,
+    queryFn: async ({ queryKey }) => {
+      const employeesResponse = await EmployeesService.fetchEmployees({
+        user: userId,
+        project: queryKey[1],
+        speciality: EmployeeSpeciality.MANAGER,
+      });
 
-    await fetch();
+      if (employeesResponse.data.employees.length === 0) {
+        return undefined;
+      }
 
-    if (currentProject.value) {
-      manager.value = await getManager(currentProject.value);
-    }
-
-    isLoading.value = false;
+      return employeesResponse.data.employees[0];
+    },
   });
+
+  const isLoading = computed(
+    () =>
+      isExecutorsLoading.value &&
+      isProjectsLoading.value &&
+      isManagerLoading.value
+  );
 
   return { executors, projects, isLoading, manager: readonly(manager) };
 }

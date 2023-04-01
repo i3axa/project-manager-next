@@ -4,6 +4,11 @@ import type IProjectResponse from '@/models/response/IProjectResponse';
 import type IProjectsManyResponse from '@/models/response/IProjectsManyResponse';
 import type { Id, ProjectsQuery } from '@/types/API';
 
+export interface PatchProjectParams {
+  id: Id;
+  data: Partial<Omit<IProject, '_id'>>;
+}
+
 export default class ProjectService {
   static async fetchProjectById(id: Id) {
     const url = `/projects/${id}`;
@@ -17,7 +22,7 @@ export default class ProjectService {
     return AuthAPIInstance.get<IProjectsManyResponse>(url, { params: query });
   }
 
-  static async patchProject(id: Id, data: Partial<Omit<IProject, '_id'>>) {
+  static async patchProject({ id, data }: PatchProjectParams) {
     const url = `/projects/${id}`;
 
     return AuthAPIInstance.patch<IProjectResponse>(url, data);

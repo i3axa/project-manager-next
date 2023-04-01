@@ -3,7 +3,7 @@ import type { Id, Role } from '@/types/API';
 export default interface IUser {
   _id: Id;
   email: string;
-  password: string;
+  password?: string;
   name: string;
   surname?: string;
   skills?: string;

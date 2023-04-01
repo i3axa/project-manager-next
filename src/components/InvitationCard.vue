@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { usePatchInvitation } from '@/api';
 import type IInvitation from '@/models/IInvitation';
-import InvitationsService from '@/services/InvitationsService';
 import { useStyleStore } from '@/store/style';
 import { BIconCheckLg } from 'bootstrap-icons-vue';
 import { useRouter } from 'vue-router';
@@ -14,11 +14,16 @@ const props = defineProps<IProps>();
 const styleStore = useStyleStore();
 const router = useRouter();
 
+const { mutateAsync: patchInvitation } = usePatchInvitation();
+
 const onAccept = async () => {
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await InvitationsService.patchInvitation(props.invitation._id, {
-    isResolved: true,
+  await patchInvitation({
+    id: props.invitation._id,
+    data: {
+      isResolved: true,
+    },
   });
 
   styleStore.setIsGlobalSpinnerShown(false);

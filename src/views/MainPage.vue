@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import ProjectCard from '@/components/ProjectCard.vue';
 import InvitationCard from '@/components/InvitationCard.vue';
-import useInvitations from '@/hooks/useInvitations';
-import useProjects from '@/hooks/useProjects';
 import { useAuthStore } from '@/store/auth';
 import { BIconPlusLg } from 'bootstrap-icons-vue';
 import CreateProjectModal from '@/components/CreateProjectModal.vue';
 import { ref } from 'vue';
+import { useInvitations, useProjects } from '@/api/queries';
 
 const authStore = useAuthStore();
 
@@ -14,11 +13,14 @@ if (!authStore.credentials.user) {
   throw new Error('User is not authorized');
 }
 
-const { projects } = useProjects();
+const { data: projects } = useProjects();
 
-const { invitations } = useInvitations({
-  user: authStore.credentials.user.id,
-});
+const { data: invitations } = useInvitations([
+  'invitations',
+  {
+    user: authStore.credentials.user.id,
+  },
+]);
 
 const isCreateProjectModalOpen = ref(false);
 </script>

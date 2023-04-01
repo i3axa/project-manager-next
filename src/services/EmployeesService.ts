@@ -4,6 +4,11 @@ import type IEmployeeResponse from '@/models/response/IEmployeeResponse';
 import type IEmployeesManyResponse from '@/models/response/IEmployeesManyResponse';
 import type { EmployeesQuery, Id } from '@/types/API';
 
+export interface PatchEmployeeParams {
+  id: Id;
+  data: Partial<IEmployeeRequest>;
+}
+
 export default class EmployeesService {
   static async fetchEmployees(query?: EmployeesQuery) {
     const url = '/employees';
@@ -17,8 +22,8 @@ export default class EmployeesService {
     return AuthAPIInstance.get<IEmployeeResponse>(url);
   }
 
-  static async patchEmployee(employeeId: Id, data: Partial<IEmployeeRequest>) {
-    const url = `/employees/${employeeId}`;
+  static async patchEmployee({ id, data }: PatchEmployeeParams) {
+    const url = `/employees/${id}`;
 
     return AuthAPIInstance.patch<IEmployeeResponse>(url, data);
   }

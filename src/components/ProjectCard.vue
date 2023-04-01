@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import useEmployees from '@/hooks/useEmployees';
-import useUser from '@/hooks/useUser';
+import { useUser, useEmployees } from '@/api';
 import type IProject from '@/models/IProject';
 import { useAuthStore } from '@/store/auth';
 import { BIconPersonPlus, BIconPencil } from 'bootstrap-icons-vue';
@@ -16,9 +15,12 @@ const props = defineProps<IProps>();
 
 const isEditModalOpen = ref(false);
 
-const { employees } = useEmployees({
-  project: props.project._id,
-});
+const { data: employees } = useEmployees([
+  'employees',
+  {
+    project: props.project._id,
+  },
+]);
 
 const authStore = useAuthStore();
 
@@ -26,7 +28,7 @@ if (!authStore.credentials.user) {
   throw new Error('User is not authorized');
 }
 
-const { user } = useUser(authStore.credentials.user.id);
+const { data: user } = useUser(['users', authStore.credentials.user.id]);
 
 const isUserManager = computed(
   () =>

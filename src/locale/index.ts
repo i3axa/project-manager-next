@@ -7,8 +7,8 @@ document.querySelector('html')?.setAttribute('lang', initialLocale);
 
 export default createI18n({
   locale: initialLocale,
-  // silentFallbackWarn: true,
-  // silentTranslationWarn: true,
+  silentFallbackWarn: !import.meta.env.DEV,
+  silentTranslationWarn: !import.meta.env.DEV,
   legacy: false,
   fallbackLocale: {
     'ru-RU': ['ru'],
@@ -17,7 +17,5 @@ export default createI18n({
   messages: {
     en,
     ru,
-    de: {},
-    ar: {},
   },
 });

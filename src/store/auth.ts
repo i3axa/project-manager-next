@@ -121,8 +121,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await AuthService.refreshToken();
 
-      console.log(response);
-
       setToken(response.data.accessToken);
       setUser(response.data.user);
       isAuth.value = true;

@@ -31,8 +31,11 @@ export class TaskInStateColumn implements ITaskInStateColumn {
       applyChange: async () => {
         styleStore.setIsSyncIndicatorToggled(true);
 
-        await TaskService.patchTask(this.task._id, {
-          progress: this.task.progress,
+        await TaskService.patchTask({
+          id: this.task._id,
+          data: {
+            progress: this.task.progress,
+          },
         });
 
         styleStore.setIsSyncIndicatorToggled(false);
@@ -61,8 +64,11 @@ export class TaskInStateColumn implements ITaskInStateColumn {
       applyChange: async () => {
         styleStore.setIsSyncIndicatorToggled(true);
 
-        await TaskService.patchTask(this.task._id, {
-          usedHours: this.task.usedHours,
+        await TaskService.patchTask({
+          id: this.task._id,
+          data: {
+            usedHours: this.task.usedHours,
+          },
         });
 
         styleStore.setIsSyncIndicatorToggled(false);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useCreateTask } from '@/api';
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import type ITask from '@/models/ITask';
-import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -14,22 +14,12 @@ const task = ref<Partial<ITask>>(route.query);
 
 const files = ref<File[]>([]);
 
+const { mutateAsync: createTask } = useCreateTask();
+
 const onSubmit = async () => {
-  const formData = new FormData();
-
-  for (const key in task.value) {
-    const safeKey = key as keyof ITask;
-
-    formData.append(key, task.value[safeKey] as string);
-  }
-
-  files.value.forEach((file) => {
-    formData.append('files', file);
-  });
-
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await TaskService.createTask(formData);
+  await createTask({ data: task.value, files: files.value });
 
   router.back();
 

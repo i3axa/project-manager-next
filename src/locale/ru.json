@@ -20,6 +20,11 @@
   "languages": {
     "language": "Язык"
   },
+  "password": {
+    "oldPassword": "Старый пароль",
+    "newPassword": "Новый пароль",
+    "submit": "Поменять пароль"
+  },
   "modal": {
     "closeInfo": "Ясно, спасибо!",
     "confirmDefaultHeader": "Подтвердите действие",
@@ -61,6 +66,10 @@
     }
   },
   "dashboard": {
+    "noProjects": {
+      "message": "Нет проектов с данной ролью, пожалуйста, создайте проект или попросите кого-то пригласить Вас",
+      "goMain": "Вернуться на главную"
+    },
     "totalDifficulty": "Общая сложность",
     "employees": "Рабочие",
     "project": "Проект",
@@ -114,5 +123,9 @@
   "speciality": {
     "MANAGER": "Менеджер",
     "EXECUTOR": "Исполнитель"
+  },
+  "updateProfile": {
+    "title": "Профиль",
+    "submit": "Обновить профиль"
   }
 }

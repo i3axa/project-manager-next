@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ProjectService from '@/services/ProjectService';
 import {
   TransitionRoot,
   TransitionChild,
@@ -9,8 +8,7 @@ import {
 } from '@headlessui/vue';
 import { reactive } from 'vue';
 import { useStyleStore } from '@/store/style';
-import EmployeesService from '@/services/EmployeesService';
-import { EmployeeSpeciality } from '@/types/API';
+import { useCreateProject } from '@/api';
 
 interface IProps {
   isOpen: boolean;
@@ -25,19 +23,16 @@ defineEmits<IEmits>();
 
 const styleStore = useStyleStore();
 
+const { mutateAsync: createProject } = useCreateProject();
+
 const model = reactive({ description: '', title: '' });
 
 const onSubmit = async () => {
   styleStore.setIsGlobalSpinnerShown(true);
 
-  const projectResponse = await ProjectService.createProject({
+  await createProject({
     ...model,
     isPrivate: false,
-  });
-
-  await EmployeesService.createEmployee({
-    project: projectResponse.data.project._id,
-    speciality: EmployeeSpeciality.MANAGER,
   });
 
   styleStore.setIsGlobalSpinnerShown(false);

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type ITask from '@/models/ITask';
 import TaskEditForm from '@/components/TaskEditForm.vue';
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
@@ -23,21 +22,13 @@ const onSubmit = async () => {
     return;
   }
 
-  const formData = new FormData();
-
-  for (const key in task.value) {
-    const safeKey = key as keyof ITask;
-
-    formData.append(key, task.value[safeKey] as string);
-  }
-
-  files.value.forEach((file) => {
-    formData.append('files', file);
-  });
-
   styleStore.setIsGlobalSpinnerShown(true);
 
-  const response = await TaskService.putTask(task.value._id, formData);
+  const response = await TaskService.putTask({
+    id: task.value._id,
+    data: task.value,
+    files: files.value,
+  });
 
   task.value = response.data.task;
 

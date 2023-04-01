@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import EmployeesList from '@/components/EmployeesList.vue';
 import FreeTasksList from '@/components/FreeTasksList.vue';
-import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
-import { ref, watch } from 'vue';
-import type { Id } from '@/types/API';
+import { computed, ref, watch } from 'vue';
+import type { Id, TasksQuery } from '@/types/API';
 import ListBox from '@/components/UI/ListBox.vue';
 import { useAuthStore } from '@/store/auth';
 import useManager from '@/hooks/useManager';
-import useFreeTasks from '@/hooks/useFreeTasks';
 import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 import { BIconPlusLg } from 'bootstrap-icons-vue';
+import { useDeleteTask, usePatchTask, useTasks } from '@/api';
+import NoProjects from '@/components/NoProjects.vue';
 
 const styleStore = useStyleStore();
 const authStore = useAuthStore();
@@ -37,13 +37,24 @@ const {
   isLoading: areExecutorsLoading,
 } = useManager(authStore.credentials.user.id, currentProject);
 
-const { freeTasks, isLoading: areFreeTasksLoading } =
-  useFreeTasks(currentProject);
+const tasksQueryKey = computed<[string, TasksQuery]>(() => [
+  'tasks',
+  { project: currentProject.value, director: manager.value?._id },
+]);
+const { data: tasks, isLoading: areFreeTasksLoading } = useTasks(
+  tasksQueryKey,
+  { enabled: !!manager }
+);
+
+const freeTasks = computed(() =>
+  tasks.value.filter((t) => t.employee === null)
+);
+
+const { mutateAsync: patchTaskRequest } = usePatchTask(tasksQueryKey);
+const { mutateAsync: deleteTaskRequest } = useDeleteTask(tasksQueryKey);
 
 const onFreeTaskAdd = async (newIndex: number) => {
-  const newTask = freeTasks.value.filter(
-    (t) => t.project === currentProject.value
-  )[newIndex];
+  const newTask = freeTasks.value[newIndex];
 
   if (newTask.employee === null) {
     return;
@@ -51,17 +62,7 @@ const onFreeTaskAdd = async (newIndex: number) => {
 
   styleStore.setIsSyncIndicatorToggled(true);
 
-  await TaskService.patchTask(newTask._id, { employee: null });
-  newTask.employee = null;
-
-  styleStore.setIsSyncIndicatorToggled(false);
-};
-
-const onTaskRelease = async (taskId: Id) => {
-  styleStore.setIsSyncIndicatorToggled(true);
-
-  const response = await TaskService.patchTask(taskId, { employee: null });
-  freeTasks.value.push(response.data.task);
+  await patchTaskRequest({ id: newTask._id, data: { employee: null } });
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -75,9 +76,7 @@ const onContinue = ref(() => {
 const deleteTask = async (taskIndex: number) => {
   styleStore.setIsSyncIndicatorToggled(true);
 
-  const deleted = freeTasks.value.splice(taskIndex, 1);
-
-  await TaskService.deleteTask(deleted[0]._id);
+  await deleteTaskRequest(freeTasks.value[taskIndex]._id);
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -93,33 +92,33 @@ const onFreeTaskDelete = async (taskIndex: number) => {
 </script>
 
 <template>
-  <div v-if="!areExecutorsLoading && !manager">No projects</div>
-  <div v-else class="outer">
+  <NoProjects v-if="!areExecutorsLoading && !manager" />
+  <div v-bind="$attrs" v-else class="outer">
     <section class="flex flex-col relative">
       <header class="header">
         <h2 class="hidden sm:block" style="line-height: 2.15rem">
           {{ $t('dashboard.project') }}
         </h2>
         <ListBox
-          :items="projects.map((p) => p._id)"
+          :items="projects?.map((p) => p._id) ?? []"
           v-model="currentProject"
           class="w-40"
         >
           <template #title="{ modelValue }">
-            {{ projects.find((p) => p._id === modelValue)?.title }}
+            {{ projects?.find((p) => p._id === modelValue)?.title }}
           </template>
           <template #item="{ item }">
-            {{ projects.find((p) => p._id === item)?.title }}
+            {{ projects?.find((p) => p._id === item)?.title }}
           </template>
         </ListBox>
       </header>
       <MiniLoadingSpinner v-if="areExecutorsLoading" />
       <EmployeesList
-        :director="manager?._id"
-        :employees="executors.filter((e) => e.project._id === currentProject)"
-        @task-release="onTaskRelease"
         v-else
-      ></EmployeesList>
+        :tasks="tasks"
+        :director="manager?._id"
+        :employees="executors"
+      />
     </section>
 
     <section class="flex flex-col relative">
@@ -142,7 +141,7 @@ const onFreeTaskDelete = async (taskIndex: number) => {
         :tasks="freeTasks"
         @task-delete="onFreeTaskDelete"
         @task-add="onFreeTaskAdd"
-      ></FreeTasksList>
+      />
     </section>
 
     <ConfirmModal

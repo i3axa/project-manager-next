@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router';
 import TaskStateColumns from '@/components/TaskStateColumns.vue';
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
-import useTasks from '@/hooks/useTasks';
+import { useEmployee, useTasks } from '@/api';
 
 const route = useRoute();
 if (route.params.id === undefined) {
@@ -11,7 +11,9 @@ if (route.params.id === undefined) {
 
 const employee = route.params.id as string;
 
-const { tasks, isLoading } = useTasks({ employee });
+const { data: tasks, isLoading } = useTasks(['tasks', { employee }]);
+
+const { data: employeeData } = useEmployee(['employees', employee]);
 </script>
 
 <template>
@@ -20,6 +22,7 @@ const { tasks, isLoading } = useTasks({ employee });
     v-else
     :tasks="tasks"
     :isInteractive="false"
+    :employee="employeeData"
   ></TaskStateColumns>
 </template>
 

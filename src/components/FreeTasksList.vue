@@ -20,11 +20,12 @@ defineEmits<IEmits>();
   <draggable
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
     :list="tasks"
-    itemKey="id"
+    :itemKey="(task: ITask) => task._id"
     group="tasks"
     animation="150"
     filter=".ignore"
     handle=".handle"
+    force-fallback="true"
     @add="$emit('taskAdd', $event.newIndex)"
   >
     <template #item="{ element, index }: { element: ITask, index: number }">

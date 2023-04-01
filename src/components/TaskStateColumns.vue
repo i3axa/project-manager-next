@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import { usePatchTask } from '@/api';
 import useTaskStateColumns from '@/hooks/useTaskStateColumns';
 import type IEmployee from '@/models/IEmployee';
 import type ITask from '@/models/ITask';
-import TaskService from '@/services/TaskService';
 import { useStyleStore } from '@/store/style';
 import type { TaskState } from '@/types/API';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ITaskInStateColumn, IStateColumn } from '@/utils/TaskStateColumn';
 import { BIconThreeDots, BIconPlus, BIconDash } from 'bootstrap-icons-vue';
+import { computed, reactive, toRefs } from 'vue';
 import Draggable from 'vuedraggable';
 
 interface IProps {
@@ -18,13 +19,24 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { taskStateColumns } = useTaskStateColumns(props.tasks);
+const { tasks } = toRefs(props);
+
+const { mutateAsync: patchTask } = usePatchTask([
+  'tasks',
+  { employee: props.employee?._id },
+]);
+
+const tasksData = computed(() => [
+  ...tasks.value.map((t) => reactive({ ...t })),
+]);
+
+const { taskStateColumns } = useTaskStateColumns(tasksData);
 
 const styleStore = useStyleStore();
 
 const getRouteQuery = (state: TaskState) => {
   return {
-    project: props.employee?.project,
+    project: props.employee?.project._id,
     state,
     employee: props.employee?._id,
   };
@@ -38,7 +50,10 @@ const onTaskAdd = async (
 
   styleStore.setIsSyncIndicatorToggled(true);
 
-  await TaskService.patchTask(newTask.task._id, { state: column.state });
+  await patchTask({
+    id: newTask.task._id,
+    data: { state: column.state },
+  });
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -53,7 +68,7 @@ const onTaskAdd = async (
     >
       <div class="column-header">
         <span class="text-gray-400 font-semibold text-lg">{{
-          $t(taskStateColumn.titleLocaleKey)
+          taskStateColumn.title
         }}</span>
         <div class="difficulty-badge text-white bg-gray-400 dark:bg-gray-600">
           {{ taskStateColumn.totalDifficulty }} *
@@ -79,13 +94,15 @@ const onTaskAdd = async (
         :disabled="!isInteractive"
         animation="150"
         group="tasks"
-        itemKey="id"
+        :itemKey="(task: ITaskInStateColumn) => task.task._id"
         filter=".ignore"
+        force-fallback="true"
+        sort="false"
         @add="onTaskAdd($event, taskStateColumn)"
       >
         <template #item="{ element }: { element: ITaskInStateColumn }">
           <div
-            class="rounded-2xl shadow dark:shadow-slate-900"
+            class="rounded-2xl shadow dark:shadow-slate-900 bg-white dark:bg-slate-800"
             :class="isInteractive ? 'cursor-move' : 'cursor-default'"
           >
             <b-icon-three-dots

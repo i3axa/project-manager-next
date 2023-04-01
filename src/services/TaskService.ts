@@ -4,6 +4,22 @@ import type ITask from '@/models/ITask';
 import type ITaskResponse from '@/models/response/ITaskResponse';
 import type { Id, TasksQuery } from '@/types/API';
 
+export interface CreateTaskParams {
+  data: Partial<ITask>;
+  files: File[];
+}
+
+export interface PutTaskParams {
+  id: Id;
+  data: Partial<ITask>;
+  files: File[];
+}
+
+export interface PatchTaskParams {
+  id: Id;
+  data: Partial<ITask>;
+}
+
 export default class TaskService {
   static async fetchTasks(query?: TasksQuery) {
     const url = '/tasks';
@@ -19,22 +35,46 @@ export default class TaskService {
     return AuthAPIInstance.get<ITaskResponse>(url);
   }
 
-  static async createTask(newTask: FormData) {
+  static async createTask({ data, files }: CreateTaskParams) {
     const url = '/tasks';
 
-    return FormAuthAPIInstance.post<ITaskResponse>(url, newTask);
+    const formData = new FormData();
+
+    for (const key in data) {
+      const safeKey = key as keyof ITask;
+
+      formData.append(key, data[safeKey] as string);
+    }
+
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    return FormAuthAPIInstance.post<ITaskResponse>(url, formData);
   }
 
-  static async patchTask(taskId: Id, data: Partial<ITask>) {
-    const url = `/tasks/${taskId}`;
+  static async patchTask({ id, data }: PatchTaskParams) {
+    const url = `/tasks/${id}`;
 
     return AuthAPIInstance.patch<ITaskResponse>(url, data);
   }
 
-  static async putTask(taskId: Id, data: FormData) {
-    const url = `/tasks/${taskId}`;
+  static async putTask({ id, data, files }: PutTaskParams) {
+    const url = `/tasks/${id}`;
 
-    return FormAuthAPIInstance.put<ITaskResponse>(url, data);
+    const formData = new FormData();
+
+    for (const key in data) {
+      const safeKey = key as keyof ITask;
+
+      formData.append(key, data[safeKey] as string);
+    }
+
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    return FormAuthAPIInstance.put<ITaskResponse>(url, formData);
   }
 
   static async deleteTask(taskId: Id) {

@@ -20,6 +20,11 @@
   "languages": {
     "language": "Language"
   },
+  "password": {
+    "oldPassword": "Old password",
+    "newPassword": "New password",
+    "submit": "Change password"
+  },
   "modal": {
     "closeInfo": "Got it, thanks!",
     "confirmDefaultHeader": "Confirm your action",
@@ -61,6 +66,10 @@
     }
   },
   "dashboard": {
+    "noProjects": {
+      "message": "You're not in a project with this role, please create one or ask someone to invite you",
+      "goMain": "Go back to the main page"
+    },
     "totalDifficulty": "Total difficulty",
     "employees": "Employees",
     "project": "Project",
@@ -114,5 +123,9 @@
   "speciality": {
     "MANAGER": "Manager",
     "EXECUTOR": "Executor"
+  },
+  "updateProfile": {
+    "title": "Profile",
+    "submit": "Update profile"
   }
 }

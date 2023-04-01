@@ -1,58 +1,39 @@
 import type ITask from '@/models/ITask';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import {
   StateColumn,
   TaskInStateColumn,
   type IStateColumn,
-  type ITaskInStateColumn,
 } from '@/utils/TaskStateColumn';
 import { TaskState } from '@/types/API';
+import type { MaybeRef } from '@vueuse/core';
+import { getMaybeRefValue } from '@/utils';
+import { useI18n } from 'vue-i18n';
 
-export default function (tasks: ITask[]) {
+export default function (tasks: MaybeRef<ITask[]>) {
   const taskStateColumns = ref<IStateColumn[]>([]);
+  const { t } = useI18n();
 
-  const initialize = () => {
-    const waitingTasks: ITaskInStateColumn[] = tasks
-      .filter((task) => task.state === TaskState.WAITING)
-      .map((task) => new TaskInStateColumn(task));
-
-    const inProgressTasks: ITaskInStateColumn[] = tasks
-      .filter((task) => task.state === TaskState.IN_PROGRESS)
-      .map((task) => new TaskInStateColumn(task));
-
-    const stopedTasks: ITaskInStateColumn[] = tasks
-      .filter((task) => task.state === TaskState.STOPED)
-      .map((task) => new TaskInStateColumn(task));
-
-    const closedTasks: ITaskInStateColumn[] = tasks
-      .filter((task) => task.state === TaskState.CLOSED)
-      .map((task) => new TaskInStateColumn(task));
-
-    taskStateColumns.value = [
+  for (const state in TaskState) {
+    taskStateColumns.value.push(
       new StateColumn({
-        titleLocaleKey: 'dashboard.WAITING',
-        state: TaskState.WAITING,
-        tasks: waitingTasks,
-      }),
-      new StateColumn({
-        titleLocaleKey: 'dashboard.IN_PROGRESS',
-        state: TaskState.IN_PROGRESS,
-        tasks: inProgressTasks,
-      }),
-      new StateColumn({
-        titleLocaleKey: 'dashboard.STOPED',
-        state: TaskState.STOPED,
-        tasks: stopedTasks,
-      }),
-      new StateColumn({
-        titleLocaleKey: 'dashboard.CLOSED',
-        state: TaskState.CLOSED,
-        tasks: closedTasks,
-      }),
-    ];
-  };
+        title: t(`dashboard.${state}`),
+        state: state as TaskState,
+        tasks: getMaybeRefValue(tasks)
+          .filter((task) => task.state === state)
+          .map((task) => new TaskInStateColumn(task)),
+      })
+    );
+  }
 
-  initialize();
+  watch(tasks, (newTasks) => {
+    taskStateColumns.value.forEach(
+      (col) =>
+        (col.tasks = getMaybeRefValue(newTasks)
+          .filter((task) => task.state === col.state)
+          .map((task) => new TaskInStateColumn(task)))
+    );
+  });
 
   return { taskStateColumns };
 }

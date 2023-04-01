@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/auth';
 import type { Id } from '@/types/API';
 import { ref, watch } from 'vue';
 import ListBox from '@/components/UI/ListBox.vue';
+import NoProjects from '@/components/NoProjects.vue';
 
 const authStore = useAuthStore();
 
@@ -31,11 +32,15 @@ const { tasks, projects, currentEmployee, isLoading } = useExecutor(
 
 <template>
   <LoadingSpinner v-if="isLoading" class="w-full" />
-  <div v-else-if="projects.length === 0">No projects</div>
-  <section v-else class="w-full flex flex-col gap-2 items-center mx-0">
+  <NoProjects v-else-if="projects.length === 0" />
+  <section
+    v-bind="$attrs"
+    v-else
+    class="w-full flex flex-col gap-2 items-center !mx-0"
+  >
     <header>
       <ListBox
-        v-if="!isLoading"
+        v-if="currentProject"
         :items="projects.map((p) => p._id)"
         v-model="currentProject"
         class="w-40"

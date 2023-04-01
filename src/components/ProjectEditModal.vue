@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import useEmployees from '@/hooks/useEmployees';
-import useProject from '@/hooks/useProject';
-import ProjectService from '@/services/ProjectService';
+import {
+  useDeleteEmployee,
+  useDeleteProject,
+  useEmployees,
+  usePatchProject,
+  useProject,
+} from '@/api';
 import {
   TransitionRoot,
   TransitionChild,
@@ -12,8 +16,7 @@ import {
 import { BIconPersonX, BIconTrash } from 'bootstrap-icons-vue';
 import { reactive, watch, ref, computed } from 'vue';
 import ConfirmModal from '@/components/UI/ConfirmModal.vue';
-import { EmployeeSpeciality, type Id } from '@/types/API';
-import EmployeesService from '@/services/EmployeesService';
+import { EmployeeSpeciality, type EmployeesQuery, type Id } from '@/types/API';
 import { useStyleStore } from '@/store/style';
 
 interface IProps {
@@ -30,18 +33,32 @@ const emit = defineEmits<IEmits>();
 
 const styleStore = useStyleStore();
 
-const { project, isLoading } = useProject(props.projectId);
-const { employees, refetch: employeesRefetch } = useEmployees({
-  project: props.projectId,
-  speciality: EmployeeSpeciality.EXECUTOR,
-});
+const employeesQuery: [string, EmployeesQuery] = [
+  'employees',
+  {
+    project: props.projectId,
+    speciality: EmployeeSpeciality.EXECUTOR,
+  },
+];
+
+const { data: project, isLoading } = useProject(['projects', props.projectId]);
+const { data: employees } = useEmployees(employeesQuery);
+
+const { mutateAsync: deleteEmployee } = useDeleteEmployee(employeesQuery);
+
+const { mutateAsync: patchProject } = usePatchProject();
+const { mutateAsync: deleteProject } = useDeleteProject();
 
 let model = reactive({ description: '', title: '' });
-watch(project, () => {
-  if (project) {
-    model = { ...model, ...project.value };
-  }
-});
+watch(
+  project,
+  () => {
+    if (project) {
+      model = { ...model, ...project.value };
+    }
+  },
+  { immediate: true }
+);
 
 const onSubmit = async () => {
   if (!project.value) {
@@ -50,7 +67,7 @@ const onSubmit = async () => {
 
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await ProjectService.patchProject(project.value._id, model);
+  await patchProject({ id: project.value._id, data: model });
 
   styleStore.setIsGlobalSpinnerShown(false);
 };
@@ -66,8 +83,7 @@ const onDeleteEmployee = computed(() => async () => {
 
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await EmployeesService.deleteEmployee(selectedEmployee.value);
-  await employeesRefetch();
+  await deleteEmployee(selectedEmployee.value);
 
   styleStore.setIsGlobalSpinnerShown(false);
 
@@ -77,7 +93,7 @@ const onDeleteEmployee = computed(() => async () => {
 const onProjectDelete = async () => {
   styleStore.setIsGlobalSpinnerShown(true);
 
-  await ProjectService.deleteProject(props.projectId);
+  await deleteProject(props.projectId);
 
   styleStore.setIsGlobalSpinnerShown(false);
 

@@ -2,22 +2,15 @@
 import type IEmployee from '@/models/IEmployee';
 import EmployeeCard from '@/components/EmployeeCard.vue';
 import type { Id } from '@/types/API';
-
-interface IEmits {
-  (eventName: 'taskRelease', taskId: Id): void;
-}
+import type ITask from '@/models/ITask';
 
 interface IProps {
   employees: IEmployee[];
+  tasks: ITask[];
   director?: Id;
 }
 
 defineProps<IProps>();
-const emit = defineEmits<IEmits>();
-
-const releaseTask = (taskId: Id) => {
-  emit('taskRelease', taskId);
-};
 </script>
 
 <template>
@@ -27,7 +20,7 @@ const releaseTask = (taskId: Id) => {
       :key="employee._id"
       :director="director"
       :employee="employee"
-      @task-release="releaseTask"
+      :tasks="tasks.filter((t) => t.employee === employee._id)"
     />
   </div>
 </template>

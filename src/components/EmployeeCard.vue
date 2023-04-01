@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import useTasks from '@/hooks/useTasks';
 import type IEmployee from '@/models/IEmployee';
 import type ITask from '@/models/ITask';
 import EmployeesTaskEditDropdown from '@/components/EmployeesTaskEditDropdown.vue';
-import { computed, ref } from 'vue';
-import TaskService from '@/services/TaskService';
+import { computed, ref, toRefs } from 'vue';
 import { useStyleStore } from '@/store/style';
 import type { Id } from '@/types/API';
 import MiniLoadingSpinner from '@/components/UI/MiniLoadingSpinner.vue';
@@ -18,24 +16,25 @@ import {
   BIconExclamationCircle,
 } from 'bootstrap-icons-vue';
 import Draggable from 'vuedraggable';
+import { useDeleteTask, usePatchTask } from '@/api';
 
 interface IProps {
   employee: IEmployee;
+  tasks: ITask[];
   director?: Id;
 }
 
-interface IEmits {
-  (eventName: 'taskRelease', taskId: Id): void;
-}
-
 const props = defineProps<IProps>();
-const emit = defineEmits<IEmits>();
 
-const { tasks, isLoading } = useTasks({
-  employee: props.employee._id,
-  project: props.employee.project._id,
-  director: props.director,
-});
+const { tasks } = toRefs(props);
+
+const taskKey = [
+  'tasks',
+  { project: props.employee.project._id, director: props.director },
+];
+
+const { mutateAsync: patchTaskRequest } = usePatchTask(taskKey);
+const { mutateAsync: deleteTaskRequest } = useDeleteTask(taskKey);
 
 const totalDifficulty = computed(() => {
   const difficulties = tasks.value.map((task) => task.difficulty);
@@ -43,10 +42,15 @@ const totalDifficulty = computed(() => {
   return difficulties.reduce((previous, current) => previous + current, 0);
 });
 
-const releaseTask = (taskIndex: number) => {
-  const releasedTask = tasks.value.splice(taskIndex, 1)[0];
+const releaseTask = async (taskIndex: number) => {
+  styleStore.setIsSyncIndicatorToggled(true);
 
-  emit('taskRelease', releasedTask._id);
+  await patchTaskRequest({
+    id: tasks.value[taskIndex]._id,
+    data: { employee: null },
+  });
+
+  styleStore.setIsSyncIndicatorToggled(false);
 };
 
 const styleStore = useStyleStore();
@@ -56,8 +60,7 @@ const deleteTask = async (taskIndex: number) => {
 
   styleStore.setIsSyncIndicatorToggled(true);
 
-  await TaskService.deleteTask(task._id);
-  tasks.value.splice(taskIndex, 1);
+  await deleteTaskRequest(task._id);
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -88,8 +91,10 @@ const onTaskAdd = async ({ newIndex }: { newIndex: number }) => {
 
   styleStore.setIsSyncIndicatorToggled(true);
 
-  await TaskService.patchTask(newTask._id, { employee: props.employee._id });
-  newTask.employee = props.employee._id;
+  await patchTaskRequest({
+    id: newTask._id,
+    data: { employee: props.employee._id },
+  });
 
   styleStore.setIsSyncIndicatorToggled(false);
 };
@@ -149,15 +154,16 @@ const onDropDownOpen = (event: Event) => {
     >
       {{ $t('dashboard.addTask') }}
     </div>
-    <MiniLoadingSpinner v-if="isLoading" />
+    <MiniLoadingSpinner v-if="false" />
     <draggable
       v-else
       class="task-list"
       :list="tasks"
       animation="150"
       group="tasks"
-      itemKey="id"
+      :itemKey="(task: ITask) => task._id"
       filter=".ignore"
+      force-fallback="true"
       @add="onTaskAdd"
       @end="forceHideTooltips = false"
     >
