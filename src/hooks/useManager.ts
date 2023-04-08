@@ -9,10 +9,10 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     'employees',
     { speciality: EmployeeSpeciality.EXECUTOR, project: currentProject.value },
   ]);
-  const { data: executors, isLoading: isExecutorsLoading } =
+  const { data: executors, isFetchedAfterMount: isExecutorsFetched } =
     useEmployees(executorsQueryKey);
 
-  const { data: projects, isLoading: isProjectsLoading } = useQuery({
+  const { data: projects, isFetchedAfterMount: isProjectsFetched } = useQuery({
     queryKey: ['projects', { userId }],
     queryFn: async () => {
       const userEmployeesResponse = await EmployeesService.fetchEmployees({
@@ -38,7 +38,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
 
   const managerQueryKey = computed(() => ['manager', currentProject.value]);
   const isEnabled = computed(() => !!currentProject.value);
-  const { data: manager, isLoading: isManagerLoading } = useQuery({
+  const { data: manager, isFetchedAfterMount: isManagerFetched } = useQuery({
     enabled: isEnabled,
     queryKey: managerQueryKey,
     queryFn: async ({ queryKey }) => {
@@ -58,9 +58,11 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
 
   const isLoading = computed(
     () =>
-      isExecutorsLoading.value &&
-      isProjectsLoading.value &&
-      isManagerLoading.value
+      !(
+        isExecutorsFetched.value ||
+        isProjectsFetched.value ||
+        isManagerFetched.value
+      )
   );
 
   return { executors, projects, isLoading, manager: readonly(manager) };

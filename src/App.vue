@@ -18,7 +18,7 @@ const styleStore = useStyleStore();
   <div
     v-show="styleStore.isGlobalOverlayShown"
     id="global-overlay"
-    class="bg-dark/70"
+    class="bg-black/70"
     @click="
       styleStore.isNavbarHidden ? undefined : styleStore.toggleNavigationBar()
     "

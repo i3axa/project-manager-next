@@ -13,7 +13,7 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     'employees',
     { speciality: EmployeeSpeciality.EXECUTOR, user: userId },
   ]);
-  const { data: employees, isLoading: isEmployeesLoading } =
+  const { data: employees, isFetchedAfterMount: isEmployeesFetched } =
     useEmployees(employeesQueryKey);
 
   const currentEmployee = computed(() =>
@@ -30,12 +30,15 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
   const enabled = computed(
     () => !!(currentEmployee.value && currentProject.value)
   );
-  const { data: tasks, isLoading: isTasksLoading } = useTasks(tasksQueryKey, {
-    enabled,
-  });
+  const { data: tasks, isFetchedAfterMount: isTasksFetched } = useTasks(
+    tasksQueryKey,
+    {
+      enabled,
+    }
+  );
 
   const isLoading = computed(
-    () => isEmployeesLoading.value && isTasksLoading.value
+    () => !(isEmployeesFetched.value || isTasksFetched.value)
   );
 
   (async () => {
@@ -46,5 +49,5 @@ export default function (userId: Id, currentProject: Ref<Id | undefined>) {
     }
   })();
 
-  return { tasks, projects, currentEmployee, isLoading };
+  return { tasks, projects, executors: employees, currentEmployee, isLoading };
 }

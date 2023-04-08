@@ -12,6 +12,7 @@ import ConfirmModal from '@/components/UI/ConfirmModal.vue';
 import { BIconPlusLg } from 'bootstrap-icons-vue';
 import { useDeleteTask, usePatchTask, useTasks } from '@/api';
 import NoProjects from '@/components/NoProjects.vue';
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue';
 
 const styleStore = useStyleStore();
 const authStore = useAuthStore();
@@ -92,7 +93,8 @@ const onFreeTaskDelete = async (taskIndex: number) => {
 </script>
 
 <template>
-  <NoProjects v-if="!areExecutorsLoading && !manager" />
+  <LoadingSpinner v-if="areExecutorsLoading" class="w-full" />
+  <NoProjects v-else-if="!manager" />
   <div v-bind="$attrs" v-else class="outer">
     <section class="flex flex-col relative">
       <header class="header">
